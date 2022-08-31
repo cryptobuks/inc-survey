@@ -1,0 +1,34 @@
+<div class="input-token">
+
+    <div class="selector" (click)="emitSelect($event)">
+        <div class="icon">
+            <img *ngIf="data.logoURI" [alt]="data.symbol" [src]="data.logoURI" onerror="this.src='assets/img/unk_token.png';" />
+            <img *ngIf="!data.logoURI" alt="{{ 'empty_token' | translate }}" src="assets/img/empty_token.png" />
+        </div>
+
+        <div class="text">
+            <span class="desc">{{ title }}</span>
+            <div *ngIf="data.symbol" class="tkn-name">
+                <span>{{ data.symbol }}</span>
+                <!--<mat-icon>keyboard_arrow_down</mat-icon>-->
+            </div>
+            <button *ngIf="!data.symbol" pButton pRipple type="button" label="{{ 'select_token' | translate }}"
+                class="p-button-outlined p-button-rounded p-button-secondary select-btn"></button>
+        </div>
+    </div>
+
+    <div class="box" (click)="amountInput.focus()">
+        <input class="amount-in" type="text" inputmode="decimal" autocomplete="off" autocorrect="off"  spellcheck="false"
+            pattern="^[0-9]*[.,]?[0-9]*$" placeholder="0.0" minlength="1" maxlength="79" #amountInput />
+
+        <button *ngIf="hasBalance()" pButton pRipple type="button" label="{{ 'max' | translate }}"
+            class="p-button-outlined p-button-rounded p-button-secondary max-btn"
+            (click)="onMax()"></button>
+    </div>
+
+    <div *ngIf="hasBalance() || hasPrice()" class="info">
+        <span *ngIf="hasBalance()" class="balance" (click)="onBalance()">{{ 'balance' | translate }}: {{ humanFriendlyBalance() }} {{ data.symbol }}</span>
+        <span *ngIf="hasPrice()" class="price" (click)="onPrice()">≈$ {{ data.price }}</span>
+    </div>
+
+</div>

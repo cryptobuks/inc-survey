@@ -1,0 +1,23 @@
+.details-cnt {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.details-cnt .survey-state-info {
+    margin-top: 20px;
+}
+
+.details-cnt .relevant-info {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.increase-dialog-body .relevant-info {
+    margin-top: 10px;
+}
+
+@media screen and (max-width: 1040px) {
+    .details-cnt {
+        margin: 20px;
+    }
+}

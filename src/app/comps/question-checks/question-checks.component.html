@@ -1,0 +1,25 @@
+<section *ngIf="!data.state.edited" aria-label="Select options" [class.check-group]="!data.content.useGrid" [class.check-grid]="data.content.useGrid">
+    <div *ngFor="let option of sortedOptions; let i = index" class="field-checkbox">
+        <p-checkbox [value]="option.value" [(ngModel)]="data.response.input" inputId="{{ randId }}-{{ i }}" [disabled]="data.state.disabled"></p-checkbox>
+        <label for="{{ randId }}-{{ i }}" [class.disabled]="data.state.disabled">{{ option.label }}</label>
+    </div>
+</section>
+
+<div *ngIf="data.state.edited">
+    <div [class.editable-group]="!data.content.useGrid" [class.editable-grid]="data.content.useGrid">
+        <div class="editable-option" *ngFor="let option of data.content.options; let i = index">
+            <mat-icon (click)="discreetInput.focus()">{{ option.selected? 'check_box': 'check_box_outline_blank' }}</mat-icon>
+            <input #discreetInput class="discreet-input" type="text" placeholder="{{ 'option' | translate }} {{ (i+1) }}" 
+            [(ngModel)]="option.label" maxlength="255" />
+
+            <button mat-icon-button class="quest-comp-button" type="button" [disabled]="!canRemOption()" (click)="remOption(i)">
+                <mat-icon>cancel</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <button class="icon-text-button quest-comp-button" mat-button type="button" [disabled]="!canAddOption()" (click)="addOption()">
+        <mat-icon>add_circle</mat-icon>
+        <span>{{ 'add_option' | translate }}</span>
+    </button>
+</div>

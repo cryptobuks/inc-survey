@@ -1,0 +1,141 @@
+.take-survey-cnt {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.take-survey-cnt .relevant-info {
+    display: block;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.part-key-cnt {
+    margin-top: 20px;
+    text-align: start;
+}
+
+.part-key-cnt > span {
+    display: block;
+    font-size: 16px;
+}
+
+.part-key-cnt .part-key {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.part-key-cnt .part-key > input {
+    width: 100%;
+}
+
+.part-key-cnt .part-key > i {
+    cursor: pointer;
+}
+
+.captcha-cnt .captcha-label {
+    display: block;
+}
+
+.captcha-cnt .captcha-image-cnt,
+.captcha-cnt .captcha-response {
+    margin-top: 20px;
+}
+
+.captcha-cnt .captcha-image-cnt {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.captcha-cnt .captcha-image {
+    width: 256px;
+    height: 128px;
+}
+
+.captcha-cnt .captcha-response {
+    display: block;
+}
+
+.captcha-cnt .captcha-response > input {
+    width: 100%;
+}
+
+.sign-req {
+    text-align: start;
+}
+
+.sign-req .contract-name, .sign-req .contract-addr {
+    display: block;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.sign-req .contract-addr {
+    display: block;
+    margin-top: 10px;
+}
+
+/* Message */
+.sign-req > label {
+    display: block;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.sign-req .req-content {
+    overflow-x: hidden;
+    word-wrap: break-word;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid var(--surface-border);
+    border-radius: 4px;
+    background-color: var(--surface-b);
+}
+
+.sign-req .req-field, .sign-req .req-data {
+    font-size: 16px;
+    text-align: start;
+}
+
+.sign-req .req-field:not(:first-child), .sign-req .req-data:not(:first-child) {
+    margin-top: 10px;
+}
+
+.sign-req .req-field > label, .sign-req .req-data-head > label {
+    font-weight: 500;
+}
+.sign-req .req-field > label:after, .sign-req .req-data-head > label:after {
+    content: ':';
+}
+
+.sign-req .req-field > span, .sign-req .req-data > span {
+    display: block;
+    margin-top: 4px;
+    overflow: hidden;
+    word-wrap: break-word;
+}
+
+.sign-req .req-data-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sign-req .req-data > span {
+    white-space: break-spaces;
+}
+
+@media screen and (max-width: 1040px) {
+    .take-survey-cnt {
+        margin: 20px;
+    }
+
+    ::ng-deep .survey-banner {
+        padding: 14px 10px !important;
+    }
+}

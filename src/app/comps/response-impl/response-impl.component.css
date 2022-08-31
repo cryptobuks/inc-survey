@@ -1,0 +1,27 @@
+.response-impl {
+    overflow: visible;
+}
+
+.response-title {
+    display: flex;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgb(0 0 0 / 5%);
+}
+
+.response-impl .question {
+    flex: 1;
+    font-weight: 500;
+}
+
+.answer-num {
+    margin-left: 10px;
+}
+
+.response-content {
+    margin-top: 10px;
+}
+
+.response-impl p-paginator {
+    display: block;
+    margin-top: 10px;
+}

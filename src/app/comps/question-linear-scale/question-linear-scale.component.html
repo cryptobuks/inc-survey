@@ -1,0 +1,43 @@
+<div *ngIf="!data.state.edited" class="linear-scale">
+    <span class="scale-label">{{ data.content.fromLabel }}</span>
+    <mat-radio-group aria-label="Select an option" [(ngModel)]="data.response.input" [disabled]="data.state.disabled">
+        <mat-radio-button *ngFor="let option of stateOptions" [value]="option.value">{{ option.label }}</mat-radio-button>
+    </mat-radio-group>
+    <span class="scale-label">{{ data.content.toLabel }}</span>
+</div>
+
+<div *ngIf="data.state.edited" class="edit-scale">
+    <div class="scale-range">
+        <mat-form-field appearance="fill">
+            <mat-label>{{ 'from' | translate }}</mat-label>
+            <mat-select [(ngModel)]="data.content.from">
+              <mat-option *ngFor="let option of stateOptions" [value]="option.value">
+                {{ option.value }}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>{{ 'to' | translate }}</mat-label>
+            <mat-select [(ngModel)]="data.content.to">
+              <mat-option *ngFor="let option of stateOptions" [value]="option.value">
+                {{ option.value }}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div class="scale-labels">
+        <div class="label-input-cnt">
+            <span>{{ data.content.from }}. </span>
+            <input #discreetInput class="discreet-input" type="text" placeholder="{{ 'label' | translate }} ({{ 'optional' | translate }})" 
+            [(ngModel)]="data.content.fromLabel" maxlength="255" />
+        </div>
+        
+        <div class="label-input-cnt">
+            <span>{{ data.content.to }}. </span>
+            <input #discreetInput class="discreet-input" type="text" placeholder="{{ 'label' | translate }} ({{ 'optional' | translate }})" 
+            [(ngModel)]="data.content.toLabel" maxlength="255" />
+        </div>
+    </div>
+</div>

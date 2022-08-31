@@ -1,0 +1,31 @@
+<div class="survey-list-cnt">
+
+    <breadcrumbs></breadcrumbs>
+
+    <div class="content-panel survey-filter">
+        <span class="p-input-icon-left p-input-icon-right">
+            <i class="pi pi-search" tabindex="-1" (click)="searchInput.focus()"></i>
+            <i *ngIf="searching" class="pi pi-spin pi-spinner" tabindex="-1"></i>
+            <i *ngIf="!searching && state.search" class="pi pi-times" (click)="cleanSearch()"></i>
+            <input type="text" pInputText placeholder="{{ 'search' | translate }}" [(ngModel)]="state.search" (ngModelChange)="onChangeSearch($event)" #searchInput />
+        </span>
+
+        <p-multiSelect [options]="filters" [(ngModel)]="state.selectedFilters" defaultLabel="{{ 'select_filters' | translate }}" optionLabel="name" display="chip" [showHeader]="false" (onChange)="onChangeFilter($event)"></p-multiSelect>
+    </div>
+
+    <div *ngIf="loading" class="loading-cnt">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="!loading && results.length > 0" class="survey-list">
+
+        <survey-list-item *ngFor="let survey of results" [survey]="survey" (onClick)="exploreSurvey(survey.id)"></survey-list-item>
+
+        <p-paginator class="paginator-cnt" [first]="state.paginatorData.first" [rows]="state.paginatorData.rows" [totalRecords]="surveys.length" (onPageChange)="onPageChange($event)"
+            [showJumpToPageDropdown]="true" [showPageLinks]="false" [rowsPerPageOptions]="[5,10,15,20]"></p-paginator>
+
+    </div>
+    
+    <span *ngIf="!loading && results.length == 0" class="no-results">{{ 'no_results_found' | translate }}</span>
+
+</div>

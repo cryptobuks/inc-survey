@@ -1,0 +1,97 @@
+.question-box:not(:first-child) {
+    margin-top: 20px;
+}
+
+/*.question-head {}*/
+
+.desc-cnt, .error-cnt {
+    padding: 10px 0;
+}
+
+.desc-cnt .quest-comp-button, .error-cnt .quest-comp-button {
+    margin-left: 10px;
+}
+
+.question-title {
+    font-size: 16px;
+    font-weight: 500;
+    flex: 1;
+    margin-right: 50px;
+}
+
+.question-desc, .question-error {
+    display: block;
+    flex: 1;
+}
+
+.question-desc {
+    max-height: 160px;
+}
+
+.question-error {
+    color: red;
+    height: 40px;
+}
+
+.question-comp {
+    display: block;
+    padding: 10px;
+}
+
+.validation-desc {
+    font-size: 12px;
+    font-style: italic;
+    color: var(--bg-mask-50);
+    padding: 10px;
+}
+
+.validation-desc > span {
+    display: block;
+}
+
+.validator-cnt {
+    padding: 10px;
+}
+
+/*.validator-expression, .validator-value {
+    width: 200px;
+}*/
+
+::ng-deep .validator-expression .mat-form-field-flex, 
+::ng-deep .validator-value .mat-form-field-flex,
+::ng-deep .validator-operator .mat-form-field-flex {
+    border-radius: 0;
+}
+
+.validator-operator {
+    width: 100px;
+}
+
+.validator-cnt .quest-comp-button {
+    margin-left: 4px;
+}
+
+.validator-cnt .quest-comp-button:first-of-type {
+    margin-left: 10px;
+}
+
+.question-foot {
+    padding: 0 10px;
+}
+
+.question-foot .ver-divider {
+    width: 2px;
+    height: 20px;
+    margin: 0 10px;
+}
+
+.question-foot .mat-slide-toggle {
+    margin: 0 14px;
+}
+
+/*@media screen and (max-width: 575px) {
+    .validator-expression, .validator-value {
+        width: 100%;
+        border-radius: 0;
+    }
+}*/

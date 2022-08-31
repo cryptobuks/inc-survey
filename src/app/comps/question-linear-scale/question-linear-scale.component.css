@@ -1,0 +1,86 @@
+.linear-scale {
+    display: flex;
+    flex-direction: row;
+    place-content: center space-around;
+    align-items: center;
+}
+
+.linear-scale .mat-radio-group {
+    /*flex: 1;
+    display: flex;*/
+    text-align: center;
+}
+
+.linear-scale .mat-radio-button {
+    margin: 0 10px;
+}
+
+::ng-deep .linear-scale .mat-radio-label {
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+::ng-deep .linear-scale .mat-radio-label-content {
+    padding: 10px;
+}
+
+.linear-scale .scale-label {
+    flex: 1;
+    overflow: hidden;
+    text-align: center;
+}
+
+::ng-deep .linear-scale .mat-radio-button.mat-accent .mat-radio-inner-circle {
+    background-color: #6366F1;
+}
+
+::ng-deep .linear-scale .mat-radio-button.mat-radio-disabled .mat-radio-inner-circle {
+    background-color: #6366F1;
+    opacity: 0.6;
+}
+
+::ng-deep .linear-scale .mat-radio-outer-circle {
+    border-color: #ced4da;
+}
+
+::ng-deep .linear-scale .mat-radio-button.mat-radio-disabled .mat-radio-outer-circle {
+    border-color: #ced4da;
+    opacity: 0.6;
+}
+
+::ng-deep .linear-scale .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+    border-color: #6366F1;
+}
+
+/*.edit-scale {
+}*/
+
+.scale-range {
+    display: flex;
+    flex-direction: row;
+}
+
+.scale-range .mat-form-field {
+    width: 100px;
+}
+
+::ng-deep .scale-range .mat-form-field-flex {
+    border-radius: 0;
+}
+
+.scale-labels {
+    margin-top: 20px;
+}
+
+.label-input-cnt:not(:first-child) {
+    margin-top: 10px;
+}
+
+.label-input-cnt span {
+    display: inline-block;
+    width: 24px;
+}
+
+.label-input-cnt input {
+    width: calc(100% - 24px);
+}

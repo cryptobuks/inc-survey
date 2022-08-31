@@ -1,0 +1,31 @@
+<div *ngIf="!data.state.edited" class="slider-cnt">
+    <span class="slider-min" [class.disabled]="data.state.disabled">{{ data.content.min }}</span>
+    <div class="slider-range">
+        <span [class.disabled]="data.state.disabled">{{ 'range' | translate }}: {{ data.response.input[0] + ' - ' + data.response.input[1] }}</span>
+        <p-slider [(ngModel)]="data.response.input" [range]="true" [min]="data.content.min" [max]="data.content.max" [disabled]="data.state.disabled"></p-slider>
+    </div>
+    <span class="slider-max" [class.disabled]="data.state.disabled">{{ data.content.max }}</span>
+</div>
+
+<div *ngIf="data.state.edited" class="edit-slider">
+    <div class="edit-range">
+        <mat-form-field appearance="fill">
+            <mat-label>{{ 'minimum' | translate }}</mat-label>
+            <input matInput type="number" placeholder="Ex. 0" [(ngModel)]="data.content.min" (change)="onChangeMin($event)" min="-100" max="99">
+        </mat-form-field>
+    
+        <mat-form-field appearance="fill">
+            <mat-label>{{ 'maximum' | translate }}</mat-label>
+            <input matInput type="number" placeholder="Ex. 100" [(ngModel)]="data.content.max" (change)="onChangeMax($event)" min="-99" max="100">
+        </mat-form-field>
+    </div>
+
+    <div class="slider-cnt">
+        <span class="slider-min">{{ data.content.min }}</span>
+        <div class="slider-range">
+            <span>{{ 'range' | translate }}: {{ from + ' - ' + to }}</span>
+            <p-slider [ngModel]="[from, to]" [range]="true" [min]="data.content.min" [max]="data.content.max" disabled></p-slider>
+        </div>
+        <span class="slider-max">{{ data.content.max }}</span>
+    </div>
+</div>

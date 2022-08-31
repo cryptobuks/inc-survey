@@ -1,0 +1,65 @@
+.radio-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.radio-group .field-radiobutton {
+  margin: 10px;
+}
+
+.radio-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.radio-grid .field-radiobutton {
+  margin: 10px;
+  min-width: calc(50% - 20px);
+}
+
+.radio-group .field-radiobutton > label,
+.radio-grid .field-radiobutton > label {
+  overflow: hidden;
+  white-space: normal;
+  cursor: pointer;
+  padding-left: 10px;
+}
+
+.radio-group .field-radiobutton > .disabled,
+.radio-grid .field-radiobutton > .disabled {
+  opacity:.5;
+}
+
+.editable-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.editable-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.editable-option {
+  margin: 5px;
+  flex-grow: 1;
+}
+
+.editable-grid .editable-option {
+  width: calc(50% - 10px);
+}
+
+.editable-option > .mat-icon {
+  cursor: default;
+  opacity: .5;
+}
+
+.editable-option > input {
+  width: calc(100% - 64px);
+}
+
+.icon-text-button {
+    margin-top: 10px;
+}

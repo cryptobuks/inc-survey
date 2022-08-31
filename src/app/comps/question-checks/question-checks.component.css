@@ -1,0 +1,65 @@
+.check-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.check-group .field-checkbox {
+  margin: 10px;
+}
+
+.check-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.check-grid .field-checkbox {
+  margin: 10px;
+  min-width: calc(50% - 20px);
+}
+
+.check-group .field-checkbox > label,
+.check-grid .field-checkbox > label {
+  overflow: hidden;
+  white-space: normal;
+  cursor: pointer;
+  padding-left: 10px;
+}
+
+.check-group .field-checkbox > .disabled,
+.check-grid .field-checkbox > .disabled {
+  opacity:.5;
+}
+
+.editable-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.editable-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.editable-option {
+  margin: 5px;
+  flex-grow: 1;
+}
+
+.editable-grid .editable-option {
+  width: calc(50% - 10px);
+}
+
+.editable-option > .mat-icon {
+  cursor: default;
+  opacity: .5;
+}
+
+.editable-option > input {
+  width: calc(100% - 64px);
+}
+
+.icon-text-button {
+  margin-top: 10px;
+}

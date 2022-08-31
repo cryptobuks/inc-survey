@@ -1,0 +1,15 @@
+.preview-cnt {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.preview-cnt .relevant-info {
+    margin-top: 20px;
+    text-align: center;
+}
+
+@media screen and (max-width: 1040px) {
+    .preview-cnt {
+        margin: 20px;
+    }
+}

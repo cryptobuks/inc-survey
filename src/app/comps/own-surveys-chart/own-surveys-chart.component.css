@@ -1,0 +1,9 @@
+.chart {
+    padding: 14px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+::ng-deep .chart .apexcharts-svg {
+    overflow: visible;
+}

@@ -1,0 +1,4 @@
+<div class="slider-percent">
+  <span [class.disabled]="data.state.edited || data.state.disabled">{{ "percent" | translate }}: {{ data.response.input }} %</span>
+  <p-slider [(ngModel)]="data.response.input" [disabled]="data.state.edited || data.state.disabled"></p-slider>
+</div>

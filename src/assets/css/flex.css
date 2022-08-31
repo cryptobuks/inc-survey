@@ -1,0 +1,129 @@
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.flex-ver-start {
+    align-items: flex-start;
+}
+
+.flex-ver-end {
+    align-items: flex-end;
+}
+
+.flex-ver-center {
+    align-items: center;
+}
+
+.flex-ver-stretch {
+    align-items: stretch;
+}
+
+.flex-hor-start {
+    justify-content: flex-start;
+}
+
+.flex-hor-end {
+    justify-content: flex-end;
+}
+
+.flex-hor-center {
+    justify-content: center;
+}
+
+.flex-hor-space-between {
+    justify-content: space-between;
+}
+
+.flex-hor-space-around {
+    justify-content: space-around;
+}
+
+.flex-hor-space-evenly {
+    justify-content: space-evenly;
+}
+
+/*
+align-content: center;
+place-content: center flex-end;
+*/
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.flex-spacer {
+    flex: 1 1 auto;
+}
+
+.flex-grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    place-content: center flex-start;
+    align-items: center;
+    gap: 30px;
+}
+
+/*.flex-grid-end {
+    place-content: center flex-end;
+}
+
+.flex-grid-center {
+    place-content: center;
+}*/
+
+.grid-item, .flex-grid .data-item {
+    min-width: calc(50% - 30px);
+}
+
+.grid-item, .data-item {
+    font-size: 16px;
+    text-align: start;
+}
+
+.grid-item > label, .data-item > label {
+    font-weight: 500;
+}
+
+.grid-item > label:after, .data-item > label:after {
+    content: ':';
+}
+
+.grid-item > .grid-value, .data-item > .data-field,
+.grid-item > span:not(.grid-row), .data-item > span,
+.grid-item > div:not(.grid-row), .data-item > div {
+    display: block;
+    margin-top: 10px;
+    overflow: hidden;
+    word-wrap: break-word;
+}
+
+.grid-item > .grid-row {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 10px;
+    overflow: hidden;
+    word-wrap: break-word;
+    max-width: 100%;
+    gap: 10px;
+}
+
+.control-grid {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    place-content: center flex-end;
+    align-items: center;
+    gap: 20px;
+}

@@ -1,0 +1,46 @@
+.part-list-cnt {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.part-list {
+    margin-top: -10px;
+}
+
+.part-paginator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.part-paginator > span {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+::ng-deep .part-paginator .p-paginator {
+    background: transparent;
+    flex-wrap: nowrap;
+    border: none;
+}
+
+.part-list survey-banner {
+    display: block;
+    margin-top: 10px;
+}
+
+.part-data {
+    margin-top: 20px;
+}
+
+@media screen and (max-width: 1040px) {
+    .part-list-cnt {
+        margin: 20px;
+    }
+
+    ::ng-deep .survey-banner {
+        padding: 14px 10px !important;
+    }
+}

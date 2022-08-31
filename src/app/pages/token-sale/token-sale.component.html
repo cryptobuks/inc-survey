@@ -1,0 +1,129 @@
+<div class="sale-cnt">
+
+    <breadcrumbs></breadcrumbs>
+
+    <p-panel header="{{ 'initial_offer' | translate }}">
+        <ng-template pTemplate="icons">
+            <button *ngIf="!saleFinished" class="refresh-button" mat-icon-button type="button" (click)="refresh()" [attr.data-before]="refreshTimeout || ''">
+                <mat-icon>autorenew</mat-icon>
+            </button>
+
+            <button *ngIf="!saleFinished" mat-icon-button type="button" (click)="openTxConfig()" cdkOverlayOrigin
+                #menuTrigger="cdkOverlayOrigin">
+                <mat-icon>settings</mat-icon>
+            </button>
+
+            <p-tag *ngIf="saleFinished" styleClass="mr-2" severity="success" value="{{ 'finished' | translate }}"></p-tag>
+        </ng-template>
+
+        <div *ngIf="!saleFinished">
+            <div *ngIf="rateAmount" class="offer-info">
+                <label>{{ 'token_rate' | translate }}:</label>
+                <span>{{ rateAmount }} {{ 'token_units_per_wei' | translate }}</span>
+            </div>
+    
+            <input-token class="swap-input" title="{{ 'swap_from' | translate }}:" [data]="tokenFrom" (onSelect)="openTokenSelector(tokenFrom)" 
+            (amountChange)="onAmountChanged(tokenFrom)" (priceClick)="onPriceClick(tokenFrom)" #swapInput></input-token>
+    
+            <div class="swap-divider">
+                <div class="swap-icon-cnt">
+                    <mat-icon>keyboard_double_arrow_down</mat-icon>
+                </div>
+            </div>
+            
+            <input-token class="swap-output" title="{{ 'swap_to' | translate }}:" [data]="tokenTo" (onSelect)="openTokenSelector(tokenTo)" 
+            (amountChange)="onAmountChanged(tokenTo)" (priceClick)="onPriceClick(tokenTo)" #swapOutput></input-token>
+    
+            <div *ngIf="valueInfo" class="swap-val">
+                <span>{{ valueInfo }}</span>
+                <span *ngIf="valuePrice" class="swap-val-price" (click)="switchValueInfo()"> (${{ valuePrice }})</span>
+            </div>
+    
+            <button mat-flat-button class="template-icon swap-button" [class.template-spinner]="buying" [disabled]="!buyEnabled || buying" color="primary" (click)="checkout($event)">
+                <mat-icon icon="swap_vert"></mat-icon>
+                <span>{{ buyLabel }}</span>
+            </button>
+        </div>
+
+        <div *ngIf="saleFinished" class="sale-end">
+            {{ 'initial_offer_has_ended' | translate }}
+        </div>
+
+        <div *ngIf="raisedPercent !== undefined" class="sale-progress">
+            <div class="sale-progress-info">
+                <div>
+                    <label>{{ 'raised_amount' | translate }}</label>
+                    <span>{{ raisedAmount }} INC</span>
+                </div>
+        
+                <div>
+                    <label>{{ 'total_amount' | translate }}</label>
+                    <span>{{ offerAmount }} INC</span>
+                </div>
+            </div>
+            <mat-slider min="0" max="100" step="0" [value]="raisedPercent"></mat-slider>
+        </div>
+    
+        <div *ngIf="offerProps?.closingTime" class="sale-time">
+            <label>{{ 'remaining_time' | translate }}</label>
+            <flipdown [uts]="offerProps.closingTime" (onEndTime)="onEndTime()"></flipdown>
+        </div>
+
+        <div *ngIf="!saleFinished" class="sale-info">
+            <label>{{ 'during_initial_offering' | translate }}</label>
+            <ul>
+                <li>{{ 'tokens_are_assigned_immediately' | translate }}</li>
+                <li>{{ 'obtained_tokens_cannot_be_exchanged' | translate }}</li>
+                <li>{{ 'rate_decreases_continuously' | translate }}</li>
+            </ul>
+        </div>
+
+        <div class="sale-info">
+            <label>{{ 'follow_us_on_twitter_for_progress' | translate }}: </label>
+            <a href="https://twitter.com/incentivetoken?ref_src=twsrc%5Etfw" target="_blank" class="twitter-follow-button" data-show-count="false">@incentivetoken</a>
+            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        </div>
+    </p-panel>
+
+</div>
+
+<p-dialog header="{{ 'transaction_settings' | translate }}" [(visible)]="displayTxConfig" 
+    [modal]="true" [draggable]="false" [resizable]="false" [dismissableMask]="true">
+
+    <div class="tx-config-cnt">
+        <div class="tx-config-field">
+            <label>{{ 'slippage_tolerance' | translate }}</label>
+    
+            <div class="tx-config-row">
+                <p-inputNumber [(ngModel)]="txConfig.tolerance" [showButtons]="true" buttonLayout="horizontal"
+                    spinnerMode="horizontal" [step]="0.25" decrementButtonClass="p-button-success"
+                    incrementButtonClass="p-button-success" incrementButtonIcon="pi pi-plus"
+                    decrementButtonIcon="pi pi-minus" mode="decimal" suffix=" %" [min]="0" [max]="100"
+                    [minFractionDigits]="2" [maxFractionDigits]="2" locale="en-US" placeholder="0.00 %"
+                    (onInput)="onToleranceChanged($event)">
+                </p-inputNumber>
+    
+                <p-toggleButton [(ngModel)]="txConfig.autoTolerance" onIcon="pi pi-check" offIcon="pi pi-times"
+                    onLabel="{{ 'auto' | translate }}" offLabel="{{ 'auto' | translate }}"
+                    [disabled]="txConfig.autoTolerance" (onChange)="onAutoToleranceChanged($event)"
+                    class="p-select-secondary auto-btn">
+                </p-toggleButton>
+            </div>
+        </div>
+    
+        <div class="tx-config-field">
+            <label>{{ 'transaction_deadline' | translate }}</label>
+    
+            <p-inputNumber [(ngModel)]="txConfig.timeLimit" [showButtons]="true" buttonLayout="horizontal"
+                spinnerMode="horizontal" [step]="1" decrementButtonClass="p-button-success"
+                incrementButtonClass="p-button-success" incrementButtonIcon="pi pi-plus"
+                decrementButtonIcon="pi pi-minus" mode="decimal" suffix=" {{ 'minutes' | translate | lowercase }}"
+                [min]="5" [max]="180" [minFractionDigits]="0" [maxFractionDigits]="0" locale="en-US">
+            </p-inputNumber>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+    </ng-template>
+
+</p-dialog>

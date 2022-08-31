@@ -1,0 +1,110 @@
+<div class="content-panel question-box" #box>
+    <div class="flex-row question-head">
+        <input class="discreet-input question-title" type="text" placeholder="{{ 'question' | translate }}" 
+        [readonly]="!editableLabels" [(ngModel)]="question.content.title" maxlength="255" />
+    </div>
+
+    <div *ngIf="useDescription" class="flex-row desc-cnt">
+        <textarea class="discreet-input question-desc" placeholder="{{ 'description' | translate }}" 
+        [readonly]="!editableLabels" [(ngModel)]="question.content.description" [maxLength]="512"></textarea>
+
+        <button class="quest-comp-button" mat-icon-button type="button" (click)="switchDescriptionUse()" title="{{ 'remove_description' | translate }}">
+            <mat-icon>cancel</mat-icon>
+        </button>
+    </div>
+
+    <dynamic-template class="question-comp" [item]="dynamicItem"></dynamic-template>
+
+    <!--<mat-divider></mat-divider>-->
+    <div *ngIf="question.validationDescKeys && hasValidation()" class="validation-desc">
+        <span *ngFor="let descKey of question.validationDescKeys">
+            {{ descKey | translate }}
+        </span>
+    </div>
+
+    <div class="flex-row flex-wrap validator-cnt" *ngFor="let validator of question.validators; let i = index">
+        <mat-form-field class="validator-expression" appearance="fill">
+            <mat-label>{{ 'expression' | translate }}</mat-label>
+            <mat-select [(value)]="validator.expression">
+              <mat-option *ngFor="let expression of validationExpressions" [value]="expression.value">
+                {{ expression.title }}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="validator-value" *ngIf="hasValue(validator.expression)" appearance="fill">
+            <mat-label>{{ 'value' | translate }}</mat-label>
+            <input matInput [(ngModel)]="validator.value" maxlength="255">
+        </mat-form-field>
+
+        <mat-form-field *ngIf="i < (question.validators.length - 1)" class="validator-operator" appearance="fill">
+            <mat-label>{{ 'operator' | translate }}</mat-label>
+            <mat-select [(value)]="validator.operator">
+              <mat-option *ngFor="let operator of validationOperators" [value]="operator.value">
+                {{ operator.title }}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <button class="quest-comp-button" mat-icon-button type="button" (click)="remValidator(i)" title="{{ 'remove_validator' | translate }}">
+            <mat-icon>cancel</mat-icon>
+        </button>
+
+        <button class="quest-comp-button" *ngIf="i == (question.validators.length - 1) && question.validators.length < engineProps.validatorMaxPerQuestion" 
+        mat-icon-button type="button" (click)="addValidator()" title="{{ 'add_validator' | translate }}">
+            <mat-icon>add_circle</mat-icon>
+        </button>
+    </div>
+
+    <div *ngIf="useErrorMessage" class="flex-row error-cnt">
+        <input class="discreet-input question-error" type="text" placeholder="{{ 'error_message' | translate }}" 
+        [readonly]="!editableLabels" [(ngModel)]="question.content.errorMessage" maxlength="255" />
+
+        <button class="quest-comp-button" mat-icon-button type="button" (click)="switchErrorMessageUse()" title="{{ 'remove_error_message' | translate }}">
+            <mat-icon>cancel</mat-icon>
+        </button>
+    </div>
+
+    <mat-divider style="margin: 10px;"></mat-divider>
+
+    <div class="flex-row question-foot">
+        <div id="question-error-{{ question.viewId }}" style="flex: 1;"></div>
+        <button class="quest-menu-button" mat-icon-button type="button" (click)="duplicateQuestion()" [disabled]="!canAddQuestion" title="{{ 'duplicate_question' | translate }}">
+            <mat-icon>content_copy</mat-icon>
+        </button>
+        <button class="quest-menu-button" mat-icon-button type="button" (click)="removeQuestion()" title="{{ 'remove_question' | translate }}">
+            <mat-icon>delete</mat-icon>
+        </button>
+        <mat-divider class="ver-divider" vertical></mat-divider>
+        <mat-slide-toggle [(ngModel)]="question.mandatory" (change)="onMandatoryChanged($event)">{{ 'mandatory' | translate }}</mat-slide-toggle>
+        <button class="quest-menu-button" mat-icon-button type="button" [matMenuTriggerFor]="menu" title="{{ 'more_options' | translate }}">
+            <mat-icon>more_vert</mat-icon>
+        </button>
+    </div>
+
+    <mat-menu #menu="matMenu">
+        <button class="quest-menu-item" mat-menu-item (click)="switchDescriptionUse()">
+            <mat-icon>{{ (useDescription? 'cancel': 'add_circle') }}</mat-icon>
+            <span>{{ (useDescription? 'remove_description': 'add_description') | translate }}</span>
+        </button>
+
+        <button *ngIf="isValidable()" class="quest-menu-item" mat-menu-item (click)="switchValidation()">
+            <mat-icon>{{ (hasValidation()? 'cancel': 'add_circle') }}</mat-icon>
+            <span>{{ (hasValidation()? 'remove_validation': 'add_validation') | translate }}</span>
+        </button>
+
+        <button *ngIf="hasValidation()" class="quest-menu-item" mat-menu-item (click)="switchErrorMessageUse()">
+            <mat-icon>{{ (useErrorMessage? 'cancel': 'add_circle') }}</mat-icon>
+            <span>{{ (useErrorMessage? 'remove_error_message': 'add_error_message') | translate }}</span>
+        </button>
+
+        <div *ngIf="extraMenuOptions && extraMenuOptions.length > 0">
+            <mat-divider></mat-divider>
+
+            <button *ngFor="let option of extraMenuOptions; let i = index" class="quest-menu-item" mat-menu-item (click)="option.onClick(i)" [disabled]="option.disabled">
+                <mat-icon *ngIf="option.checked">check</mat-icon>
+                <span [ngStyle]="{'margin-left': option.checked? '0' : '40px'}">{{ option.titleKey | translate }}</span>
+            </button>
+        </div>
+    </mat-menu>
+</div>

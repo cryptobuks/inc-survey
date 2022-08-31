@@ -1,0 +1,38 @@
+.balance-chip {
+    display: flex;
+    align-items: center;
+    border-radius: 1rem;
+    font-size: 16px;
+    font-weight: 500;
+    border: 1px solid var(--bg-mask-10);
+}
+
+.balance-chip .symbol, .balance-chip .symbol-icon, .balance-chip .mat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(0 0 0 / 45%);
+    /*border-radius: 1rem 0 0 1rem;*/
+    border-radius: inherit;
+    height: 100%;
+}
+
+.balance-chip .symbol {
+    padding: 6px 10px;
+    font-style: oblique;
+}
+
+.balance-chip .symbol-icon {
+    width: 32px;
+    height: 32px;
+    padding: 2px;
+}
+
+.balance-chip .mat-icon {
+    padding: 4px;
+    width: 100%;
+}
+
+.balance-chip .balance {
+    padding: 6px 10px;
+}

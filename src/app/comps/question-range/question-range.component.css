@@ -1,0 +1,50 @@
+.slider-cnt {
+    display: flex;
+    flex-direction: row;
+    place-content: flex-end center;
+    align-items: flex-end;
+    margin-bottom: 10px;
+}
+
+.slider-cnt span {
+    display: block;
+    font-size: 14px;
+}
+
+.slider-cnt .disabled {
+    opacity:.5;
+}
+
+.slider-min, .slider-max {
+    line-height: 4px;
+}
+
+.slider-range {
+    width: 256px;
+    margin: 0 20px;
+}
+
+.slider-range > span {
+    margin-bottom: 10px;
+}
+
+.edit-range {
+    display: flex;
+    flex-direction: row;
+}
+
+.edit-range .mat-form-field {
+    width: 100px;
+}
+
+::ng-deep .edit-range .mat-form-field-flex {
+    border-radius: 0;
+}
+
+.edit-slider .slider-cnt {
+    margin-top: 10px;
+}
+
+.edit-slider span {
+    opacity:.5;
+}

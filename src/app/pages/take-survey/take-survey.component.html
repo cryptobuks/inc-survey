@@ -1,0 +1,147 @@
+<div class="take-survey-cnt">
+
+    <breadcrumbs></breadcrumbs>
+
+    <div *ngIf="loading" class="loading-cnt">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="!loading && survey">
+
+        <survey-banner [survey]="survey" [surveyStateInfo]="surveyStateInfo" (onClick)="backToDetails()">
+        </survey-banner>
+
+        <div *ngIf="surveyStateInfo.canParticipate">
+
+            <div class="relevant-info">
+                {{ 'dnot_provide_personal_data' | translate }}
+            </div>
+
+            <div *ngIf="survey.keyRequired" class="content-panel part-key-cnt">
+                <span class="question-title">{{ 'enter_oupon_provided_by_survey_owner' | translate }}</span>
+
+                <span class="p-input-icon-right part-key">
+                    <i *ngIf="state.partKey" class="pi pi-times" (click)="state.partKey=''"></i>
+                    <input placeholder="{{ 'participation_coupon' | translate }}" type="text" pInputText maxlength="36"
+                    [(ngModel)]="state.partKey">
+                </span>
+            </div>
+
+            <survey-impl [survey]="survey" [showDetails]="false" #surveyComp></survey-impl>
+
+            <div *ngIf="surveyStateInfo.isOpened && !surveyStateInfo.enoughBudget" class="relevant-info">
+                {{ 'no_more_parts_survey_not_have_budget' | translate }}
+            </div>
+
+            <div *ngIf="surveyStateInfo.isOpened && surveyStateInfo.enoughBudget && !enoughGasReserve"
+                class="relevant-info">
+                {{ 'not_enough_gas_reserve_to_assume_parts' | translate }}
+            </div>
+
+        </div>
+
+        <div class="control-grid">
+
+            <button mat-flat-button class="template-icon back-button" [disabled]="sending" (click)="backToDetails()">
+                <mat-icon icon="arrow_back"></mat-icon>
+                <span>{{ 'back_to_survey_details' | translate }}</span>
+            </button>
+
+            <button mat-flat-button class="template-icon send-button" [class.template-spinner]="sending"
+                [disabled]="sending || !surveyStateInfo.canParticipate" color="primary" (click)="participate($event)">
+                <mat-icon icon="send"></mat-icon>
+                <span>{{ sendLabel }}</span>
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<p-dialog header="{{ 'captcha_test' | translate }}" [(visible)]="displayCaptchaDialog"
+    [breakpoints]="{'960px': '75vw'}" [style]="{width: '50vw'}" [modal]="true" [draggable]="false" [resizable]="false"
+    [dismissableMask]="true">
+
+    <div class="captcha-cnt">
+        <span class="captcha-label">{{ 'solve_following_captcha' | translate }}</span>
+
+        <div class="captcha-image-cnt">
+            <img class="captcha-image" [src]="captchaUrl" alt="Captcha" loading="lazy" />
+
+            <button *ngIf="captchaUrl" mat-icon-button aria-label="Generate" [disabled]="generatingCaptcha" (click)="genCaptchaUrl()">
+                <mat-icon>autorenew</mat-icon>
+            </button>
+        </div>
+    
+        <span class="p-input-icon-right captcha-response">
+            <i *ngIf="captcha" class="pi pi-times" (click)="captcha=''"></i>
+            <input placeholder="{{ 'captcha_text' | translate }}" type="text" pInputText maxlength="36"
+                [(ngModel)]="captcha">
+        </span>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button class="icon-text-button" mat-flat-button color="primary" (click)="sendMetaTx()">
+            <mat-icon>send</mat-icon>
+            <span>{{ 'send' | translate }}</span>
+        </button>
+    </ng-template>
+
+</p-dialog>
+
+<p-dialog header="{{ 'signature_request' | translate }}" [(visible)]="displaySigReqDialog"
+    [breakpoints]="{'960px': '75vw'}" [style]="{width: '50vw'}" [modal]="true" [draggable]="false" [resizable]="false"
+    [dismissableMask]="true">
+
+    <div *ngIf="request" class="sign-req">
+        <span class="contract-name">{{ forwarderName }}</span>
+        <span class="contract-addr">{{ forwarderShortAddress }}</span>
+        <label>{{ 'message' | translate }}</label>
+
+        <div class="req-content">
+            <div class="req-field">
+                <label>from</label>
+                <span>{{ request.from }}</span>
+            </div>
+
+            <div class="req-field">
+                <label>to</label>
+                <span>{{ request.to }}</span>
+            </div>
+
+            <div class="req-field">
+                <label>value</label>
+                <span>{{ request.value }}</span>
+            </div>
+
+            <div class="req-field">
+                <label>gas</label>
+                <span>{{ request.gas }}</span>
+            </div>
+
+            <div class="req-field">
+                <label>nonce</label>
+                <span>{{ request.nonce }}</span>
+            </div>
+
+            <div class="req-data">
+                <div class="req-data-head">
+                    <label>data</label>
+                    <button mat-stroked-button (click)="showDecodedData = !showDecodedData">
+                        {{ (showDecodedData? 'encode': 'decode') | translate }}
+                    </button>
+                </div>
+                <span>{{ showDecodedData? decodedData: request.data }}</span>
+            </div>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button class="icon-text-button" mat-flat-button color="primary" (click)="signPart()">
+            <mat-icon>draw</mat-icon>
+            <span>{{ 'sign' | translate }}</span>
+        </button>
+    </ng-template>
+
+</p-dialog>

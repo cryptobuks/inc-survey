@@ -1,0 +1,31 @@
+.dropdown {
+  display: block;
+  /*width: 256px;
+  margin: 0 auto;*/
+}
+
+::ng-deep .dropdown .p-dropdown {
+  width: 100%;
+}
+
+.editable-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.editable-option {
+  margin: 5px;
+  flex-grow: 1;
+}
+
+.editable-option > .mat-icon {
+  cursor: default;
+}
+
+.editable-option > input {
+  width: calc(100% - 56px);
+}
+
+.icon-text-button {
+  margin-top: 10px;
+}

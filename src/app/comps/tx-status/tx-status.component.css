@@ -1,0 +1,9 @@
+.tx-status {
+    padding: 40px;
+}
+
+@media screen and (max-width: 991px) {
+    .tx-status {
+        padding: 30px 20px;
+    }
+}

@@ -1,0 +1,131 @@
+.dash-card {
+    margin-top: 28px;
+    text-align: left;
+    padding: 14px;
+}
+
+/*.dash-card-content {   
+}*/
+
+.dash-card-icon {
+    position: absolute;
+    top: -28px;
+    background: #999;
+    border-radius: 3px;
+    padding: 14px;
+    -webkit-box-shadow: 2px 2px 10px 1px rgba(0 0 0 / 20%);
+    -moz-box-shadow: 2px 2px 10px 1px rgba(0 0 0 / 20%);
+    box-shadow: 2px 2px 10px 1px rgba(0 0 0 / 20%);
+}
+
+.dash-card-icon > .mat-icon {
+    color: #fff;
+    font-size: 36px;
+    line-height: 36px;
+    width: 36px;
+    height: 36px;
+}
+
+.dash-card-text {
+    text-align: right;
+}
+
+.dash-card-title {
+    display: block;
+    color: var(--text-color);
+    font-size: 16px;
+}
+
+.dash-card-value {
+    display: block;
+    color: var(--text-color);
+    font-size: 24px;
+    margin-top: 14px;
+}
+
+.dash-card .mat-divider {
+    margin: 16px 0 10px 0;
+}
+
+.dash-card-base {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 24px;
+    color: var(--text-color-secondary);
+}
+
+.dash-card-info {
+    display: inline-flex;
+    align-items: center;
+}
+
+.dash-card-info > .mat-icon {
+    margin-right: 7px;
+}
+
+.dash-card-info > span {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.dot-pulse,
+.dot-pulse:before,
+.dot-pulse:after {
+  border-radius: 50%;
+  width: 2.5em;
+  height: 2.5em;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation: load7 1.8s infinite ease-in-out;
+  animation: load7 1.8s infinite ease-in-out;
+}
+.dot-pulse {
+  color: #9880ff;
+  font-size: 6px;
+  position: relative;
+  text-indent: -9999em;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+    display: inline-block;
+    margin: 0px 24px 14px 0px;
+}
+.dot-pulse:before,
+.dot-pulse:after {
+  content: '';
+  position: absolute;
+  top: 0;
+}
+.dot-pulse:before {
+  left: -3.5em;
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+.dot-pulse:after {
+  left: 3.5em;
+}
+
+@-webkit-keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
+  }
+}
+
+@keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
+  }
+}

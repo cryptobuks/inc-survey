@@ -1,0 +1,138 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "inc-survey": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:application": {
+          "strict": true
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/inc-survey",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.app.json",
+            "aot": true,
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              "src/.htaccess"
+            ],
+            "styles": [
+              "src/app-theme.scss",
+              "src/styles.css",
+              "src/assets/css/flex.css"
+            ],
+            "scripts": [
+              "src/assets/js/web3@1.5.3.js",
+              "src/assets/js/web3modal@1.9.8.js",
+              "src/assets/js/evm-chains@0.2.0.js",
+              "src/assets/js/web3-provider@1.7.7.js",
+              "src/assets/js/wallet-sdk-bundle@3.0.6.js",
+              "src/assets/js/fortmatic@2.0.6.js",
+              "src/assets/js/portis-web3@4.0.6.js",
+              "src/assets/js/torus.umd@1.13.7.js",
+              "src/assets/js/authereum@0.1.14.js",
+              "src/assets/js/sha3@0.8.0.js",
+              "src/assets/js/uuidv4@8.3.2.js",
+              "src/assets/js/ipfs@0.10.7.js",
+              "src/assets/js/apexcharts@3.33.1.js",
+              "src/assets/js/jquery@3.6.0.min.js",
+              "src/assets/js/xlsx.full@0.17.2.js",
+              "src/assets/js/utils.js"
+            ],
+            "showCircularDependencies": false
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "5kb",
+                  "maximumError": "10kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all",
+              "buildOptimizer": true,
+              "optimization": true,
+              "vendorChunk": false,
+              "extractLicenses": true,
+              "sourceMap": false,
+              "namedChunks": false
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "inc-survey:build:production"
+            },
+            "development": {
+              "browserTarget": "inc-survey:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "inc-survey:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "src/test.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.spec.json",
+            "karmaConfig": "karma.conf.js",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/app-theme.scss",
+              "src/styles.css",
+              "src/assets/css/flex.css"
+            ],
+            "scripts": [
+              "src/assets/js/utils.js"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "inc-survey"
+}

@@ -1,0 +1,110 @@
+<div class="details-cnt">
+
+    <breadcrumbs></breadcrumbs>
+
+    <div *ngIf="loading" class="loading-cnt">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="!loading && survey">
+        <survey-impl [survey]="survey" showQuestions="false" [questionsNum]="questionsNum" [showMaxParts]="true" #surveyComp></survey-impl>
+
+        <div class="content-panel flex-grid survey-state-info">
+
+            <div class="grid-item">
+                <label>{{ 'participations' | translate }}</label>
+                <span>{{ surveyStateInfo.partsNum }}</span>
+            </div>
+        
+            <div class="grid-item">
+                <label>{{ 'remaining_time' | translate }}</label>
+                <span>{{ surveyStateInfo.rmngDuration }}</span>
+            </div>
+        
+            <div class="grid-item">
+                <label>{{ 'remaining_budget' | translate }}</label>
+                <div class="grid-row" title="{{ surveyStateInfo.rmngBudgetAmount }} INC">
+                    <span class="line-limit">{{ surveyStateInfo.rmngBudgetAmount }}</span>
+                    <span class="coin-suffix">INC</span>
+                </div>
+            </div>
+        
+            <div class="grid-item">
+                <label>{{ 'gas_reserve' | translate }}</label>
+                <div class="grid-row" title="{{ surveyStateInfo.rmngGasReserveAmount }} {{ currSymbol }}">
+                    <span class="line-limit">{{ surveyStateInfo.rmngGasReserveAmount }}</span>
+                    <span class="coin-suffix">{{ currSymbol }}</span>
+                </div>
+            </div>
+        
+        </div>
+
+        <div *ngIf="surveyStateInfo.isOpened && !surveyStateInfo.enoughBudget" class="relevant-info">
+            {{ 'no_more_parts_survey_not_have_budget' | translate }}
+        </div>
+
+        <div *ngIf="surveyStateInfo.isOpened && surveyStateInfo.enoughBudget && survey.keyRequired" class="relevant-info">
+            {{ 'survey_requires_coupon_participate' | translate }}
+        </div>
+    
+        <div class="control-grid">
+    
+            <button mat-flat-button class="template-icon back-button" (click)="backToList()">
+                <mat-icon icon="arrow_back"></mat-icon>
+                <span>{{ backLabel }}</span>
+            </button>
+
+            <button mat-flat-button class="template-icon answers-button" color="accent" [disabled]="surveyStateInfo.partsNum == 0" (click)="seeAnswers()">
+                <mat-icon icon="fact_check"></mat-icon>
+                <span>{{ answersLabel }}</span>
+            </button>
+    
+            <button *ngIf="!isSurveyOwner && !isFromMyParts" mat-flat-button class="template-icon take-button" color="primary" 
+            [disabled]="!surveyStateInfo.canParticipate" (click)="takeSurvey()">
+                <mat-icon icon="edit"></mat-icon>
+                <span>{{ takeLabel }}</span>
+            </button>
+
+            <button *ngIf="isSurveyOwner" mat-flat-button class="template-icon increase-button" color="primary" [class.template-spinner]="increasing" 
+            [disabled]="increasing || !canIncreaseGasReserve" (click)="displayIncreaseDialog=true">
+                <mat-icon icon="keyboard_double_arrow_up"></mat-icon>
+                <span>{{ increaseLabel }}</span>
+            </button>
+
+            <button *ngIf="isSurveyOwner" mat-flat-button class="template-icon solve-button" color="warn" [class.template-spinner]="solving" 
+            [disabled]="solving || !canSolveSurvey" (click)="solveSurvey($event)">
+                <mat-icon icon="block"></mat-icon>
+                <span>{{ 'solve_survey' | translate }}</span>
+            </button>
+    
+        </div>
+    </div>
+
+</div>
+
+<p-dialog header="{{ 'increase_gas_reserve' | translate }}" [(visible)]="displayIncreaseDialog" [breakpoints]="{'960px': '75vw'}" [style]="{width: '50vw'}"
+    [modal]="true" [draggable]="false" [resizable]="false" [dismissableMask]="true">
+        <div class="increase-dialog-body">
+            <mat-form-field class="survey-gas-reserve" appearance="fill">
+                <mat-label>{{ 'gas_reserve' | translate }}</mat-label>
+                <input matInput placeholder="0.0" [(ngModel)]="gasReserveAmount" (input)="onChangeGasReserve()" maxlength="100">
+                <div *ngIf="!isLowInputGasReserve" class="input-coin-suffix" matSuffix>
+                    <span>{{ currSymbol }}</span>
+                </div>
+                <button *ngIf="isLowInputGasReserve" matSuffix mat-icon-button aria-label="Calculate" (click)="loadGasReserve()">
+                    <mat-icon>autorenew</mat-icon>
+                </button>
+            </mat-form-field>
+
+            <div *ngIf="isValidInputGasReserve && isLowInputGasReserve" class="relevant-info">
+                {{ 'current_gas_reserve_plus_amount_not_enough' | translate }}
+            </div>
+        </div>
+
+        <ng-template pTemplate="footer">
+            <button class="icon-text-button" mat-flat-button color="primary" [disabled]="!isValidInputGasReserve" (click)="increaseGasReserve()">
+                <mat-icon>send</mat-icon>
+                <span>{{ 'send_transaction' | translate }}</span>
+            </button>
+        </ng-template>
+</p-dialog>

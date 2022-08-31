@@ -1,0 +1,21 @@
+<p-dropdown *ngIf="!data.state.edited" class="dropdown" placeholder="{{ 'select_an_option' | translate }}" [options]="sortedOptions" [(ngModel)]="data.response.input" 
+    optionLabel="label" optionValue="value" [showClear]="true" [disabled]="data.state.disabled"></p-dropdown>
+
+<div *ngIf="data.state.edited">
+    <div [class.editable-group]="!data.content.useGrid" [class.editable-grid]="data.content.useGrid">
+        <div class="editable-option" *ngFor="let option of data.content.options; let i = index">
+            <span>{{ (i+1) }}. </span>
+            <input #discreetInput class="discreet-input" type="text" placeholder="{{ 'option' | translate }} {{ (i+1) }}" 
+            [(ngModel)]="option.label" maxlength="255" />
+
+            <button mat-icon-button class="quest-comp-button" type="button" [disabled]="!canRemOption()" (click)="remOption(i)">
+                <mat-icon>cancel</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <button class="icon-text-button quest-comp-button" mat-button type="button" [disabled]="!canAddOption()" (click)="addOption()">
+        <mat-icon>add_circle</mat-icon>
+        <span>{{ 'add_option' | translate }}</span>
+    </button>
+</div>

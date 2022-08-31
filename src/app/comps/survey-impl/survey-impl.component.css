@@ -1,0 +1,125 @@
+.survey-cnt {
+    text-align: start;
+}
+
+.survey-main-details {
+    padding: 40px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+
+.survey-logo {
+    text-align: center;
+    flex: 1;
+    max-width: 256px;
+    margin: 0 auto;
+}
+
+.survey-logo .data-item {
+    display: block;
+    margin-top: 20px;
+}
+
+.survey-info {
+    flex: 3;
+    max-width: 100%;
+}
+
+.survey-title, .survey-description {
+    min-width: 100% !important;
+}
+
+.survey-cost-info {
+    margin-top: 20px;
+}
+
+.survey-keys-panel {
+    margin-top: 20px;
+    padding: 40px;
+}
+
+.survey-keys-cnt {
+    position: relative;
+}
+
+.survey-keys-cnt .grid-item {
+    min-width: 100% !important;
+}
+
+.survey-keys-cnt .survey-keys-export {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 10px;
+}
+
+.survey-keys {
+    height: 256px;
+    overflow-y: auto !important;
+    border-radius: 4px;
+    padding: 10px;
+    text-align: center;
+    background: var(--surface-b);
+    border-bottom: solid 1px var(--surface-border);
+}
+
+.survey-keys > span {
+    display: block;
+}
+
+.question-list {
+    margin-top: 20px;
+}
+
+.survey-cnt .paginator-cnt {
+    margin-top: 20px;
+}
+
+.questions-head {
+    display: flex;
+    flex-direction: row;
+    place-content: center space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 0 10px;
+}
+
+.question-box:not(:first-child) {
+    margin-top: 20px;
+}
+
+.question-title {
+    display: block;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.question-desc {
+    display: block;
+    margin-top: 10px;
+}
+
+.question-comp {
+    display: block;
+    margin-top: 20px;
+}
+
+@media screen and (max-width: 991px) {
+    .survey-main-details {
+        padding: 30px 20px;
+        gap: 30px;
+    }
+
+    .survey-logo {
+        width: 100%;
+        max-width: 100%;
+        flex: none;
+    }
+
+    .survey-keys-panel {
+        padding: 30px 20px;
+    }
+}

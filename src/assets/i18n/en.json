@@ -1,0 +1,467 @@
+{
+    "app_name": "INC Survey",
+
+    "dashboard": "Dashboard",
+    "surveys": "Surveys",
+    "create_survey": "Create survey",
+    "take_survey": "Take survey",
+    "swap": "Swap",
+    "survey_details": "Survey details",
+    "survey": "Survey",
+    "survey_answers": "Survey answers",
+    "survey_sent": "Survey sent",
+    "participation_sent": "Participation sent",
+
+    "connect_wallet": "Connect wallet",
+    "change_wallet": "Change wallet",
+    "disconnect_wallet": "Disconnect wallet",
+    "select_x": "Select {{val1}}",
+
+    "about": "About",
+    "accept": "Accept",
+    "cancel": "Cancel",
+    "participate": "Participate",
+    "back_to_survey_list": "Back to survey list",
+    "go_to_dashboard": "Go to dashboard",
+    "print_details": "Print details",
+    "print_page": "Print page",
+    "download_excel": "Download Excel",
+
+    "coupons": "Coupons",
+    "coupons_guarantee_but_increase_cost": "Coupons guarantee the participation of specific users but this will increase the cost of the transaction (gas). Alternatively, you can choose not to use the coupons, this way everyone can participate in this survey.",
+    "have_send_coupons_to_users": "Each coupon allows a single participation, you will need to send these coupons to the users you want to survey.",
+    "save_your_coupons": "Please save your coupons now as they will not be sent to the blockchain. Instead, part of the resulting hashes will be sent.",
+    "export_your_coupons": "Please export your coupons and save them, you might not see them again.",
+    "maximum_x_coupons": "Maximum {{val1}} coupons.",
+
+    "participation": "Participation",
+    "public_participation": "Public participation",
+    "private_participation": "Private participation",
+    "location": "Location",
+
+    "participation_status": "Participation status",
+    "survey_status": "Survey status",
+
+    "swap_from": "Swap From",
+    "swap_to": "Swap To",
+    "max": "Max",
+    "balance": "Balance",
+
+    "no_results_found": "No results found",
+    "import_token": "Import token",
+    "import_or_select_network": "Import/Select network",
+    "import_wrapped_currency": "Import wrapped native currency",
+    "token_already_imported": "The token is already imported",
+    "network_already_selected": "The network is already selected",
+    
+    "invalid_amount": "Invalid amount",
+    "amount_not_indicated": "Amount not indicated",
+    "amount_too_small": "Amount too small",
+    "insufficient_currency_balance": "Insufficient {{val1}} balance",
+    "in_process": "In process",
+
+    "token_sale": "Token sale",
+    "initial_offer": "Initial offer",
+    "token_rate": "Token rate",
+    "token_units_per_wei": "TKNbits per 1 wei",
+    "during_initial_offering": "During the initial offering",
+    "tokens_are_assigned_immediately": "Tokens are assigned immediately",
+    "obtained_tokens_cannot_be_exchanged": "The obtained tokens can be used to create surveys but cannot be exchanged for others since INC is not listed on any exchange yet.",
+    "rate_decreases_continuously": "The rate decreases continuously until the established minimum, so the price rises.",
+    "remaining_amount": "Remaining amount",
+    "x_of_total": "{{val1}} of the total",
+
+
+
+    "survey_created_successfully": "The survey has been created successfully",
+    "survey_solved_correctly": "The survey has been solved correctly",
+    "solve_survey": "Solve survey",
+    "solve_survey_description": "This operation consists of withdrawing the remaining budget and the gas reserve, leaving the survey unusable.",
+
+    "want_to_continue": "Do you want to continue?",
+
+    "have_bought_x": "You have bought {{val1}}",
+    "have_received_reward_x": "You have received a reward of {{val1}}",
+    "have_received_x": "You have received {{val1}}",
+    "have_sent_x": "You have sent {{val1}}",
+    "for_remaining_budget_received_refund_x": "For the remaining budget, you have received a refund of {{val1}}",
+    "for_gas_reserve_received_refund_x": "For the gas reserve, you have received a refund of {{val1}}",
+
+    "available_items": "Available items",
+    "questions": "Questions",
+
+    "question": "Question",
+
+    "add_description": "Add description",
+    "remove_description": "Remove description",
+    "description": "Description",
+
+    "add_error_message": "Add error message",
+    "remove_error_message": "Remove error message",
+    "error_message": "Error message",
+
+    "add_validation": "Add validation",
+    "remove_validation": "Remove validation",
+    "validation": "Validation",
+    "validator": "Validator",
+    "validate_response": "Validate response",
+
+    "short_text_response": "Short text response",
+    "multiline_text_response": "Multi-line text response",
+    "mandatory": "Mandatory",
+
+    "expression" : "Expression",
+    "operator" : "Operator",
+
+    "empty": "Empty",
+    "not_empty": "Not empty",
+    "equals": "Equals",
+    "not_equals": "Not equals",
+    "contains": "Contains",
+    "not_contains": "Not contains",
+    "equals_ignore_case": "Equals ignore case",
+    "not_equals_ignore_case": "Not equals ignore case",
+    "contains_ignore_case": "Contains ignore case",
+    "not_contains_ignore_case": "Not contains ignore case",
+    "greater": "Greater",
+    "greater_equals": "Greater or equal",
+    "less": "Less",
+    "less_equals": "Less or equal",
+    "contains_digits": "Contains digits",
+    "not_contains_digits": "Not contains digits",
+    "min_length": "Minimum length",
+    "max_length": "Maximum length",
+
+    "and": "And",
+    "or": "Or",
+    "value": "Value",
+    
+    "preview": "Preview",
+    "survey_preview": "Survey preview",
+    "survey_created": "Survey created",
+    "untitled_survey": "Untitled survey",
+    "what_purpose_of_this_survey": "What is the purpose of this survey?",
+
+    "title": "Title",
+    "logo_url": "Logo URL",
+    "logo_placeholder": "https://.. or ipfs://..",
+    "survey_url": "Survey URL",
+    "participations": "Participations",
+    "maximum_participations": "Maximum participations",
+
+    "start_date": "Start date",
+    "end_date": "End date",
+    "budget": "Budget",
+    "reward": "Reward",
+
+    "total_budget": "Total budget",
+    "reward_for_participation": "Reward for participation",
+
+    "date_range": "Date range",
+
+    "image_reduced_automatically": "The image will be reduced automatically",
+    "image_uploaded_to_server_link_saved_on_blockchain": "The image will be uploaded to IPFS and the link will be saved on the blockchain.",
+    "can_indicate_your_link": "You can indicate your own link",
+    "logo_size_exceeds_limit": "Logo size exceeds the limit",
+    "url_too_long_max_x_chars": "URL too long, maximum {{val1}} characters",
+    "invalid_url": "Invalid URL",
+    "url_is_not_image": "The URL is not an image",
+
+    "please_enter_title": "Please enter a title",
+    "invalid_title_max_x_chars": "Invalid title, maximum {{val1}} characters",
+
+    "invalid_description_max_x_chars": "Invalid description, maximum {{val1}} characters",
+
+    "please_enter_valid_budget": "Please enter a valid budget",
+    "budget_exceeds_your_x_balance": "Budget exceeds your {{val1}} balance",
+
+    "please_enter_valid_reward": "Please enter a valid reward",
+    "reward_exceeds_budget": "The reward exceeds the budget",
+
+    "please_enter_valid_gas_reserve": "Please enter a valid gas reserve",
+    "gas_reserve_exceeds_your_x_balance": "Gas reserve exceeds your {{val1}} balance",
+    
+    "please_enter_start_date": "Please enter a start date",
+    "start_date_must_after_current_date_at_least_1_hour": "The start date must be after the current date by at least 1 hour",
+    "invalid_start_date_max_x_days": "Invalid start date, maximum {{val1}} days to open the survey",
+
+    "please_enter_end_date": "Please enter an end date",
+    "invalid_date_range_min_x_hours": "Invalid date range, minimum {{val1}} hours duration",
+    "invalid_date_range_max_x_days": "Invalid date range, maximum {{val1}} days duration",
+
+    "please_enter_questions": "Please enter questions",
+    "number_questions_exceeds_limit_x": "The number of questions exceeds the limit of {{val1}}",
+    "please_ask_the_question": "Please ask the question",
+    "very_long_question_reduce": "Very long question, reduce text or options.",
+    
+    "number_validators_exceeds_limit_x": "The number of validators exceeds the limit of {{val1}}",
+    "invalid_validator_value_max_x_chars": "Invalid validator value, maximum {{val1}} characters",
+    "validator_error_select_expression": "Validator error, select the expression",
+    "validator_error_select_operator": "Validator error, select the operator",
+    "validator_error_indicates_value": "Validator error, indicates the value",
+    "validator_value_must_be_integer": "Validator value must be a positive integer",
+    "validator_value_must_be_positive_integer": "Validator value must be a positive integer",
+    "duplicate_options_not_allowed": "Duplicate options are not allowed",
+
+    "value_represents_date_seconds": "The value represents a date in seconds.",
+    "note_are_validating_both_dates": "Note that you are validating both dates with the same conditions.",
+    "start_date_always_less_end_date": "The start date will always be less than the end date.",
+    "note_are_validating_both_values": "Note that you are validating both values with the same conditions.",
+    "range_with_same_value_not_accepted": "A range with the same value will not be accepted.",
+
+    "maximum_x": "Maximum {{val1}}",
+
+    "edit_survey": "Edit survey",
+    "test_survey": "Test survey",
+    "send_survey": "Send survey",
+
+    "option": "Option",
+    "add_option": "Add option",
+    "select_an_option": "Select an option",
+    "select_multiple_options": "Select multiple options",
+    "single_choice_grid": "Single choice grid",
+    "multiple_choice_grid": "Multiple choice grid",
+    "dropdown": "Dropdown",
+    "linear_scale": "Linear scale",
+    "percent": "Percent",
+    "date": "Date",
+    "date_and_time": "Date and time",
+
+    "start_date_and_time": "Start date and time",
+    "end_date_and_time": "End date and time",
+
+    "rating": "Rating",
+    "range": "Range",
+
+    "show_time": "Show time",
+    "show_seconds": "Show seconds",
+    "sort_randomly": "Sort randomly",
+
+    "label": "Label",
+    "toggle": "Toggle",
+    "yes": "Yes",
+    "no": "No",
+    "from": "From",
+    "to": "To",
+    "optional": "Optional",
+
+    "success": "Success",
+    "info": "Info",
+    "warn": "Warn",
+    "error": "Error",
+    "minimum": "Minimum",
+    "maximum": "Maximum",
+    "default": "Default",
+    "failed": "Failed",
+
+    "sure_you_want_proceed": "Are you sure that you want to proceed?",
+    "data_entered_is_correct": "The data entered is correct",
+
+    "must_answer_this_question": "You must answer this question",
+    "invalid_response": "Invalid response",
+    "very_long_response_reduce_text": "Very long response, please reduce the text entered.",
+    "no_more_questions_added": "No more questions can be added",
+
+    "add_question": "Add question",
+    "duplicate_question": "Duplicate question",
+    "remove_question": "Remove question",
+    "move_question": "Move question",
+    "more_options": "More options",
+    "add_validator": "Add validator",
+    "remove_validator": "Remove validator",
+    "page": "Page",
+
+    "test_survey_before_submitting_to_blockchain": "Please carefully test your survey before submitting to the blockchain, as once submitted, it cannot be modified.",
+    "first_time_two_transactions_x_executed": "Since this is your first time, 2 transactions will be executed, the first to approve the {{val1}} tokens and the second to send the survey.",
+
+    "transaction_failed": "Transaction failed.",
+    "transaction_has_failed": "The transaction has failed",
+    "sorry_transaction_failed": "Sorry, the transaction has failed.",
+    "transaction_failed_try_again_later": "The transaction has failed, please try again later.",
+
+    "operation_failed_try_again_later": "The operation has failed, please try again later.",
+    "unexpected_error_try_again_later": "An unexpected error has occurred, please try again later.",
+
+    "drag_here_components": "Drag here the components",
+    "image_not_loaded_try_again_later": "The image could not be loaded, please try again later.",
+    "select_filters": "Select filters",
+
+    "all": "All",
+    "opened": "Opened",
+    "closed": "Closed",
+    "pending": "Pending",
+    "with_budget": "With budget",
+    "without_budget": "Without budget",
+    "search": "Search",
+    "remaining_budget": "Remaining budget",
+    "no_more_parts_survey_not_have_budget": "No more participations are allowed, the survey does not have a sufficient budget.",
+    "with_gas_reserve": "With gas reserve",
+
+    "participation_coupon": "Participation coupon",
+    "coupon": "Coupon",
+    "survey_requires_coupon_participate": "This survey requires a coupon to participate.",
+    "enter_coupon_provided_by_owners": "Please enter the coupon provided by the owners.",
+
+    "congrat_survey_created": "Congratulations, your survey has been created successfully.",
+
+    "block": "Block",
+    "block_hash": "Block hash",
+    "block_number": "Block number",
+    "transaction_hash": "Transaction hash",
+    "transaction_index": "Transaction index",
+    "network_fee": "Network fee",
+    "gas_used": "Gas used",
+    "engine_rate": "Engine rate",
+    "total_cost": "Total cost",
+    "total_cost_without_gas": "Total cost without gas",
+    "view_on_block_explorer": "View on block explorer",
+    "send_participation": "Send participation",
+    "closed_survey": "Closed survey",
+    "pending_survey": "Pending survey",
+    "back_to_survey_details": "Back to survey details",
+    "remaining_time": "Remaining time",
+    "no_budget": "No budget",
+    "no_budget_survey": "Non-budget survey",
+
+    "gas_reserve": "Gas reserve",
+    "wrong_number_participations": "Wrong number of participations, the division should return a positive integer.",
+    "wrong_number_coupons": "Wrong number of coupons, it must be 0 or match the number of participations.",
+    "duration": "Duration",
+
+    "congrat_participation_registered": "Congratulations, your participation has been successfully registered.",
+    "could_not_get_wallet": "Could not get a wallet connection",
+
+    "network_added_successfully": "Network added successfully",
+    "token_added_successfully": "Token added successfully",
+
+    "my_surveys": "My surveys",
+    "my_participations": "My participations",
+    "check_status": "Check status",
+
+    "already_participated": "You have already participated",
+    "registered_participation": "Registered participation",
+    "relayer": "Relayer",
+
+    "enter_participation_coupon": "You must enter the participation coupon",
+    "invalid_participation_coupon": "The participation coupon has an invalid format",
+    "enter_oupon_provided_by_survey_owner": "Please enter the coupon provided by the owner of the survey",
+    "enter_captcha": "You must enter the CAPTCHA",
+
+    "send_without_gas": "Send without gas",
+    "send_paying_gas": "Send paying gas",
+
+    "how_do_send_transaction": "How do you want to send the transaction?",
+    "use_gas_reserve_left_by_owner_or_pay_gas": "You can use the gas reserve that the owner of the survey has left, in this case, the Relayer is in charge of sending a signed metatransaction or you can choose to send the transaction from your account and pay for the gas.",
+
+    "not_enough_gas_reserve_to_assume_parts": "There is not enough gas reserve to assume more participations.",
+    "to_participate_must_send_from_your_account": "To participate you must send the transaction from your account and paying for the gas.",
+
+    "gas_reserve_used_to_finance_transactions": "The gas reserve will be used to finance the transactions of the participants.",
+    "you_can_retrieve_remaining_gas_reserve": "You can recover the remaining gas reserve when you finish the survey.",
+
+    "low_gas_reserve": "Low gas reserve.",
+    "survey_not_profitable_no_one_take_it": "If the survey is not profitable, it is unlikely that anyone will take it.",
+    "survey_can_expensive_for_participants": "A survey can even be expensive for the participants if they have to pay gas for the transactions, unless the reward value is high.",
+    "insufficient_x_balance": "Insufficient {{val1}} balance",
+    "answer": "Answer",
+    "answers": "Answers",
+
+    "star": "Star",
+    "stars": "Stars",
+    "total_average": "Total average",
+    "people": "People",
+    "day": "Day",
+    "days": "Days",
+
+    "resumen": "Resumen",
+    "individual": "Individual",
+    "see_answers": "See answers",
+    "see_all_answers": "See all answers",
+    "no_answers": "No answers",
+
+    "this_survey_no_participations": "This survey has no participations",
+
+    "transaction_settings": "Transaction settings",
+    "slippage_tolerance": "Slippage tolerance",
+    "transaction_deadline": "Transaction deadline",
+    "interface_settings": "Interface Settings",
+    "auto_router": "Auto Router",
+    "expert_mode": "Expert Mode",
+    "auto": "Auto",
+    "minutes": "Minutes",
+
+    "install_metamask": "Install Metamask",
+
+    "slippage_tolerance_may_be_exceeded": "The slippage tolerance percentage may be exceeded. Taking into account the deadline introduced.",
+    "output_is_estimated_will_receive_x_or_revert": "Output is estimated. You will receive at least {{val1}} or the transaction will revert.",
+
+    "confirm_transaction": "Confirm transaction",
+
+    "refresh": "Refresh",
+
+    "without_coupon": "Without coupon",
+    "requires_coupon": "Requires coupon",
+    "no_coupon_required": "No coupon required",
+
+    "x_timeline": "{{val1}} Timeline",
+    "balance_movements": "Balance Movements",
+    "no_data": "No data",
+
+    "my_opened_surveys": "My opened surveys",
+    "my_closed_surveys": "My closed surveys",
+    "participations_in_last_x": "Participations in the last {{val1}}",
+
+    "participant": "Participant",
+    "participation_date": "Participation date",
+
+    "see_my_surveys": "See my surveys",
+    "see_my_participations": "See my participations",
+    "successful_participation": "Successful participation",
+    "successful_participation_in_the_survey": "Successful participation in the survey",
+
+    "back_to_dashboard": "Back to Dashboard",
+    "back_to_my_answers": "Back to my answers",
+    "survey_owner": "Survey owner",
+
+    "docs": "Docs",
+    "legal_privacy": "Legal & Privacy",
+    "all_rights_reserved": "© {{val1}} {{val2}}. All rights reserved.",
+    "signature_request": "Signature request",
+    "sign": "Sign",
+    "message": "Message",
+    "encode": "Encode",
+    "decode": "Decode",
+    "please_wait": "Please wait ..",
+    "waiting_reply": "Waiting for reply ..",
+    "details": "Details",
+
+    "increase_gas_reserve": "Increase gas reserve",
+    "send_transaction": "Send transaction",
+    "sufficient_gas_reserve": "Sufficient gas reserve",
+
+    "current_gas_reserve_plus_amount_not_enough": "The current gas reserve plus the amount introduced is not enough to finance all the participations.",
+    "added_x_for_gas_reserve": "Added {{val1}} for gas reserve",
+
+    "export_coupons": "Export coupons",
+    "server_not_respond": "The server does not respond, please try again later.",
+    "server_in_maintenance": "The server is under maintenance, please try again later.",
+
+    "solve_following_captcha": "Please solve the following Captcha",
+    "captcha_test": "Captcha Test",
+    "captcha_text": "Captcha Text",
+    "send": "Send",
+    "status": "Status",
+    "value_used": "Value used",
+
+    "total_amount": "Total amount",
+    "raised_amount": "Raised amount",
+    "initial_offer_has_ended": "The initial offer has ended, thank you for your participation.",
+    "finished": "Finished",
+    "export_data": "Export data",
+
+    "follow_us_on_twitter_for_progress": "Follow us on twitter to stay up to date with our progress",
+
+    "dnot_provide_personal_data": "Please do not provide personal data, the results of the surveys are public.",
+    "not_possible_establish_connection": "It has not been possible to establish the connection with the smart contracts of this tool.",
+    "must_select_main_network_of_x": "You must select the main network of {{val1}} in your client."
+}

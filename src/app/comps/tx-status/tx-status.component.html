@@ -1,0 +1,69 @@
+<div class="content-panel flex-grid tx-status">
+
+    <div class="grid-item">
+        <label>{{ 'status' | translate }}</label>
+        <div *ngIf="!receipt">
+            <p-message severity="info" text="{{ 'pending' | translate }}" class="template-spinner"></p-message>
+        </div>
+        <div *ngIf="receipt?.status">
+            <p-message severity="success" text="{{ 'success' | translate }}"></p-message>
+        </div>
+        <div *ngIf="receipt && !receipt.status">
+            <p-message severity="error" text="{{ 'failed' | translate }}"></p-message>
+        </div>
+    </div>
+
+    <div class="grid-item">
+        <label>{{ 'transaction_hash' | translate }}</label>
+        <span>{{ txHash }}</span>
+    </div>
+
+    <div class="grid-item">
+        <label>{{ 'block' | translate }}</label>
+        <span>{{ receipt?.blockNumber || '..' }}</span>
+    </div>
+
+    <div class="grid-item">
+        <label>{{ (isMetaTx? 'relayer': 'from') | translate }}</label>
+        <span>{{ receipt?.from || '..' }}</span>
+    </div>
+
+    <div *ngFor="let txItem of txItems" class="grid-item">
+        <label>{{ txItem.title }}</label>
+        <span>{{ txItem.value || '..' }}</span>
+    </div>
+
+    <div class="grid-item">
+        <label>{{ 'gas_used' | translate }}</label>
+        <div class="grid-row" title="{{ gasUsed? gasUsed + ' ' + currSymbol: '' }}">
+            <span class="line-limit">{{ gasUsed || '..' }}</span>
+            <span class="coin-suffix">{{ gasUsed? currSymbol: '' }}</span>
+        </div>
+    </div>
+
+    <div *ngFor="let txVal of txValues" class="grid-item">
+        <label>{{ txVal.title }}</label>
+        <div class="grid-row" title="{{ txVal.amountUsed? txVal.amountUsed + ' ' + currSymbol: '' }}">
+            <span class="line-limit">{{ txVal.amountUsed || '..' }}</span>
+            <span class="coin-suffix">{{ txVal.amountUsed? currSymbol: '' }}</span>
+        </div>
+    </div>
+
+    <div class="grid-item">
+        <label>{{ 'total_cost' | translate }}</label>
+        <div class="grid-row" title="{{ totalPaid? totalPaid + ' ' + currSymbol: '' }}">
+            <span class="line-limit">{{ totalPaid || '..' }}</span>
+            <span class="coin-suffix">{{ totalPaid? currSymbol: '' }}</span>
+        </div>
+    </div>
+
+    <div class="grid-item">
+        <label>{{ 'view_on_block_explorer' | translate }}</label>
+        <div>
+            <a class="icon-text-button" mat-flat-button color="accent" [href]="explorerLink" target="_blank">
+                <mat-icon>open_in_new</mat-icon> <span>{{ explorerName }}</span>
+            </a>
+        </div>
+    </div>
+
+</div>

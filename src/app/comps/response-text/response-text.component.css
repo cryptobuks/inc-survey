@@ -1,0 +1,15 @@
+.response-text {
+    display: flex;
+    padding: 10px;
+    background: var(--bg-mask-05);
+    border-radius: 4px;
+}
+
+.response-text:not(:first-child) {
+    margin-top: 10px;
+}
+
+.response-text .num {
+    font-weight: 500;
+    margin-right: 10px;
+}

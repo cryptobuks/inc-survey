@@ -1,0 +1,117 @@
+.survey-list-item {
+    display: flex;
+    flex-direction: row;
+    place-content: center flex-start;
+    align-items: center;
+    padding: 14px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    position: relative;
+}
+
+.survey-list-item .survey-logo {
+    text-align: center;
+    min-width: 48px;
+    min-height: 48px;
+}
+
+.survey-list-item .survey-logo > img {
+    width: 48px;
+    height: 48px;
+}
+
+.survey-list-item .survey-info, .survey-list-item .survey-amounts {
+    margin-left: 20px;
+    width: calc(50% - 100px);
+    text-align: start;
+}
+
+.survey-list-item .survey-title, .survey-list-item .survey-desc {
+    display: block;
+}
+
+.survey-list-item .survey-title {
+    font-weight: 500;
+}
+
+.survey-list-item .survey-desc, .survey-list-item .survey-info .survey-amount {
+    margin-top: 4px;
+}
+
+.survey-list-item .survey-amount {
+    display: flex;
+}
+
+.survey-list-item .survey-amount b {
+    font-weight: 500;
+}
+
+.survey-list-item .survey-amount .coin-suffix {
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+.survey-list-item .survey-info .survey-amount {
+    display: none;
+}
+
+.survey-list-item .survey-state {
+    margin-left: 20px;
+    flex: 1 1 auto;
+}
+
+.survey-list-item .survey-tag {
+    display: none;
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 100%;
+}
+
+::ng-deep .survey-list-item .survey-tag .p-tag {
+    width: 100%;
+    height: 16px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    font-size: 12px;
+}
+
+.survey-list-item .survey-arrow {
+    margin-left: 10px;
+    min-width: 24px;
+    min-height: 24px;
+}
+
+@media screen and (max-width: 991px) {
+    .survey-list-item .survey-info, .survey-list-item .survey-amounts {
+        width: calc(50% - 62px);
+    }
+
+    .survey-list-item .survey-state {
+        display: none;
+    }
+
+    .survey-list-item .survey-tag {
+        display: block;
+    }
+
+    .survey-list-item {
+        padding: 14px 10px 20px 14px;
+        border: none !important;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .survey-list-item .survey-amounts {
+        display: none;
+    }
+
+    .survey-list-item .survey-info .survey-amount {
+        display: flex;
+    }
+
+    .survey-list-item .survey-info {
+        width: calc(100% - 100px);
+        margin-left: 10px;
+    }
+}

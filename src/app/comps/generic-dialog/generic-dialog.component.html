@@ -1,0 +1,26 @@
+<div mat-dialog-title class="generic-dialog-title" 
+[class.dialog-title-info]="data.type == 'info'" 
+[class.dialog-title-warn]="data.type == 'warn' || data.type == 'confirm'" 
+[class.dialog-title-error]="data.type == 'error'">
+    <span>{{ data.title }}</span>
+    <button mat-icon-button (click)="close()">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+<mat-dialog-content *ngIf="data.type == 'input'" class="generic-dialog-content">
+    <span *ngIf="data.message">{{ data.message }}</span>
+    <mat-form-field appearance="fill">
+        <mat-label>{{ data.label }}</mat-label>
+        <input matInput [(ngModel)]="data.value">
+    </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-content *ngIf="data.type != 'input'" class="generic-dialog-content" [innerHTML]="data.content">
+</mat-dialog-content>
+<mat-dialog-actions class="generic-dialog-actions" *ngIf="data.type == 'input'">
+    <button mat-button mat-dialog-close (click)="data.onAccept(data.value)">{{ 'accept' | translate }}</button>
+    <button mat-button mat-dialog-close (click)="data.onCancel? data.onCancel(): close()">{{ 'cancel' | translate }}</button>
+</mat-dialog-actions>
+<mat-dialog-actions class="generic-dialog-actions" *ngIf="data.type == 'confirm'">
+    <button mat-button mat-dialog-close (click)="data.onAccept()">{{ 'yes' | translate }}</button>
+    <button mat-button mat-dialog-close (click)="data.onCancel? data.onCancel(): close()">{{ 'no' | translate }}</button>
+</mat-dialog-actions>

@@ -1,0 +1,9 @@
+.date-picker {
+  display: block;
+  width: 256px;
+  margin: 0 auto;
+}
+
+::ng-deep .date-picker .p-calendar {
+  width: 100%;
+}

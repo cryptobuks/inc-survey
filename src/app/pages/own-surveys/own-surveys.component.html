@@ -1,0 +1,20 @@
+<div class="survey-list-cnt">
+
+    <breadcrumbs></breadcrumbs>
+
+    <div *ngIf="loading" class="loading-cnt">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="!loading && surveys.length > 0" class="survey-list">
+
+        <survey-list-item *ngFor="let survey of surveys; let i = index" [survey]="survey" [forOwner]="true" (onClick)="exploreSurvey(survey.id)"></survey-list-item>
+
+        <p-paginator class="paginator-cnt" [first]="paginatorData.first" [rows]="paginatorData.rows" [totalRecords]="surveysLength" (onPageChange)="onPageChange($event)"
+            [showJumpToPageDropdown]="true" [showPageLinks]="false" [rowsPerPageOptions]="[5,10,15,20]"></p-paginator>
+
+    </div>
+    
+    <span *ngIf="!loading && surveys.length == 0" class="no-results">{{ 'no_results_found' | translate }}</span>
+
+</div>

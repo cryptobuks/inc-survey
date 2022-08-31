@@ -1,0 +1,56 @@
+<div class="part-list-cnt">
+
+    <breadcrumbs></breadcrumbs>
+
+    <div *ngIf="loading" class="loading-cnt">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="!loading && partsNum > 0">
+        
+        <div class="part-list">
+            <div class="part-paginator">
+                <span>{{ 'survey' | translate }}</span>
+
+                <p-paginator [first]="paginatorData.first" [rows]="paginatorData.rows" 
+                    [totalRecords]="partsNum" (onPageChange)="onPageChange($event)"
+                    [showJumpToPageDropdown]="true" [showPageLinks]="false"></p-paginator>
+            </div>
+
+            <survey-banner [survey]="survey" (onClick)="showSurveyDetails()"></survey-banner>
+
+            <div class="content-panel flex-grid part-data">
+
+                <div class="grid-item">
+                    <label>{{ 'survey_owner' | translate }}</label>
+                    <span>{{ survey.owner }}</span>
+                </div>
+
+                <div class="grid-item">
+                    <label>{{ 'participation_date' | translate }}</label>
+                    <span>{{ partEntryTime }}</span>
+                </div>
+            
+            </div>
+
+            <survey-impl [survey]="survey" [showDetails]="false" [disabledQuestions]="true" [paginatorRows]="paginatorRowsForQuestions" #surveyComp></survey-impl>
+        </div>
+    
+        <div class="control-grid">
+    
+            <button mat-flat-button class="template-icon back-button" (click)="backToDashboard()">
+                <mat-icon icon="arrow_back"></mat-icon>
+                <span>{{ 'back_to_dashboard' | translate }}</span>
+            </button>
+
+            <button mat-flat-button class="template-icon print-button" color="primary" (click)="printPage()">
+                <mat-icon icon="print"></mat-icon>
+                <span>{{ 'print_page' | translate }}</span>
+            </button>
+    
+        </div>
+    </div>
+
+    <span *ngIf="!loading && partsNum == 0" class="no-results">{{ 'no_results_found' | translate }}</span>
+
+</div>

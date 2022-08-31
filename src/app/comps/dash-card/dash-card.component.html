@@ -1,0 +1,30 @@
+<div class="dash-card light-card">
+
+    <div class="dash-card-content">
+        <div class="dash-card-icon" [style.background]="iconBg">
+            <mat-icon [style.color]="iconColor">{{ icon }}</mat-icon>
+        </div>
+        <div class="dash-card-text">
+            <span class="dash-card-title">{{ title }}</span>
+            <span *ngIf="value == undefined" class="dot-pulse"></span>
+            <span *ngIf="value != undefined" class="line-limit dash-card-value" title="{{ value }}">{{ value }}</span>
+        </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="dash-card-base">
+        <div class="dash-card-info" [class.action-icon]="onInfoClick.observers.length > 0" 
+            [class.action-icon-disabled]="disabledAction && onInfoClick.observers.length > 0" 
+            (click)="emitInfoClick($event)">
+            <mat-icon>{{ infoIcon }}</mat-icon>
+            <span>{{ info }}</span>
+        </div>
+
+        <mat-icon [class.action-icon]="onExtraClick.observers.length > 0" 
+            [class.action-icon-disabled]="disabledAction && onExtraClick.observers.length > 0" 
+            [pTooltip]="extraTooltip" tooltipPosition="bottom" 
+            (click)="emitExtraClick($event)">{{ extraIcon }}</mat-icon>
+    </div>
+                
+</div>

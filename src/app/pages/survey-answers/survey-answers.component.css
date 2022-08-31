@@ -1,0 +1,64 @@
+.survey-answers-cnt {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.survey-answers-cnt .tab-view {
+    display: block;
+    margin-top: 20px;
+}
+
+::ng-deep .survey-answers-cnt .tab-view .p-tabview-nav {
+    justify-content: center;
+}
+
+.survey-answers-cnt response-impl {
+    display: block;
+    margin-top: 20px;
+}
+
+.resumen-cnt .paginator-cnt {
+    margin-top: 20px;
+}
+
+.part-paginator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.part-paginator > span {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+::ng-deep .part-paginator .p-paginator {
+    background: transparent;
+    flex-wrap: nowrap;
+    border: none;
+}
+
+.part-data {
+    margin-top: 10px;
+}
+
+/*::ng-deep .survey-answers-cnt .question-list {
+    margin-top: 10px !important;
+}*/
+
+.survey-answers-cnt .relevant-info {
+    margin-top: 20px;
+    text-align: center;
+}
+
+@media screen and (max-width: 1040px) {
+    .survey-answers-cnt {
+        margin: 20px;
+    }
+
+    ::ng-deep .survey-banner {
+        padding: 14px 10px !important;
+    }
+}

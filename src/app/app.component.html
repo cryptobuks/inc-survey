@@ -1,0 +1,145 @@
+<p-toast life="5000"></p-toast>
+<p-confirmPopup></p-confirmPopup>
+
+<div class="container">
+    <div class="header">
+
+        <div class="head-primary">
+            <a href="/" class="logo">
+                <img alt="Logo" src="assets/img/logo.png" />
+                <span class="line-limit title">{{ appName }}</span>
+            </a>
+    
+            <div class="nav">
+                <a *ngFor="let option of options" mat-button class="large-screen" [class.nav-button-active]="option.value == selectedOption" 
+                    (click)="onOptionChanged(option.value)">
+                    {{ option.name }}
+                </a>
+            </div>
+    
+            <div class="menu">
+                <p-button *ngIf="!accountData" (click)="connect()">
+                    {{ 'connect_wallet' | translate }}
+                </p-button>
+    
+                <p-button *ngIf="accountData" [label]="accountShortAddress" icon="pi pi-circle-on" iconPos="right" 
+                    styleClass="p-button-secondary" (click)="addrOverlay.toggle($event)">
+                </p-button>
+
+                <button pButton pRipple type="button" [icon]="isDarkTheme? 'pi pi-moon': 'pi pi-sun'" class="p-button-rounded" 
+                    (click)="switchTheme()"></button>
+                
+                <button pButton pRipple type="button" icon="pi pi-ellipsis-h" class="p-button-rounded" 
+                    (click)="visibleSidebar = !visibleSidebar"></button>
+            </div>
+        </div>
+
+        <div class="head-secondary">
+            <div class="balance-chips">
+                <balance-chip symbol="INC" symbolIcon="assets/img/inc_logo.png" [balance]="humanFriendlyIncBalance" background="#3a4570"
+                    icon="add" iconTooltip="{{ 'import_token' | translate }}" (onIconClick)="importToken()">
+                </balance-chip>
+
+                <balance-chip [symbol]="ccy.symbol" [symbolIcon]="ccy.logoURI" [balance]="humanFriendlyCcyBalance" background="#8247e5"
+                    icon="add" iconTooltip="{{ 'import_or_select_network' | translate }}" (onIconClick)="importNetwork()">
+                </balance-chip>
+
+                <!--<balance-chip [symbol]="wCcy.symbol" [symbolIcon]="wCcy.logoURI" [balance]="humanFriendlyWCcyBalance" background="#00bffa"
+                    icon="add" iconTooltip="{{ 'import_wrapped_currency' | translate }}" (onIconClick)="importWrappedToken()">
+                </balance-chip>-->
+            </div>
+        </div>
+
+    </div>
+
+    <div class="content">
+        <div *ngIf="connecting" class="loading-cnt">
+            <mat-spinner></mat-spinner>
+        </div>
+
+        <div *ngIf="!connecting && (!hasConnection || !loadedChainData)" class="no-connection">
+            <a *ngIf="!hasConnection" class="icon-text-button" mat-stroked-button href="https://metamask.io/download" target="_blank">
+                <mat-icon svgIcon="metamask"></mat-icon>
+                <span>{{ 'install_metamask' | translate }}</span>
+            </a>
+
+            <button *ngIf="!hasConnection" class="icon-text-button" mat-stroked-button (click)="connect()">
+                <mat-icon>account_balance_wallet</mat-icon>
+                <span>{{ 'connect_wallet' | translate }}</span>
+            </button>
+            
+            <button *ngIf="hasConnection && !loadedChainData" class="icon-text-button" mat-stroked-button (click)="importNetwork()">
+                <img alt="logo" [src]="ccy.logoURI" style="width: 1.5rem; "/>
+                <span>{{ 'select_x' | translate:{ val1 : net.chainName } }}</span>
+            </button>
+        </div>
+
+        <!--<breadcrumbs *ngIf="!connecting && hasConnection && loadedChainData"></breadcrumbs>-->
+        <router-outlet *ngIf="!connecting && hasConnection && loadedChainData"></router-outlet>
+    </div>
+
+    <div class="footer">
+        {{ 'all_rights_reserved' | translate:{ val1: '2022', val2: 'Incentive Token, LLC' } }}
+    </div>
+
+    <div class="scroll-to-top" [ngClass]="{'show-scroll-top': windowScrolled}">
+        <button class="up-arrow" mat-mini-fab color="accent" (click)="scrollToTop()">
+            <mat-icon>arrow_upward</mat-icon>
+        </button>
+    </div>
+
+    <p-overlayPanel #addrOverlay [showCloseIcon]="false" styleClass="addr-overlay">
+        <a mat-button (click)="changeWallet()">
+            <mat-icon>manage_accounts</mat-icon> <span>{{ 'change_wallet' | translate }}</span>
+        </a>
+        <a mat-button (click)="disconnect()">
+            <mat-icon>logout</mat-icon> <span>{{ 'disconnect_wallet' | translate }}</span>
+        </a>
+    </p-overlayPanel>
+
+    <p-sidebar [(visible)]="visibleSidebar" position="right" [baseZIndex]="10000" [showCloseIcon]="false">
+        <div class="small-screen">
+            <a *ngFor="let option of options" mat-button [class.nav-button-active]="option.value == selectedOption" 
+                (click)="onOptionChanged(option.value)">
+                <mat-icon>{{ option.icon }}</mat-icon> <span>{{ option.name }}</span>
+            </a>
+        </div>
+
+        <a mat-button href="https://docs.inctoken.org" target="_blank">
+            <mat-icon>article</mat-icon> <span>{{ 'docs' | translate }}</span>
+        </a>
+
+        <a mat-button href="https://twitter.com/incentivetoken" target="_blank">
+            <mat-icon svgIcon="twitter"></mat-icon> <span>Twitter</span>
+        </a>
+
+        <a mat-button href="https://discord.com/invite/fFzDHMKhcN" target="_blank">
+            <mat-icon svgIcon="discord"></mat-icon> <span>Discord</span>
+        </a>
+
+        <a mat-button href="https://inctoken.org/" target="_blank">
+            <mat-icon>info</mat-icon> <span>{{ 'about' | translate }}</span>
+        </a>
+
+        <a mat-button href="https://inctoken.org/legal" target="_blank">
+            <mat-icon>privacy_tip</mat-icon> <span>{{ 'legal_privacy' | translate }}</span>
+        </a>
+    </p-sidebar>
+</div>
+
+<p-dialog header="{{ 'could_not_get_wallet' | translate }}" [(visible)]="displayNetDialog" [breakpoints]="{'960px': '75vw'}" [style]="{width: '50vw'}"
+    [modal]="true" [draggable]="false" [resizable]="false" [dismissableMask]="true">
+        <p>
+            {{ 'not_possible_establish_connection' | translate }}
+        </p>
+        <p>
+            {{ 'must_select_main_network_of_x' | translate:{ val1 : ccy.name } }}
+        </p>
+
+        <ng-template pTemplate="footer">
+            <button class="icon-text-button" mat-stroked-button (click)="importNetwork()">
+                <img alt="logo" [src]="ccy.logoURI" style="width: 1.5rem; "/>
+                <span>{{ 'select_x' | translate:{ val1 : net.chainName } }}</span>
+            </button>
+        </ng-template>
+</p-dialog>

@@ -1,0 +1,19 @@
+<div *ngIf="!data.content.showTime" class="date-range">
+    <p-calendar placeholder="{{ 'start_date' | translate }}" 
+    [(ngModel)]="data.response.input[0]" [disabled]="data.state.edited || data.state.disabled"
+    [showIcon]="true" (onSelect)="calendar1.hideOverlay()" #calendar1></p-calendar>
+
+    <p-calendar placeholder="{{ 'end_date' | translate }}" 
+    [(ngModel)]="data.response.input[1]" [disabled]="data.state.edited || data.state.disabled"
+    [showIcon]="true" (onSelect)="calendar2.hideOverlay()" #calendar2></p-calendar>
+</div>
+
+<div *ngIf="data.content.showTime" class="date-range">
+    <p-calendar placeholder="{{ 'start_date_and_time' | translate }}"
+    [(ngModel)]="data.response.input[0]" [disabled]="data.state.edited || data.state.disabled"
+    [showIcon]="true" [showTime]="true" [showSeconds]="true" (onSelect)="calendar1.hideOverlay()" #calendar1></p-calendar>
+
+    <p-calendar placeholder="{{ 'end_date_and_time' | translate }}"
+    [(ngModel)]="data.response.input[1]" [disabled]="data.state.edited || data.state.disabled"
+    [showIcon]="true" [showTime]="true" [showSeconds]="true" (onSelect)="calendar2.hideOverlay()" #calendar2></p-calendar>
+</div>

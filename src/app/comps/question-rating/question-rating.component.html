@@ -1,0 +1,8 @@
+<!--<p-rating stars="5" [(ngModel)]="data.response.input" 
+[disabled]="data.state.edited || data.state.disabled" [cancel]="!data.mandatory"></p-rating>-->
+
+<div class="rating-cnt">
+    <span [class.disabled]="data.state.edited || data.state.disabled">{{ 'rating' | translate }}: {{ data.response.input }} / 5</span>
+    <p-rating stars="5" [(ngModel)]="data.response.input" 
+    [disabled]="data.state.edited || data.state.disabled" [cancel]="!data.mandatory"></p-rating>
+</div>

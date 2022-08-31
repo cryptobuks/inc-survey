@@ -1,0 +1,168 @@
+<div class="create-survey-cnt">
+
+    <breadcrumbs></breadcrumbs>
+
+    <div class="content-panel survey-params">
+
+        <div class="survey-logo">
+            <input type="file" accept="image/jpeg, image/png" class="hidden-input" (change)="onSelectImage($event)" #imageInput>
+            <img *ngIf="!imageLoading && hasImage()" class="thumb-circle" alt="Logo" [src]="imageSrc" (click)="imageInput.click()" loading="lazy" onerror="this.src='assets/img/broken_image.png';" />
+            <img *ngIf="!imageLoading && !hasImage()" class="thumb-circle" alt="Logo" src="assets/img/empty_image.png" (click)="imageInput.click()" />
+            <mat-spinner *ngIf="imageLoading" diameter="48"></mat-spinner>
+            <span>{{ 'maximum_x' | translate:{val1 : '1MB' } }} ({{ 'image_reduced_automatically' | translate }})</span>
+            <span>{{ 'image_uploaded_to_server_link_saved_on_blockchain' | translate }}</span>
+            <span>{{ 'can_indicate_your_link' | translate }}</span>
+            <input class="url-input" type="url" placeholder="{{ 'logo_placeholder' | translate }}" maxlength="2048" [(ngModel)]="survey.logoUrl" (ngModelChange)="onChangeLogoUrl($event)" />
+            <div class="survey-logo-error"></div>
+        </div>
+
+        <div class="survey-info">
+            <mat-form-field class="survey-title" appearance="fill">
+                <mat-label>{{ 'title' | translate }}</mat-label>
+                <input matInput placeholder="..." [(ngModel)]="survey.title" maxlength="255">
+            </mat-form-field>
+            
+            <mat-form-field class="survey-description" appearance="fill">
+                <mat-label>{{ 'description' | translate }}</mat-label>
+                <textarea matInput placeholder="..." [(ngModel)]="survey.description" [maxLength]="2048"></textarea>
+            </mat-form-field>
+
+            <mat-form-field class="survey-start-date" appearance="fill">
+                <mat-label>{{ 'start_date' | translate }}</mat-label>
+                <input matInput [ngxMatDatetimePicker]="startDatePicker" 
+                                [min]="minStartDate" [max]="maxStartDate"
+                                [(ngModel)]="survey.startDate" readonly>
+                <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                <ngx-mat-datetime-picker #startDatePicker></ngx-mat-datetime-picker>
+            </mat-form-field>
+
+            <mat-form-field class="survey-end-date" appearance="fill">
+                <mat-label>{{ 'end_date' | translate }}</mat-label>
+                <input matInput [ngxMatDatetimePicker]="endDatePicker" 
+                                [min]="minEndDate" [max]="maxEndDate"
+                                [(ngModel)]="survey.endDate" readonly>
+                <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                <ngx-mat-datetime-picker #endDatePicker></ngx-mat-datetime-picker>
+            </mat-form-field>
+
+            <div class="survey-data-item">
+                <label>{{ 'duration' | translate }}</label>
+                <span class="line-limit" [title]="duration">{{ duration }}</span>
+            </div>
+
+            <mat-form-field class="survey-budget" appearance="fill">
+                <mat-label>{{ 'total_budget' | translate }}</mat-label>
+                <input matInput placeholder="0.0" [(ngModel)]="state.budgetAmount" (input)="onChangeBudget()" maxlength="100">
+                <div class="input-coin-suffix" matSuffix>
+                    <span>INC</span>
+                </div>
+            </mat-form-field>
+
+            <mat-form-field class="survey-reward" appearance="fill">
+                <mat-label>{{ 'reward_for_participation' | translate }}</mat-label>
+                <input matInput placeholder="0.0" [(ngModel)]="state.rewardAmount" (input)="onChangeReward()" maxlength="100">
+                <div class="input-coin-suffix" matSuffix>
+                    <span>INC</span>
+                </div>
+            </mat-form-field>
+
+            <div class="survey-data-item">
+                <label>{{ 'participations' | translate }}</label>
+                <span class="line-limit" [title]="maxParts">{{ maxParts }}</span>
+            </div>
+
+            <div class="survey-gas-reserve-cnt">
+                <mat-form-field class="survey-gas-reserve" appearance="fill">
+                    <mat-label>{{ 'gas_reserve' | translate }}</mat-label>
+                    <input matInput placeholder="0.0" [(ngModel)]="state.gasReserveAmount" (input)="onChangeGasReserve()" maxlength="100">
+                    <div *ngIf="!isLowGasReserve" class="input-coin-suffix" matSuffix>
+                        <span>{{ currSymbol }}</span>
+                    </div>
+                    <button *ngIf="isLowGasReserve" matSuffix mat-icon-button aria-label="Calculate" (click)="loadGasReserve()">
+                        <mat-icon>autorenew</mat-icon>
+                    </button>
+                </mat-form-field>
+
+                <span class="field-info">{{ 'gas_reserve_used_to_finance_transactions' | translate }}</span>
+                <span class="field-info">{{ 'you_can_retrieve_remaining_gas_reserve' | translate }}</span>
+
+                <div *ngIf="isLowGasReserve" class="relevant-info">
+                    <span class="field-info">{{ 'low_gas_reserve' | translate }} {{ 'survey_not_profitable_no_one_take_it' | translate }} {{ 'survey_can_expensive_for_participants' | translate }}</span>
+                </div>
+            </div>
+
+            <div class="survey-keys-cnt">
+                <div class="survey-keys" attr.placeholder="{{ (survey.partKeys.length == 0? 'coupons_guarantee_but_increase_cost': '') | translate }}">
+                    <span *ngFor="let key of survey.partKeys">{{ key }}</span>
+                </div>
+
+                <div class="survey-keys-error"></div>
+
+                <mat-form-field class="survey-keys-num" appearance="fill">
+                    <mat-label>{{ 'coupons' | translate }} ({{ 'optional' | translate }})</mat-label>
+                    <input matInput type="number" [(ngModel)]="keysNum" readonly="true">
+                    <button *ngIf="survey.partKeys.length == 0" matSuffix mat-icon-button aria-label="Generate" [disabled]="keysNum > keysMax" (click)="setPartKeys(keysNum)">
+                      <mat-icon>autorenew</mat-icon>
+                    </button>
+                    <button *ngIf="survey.partKeys.length > 0" matSuffix mat-icon-button aria-label="Clear" (click)="setPartKeys(0)">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+
+                <span class="field-info">{{ 'maximum_x_coupons' | translate:{val1 : keysMax } }} {{ 'have_send_coupons_to_users' | translate }}</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="flex-row flex-wrap question-cnt" cdkDropListGroup>
+
+        <div class="source-cnt">
+            <span class="source-title">{{ 'available_items' | translate }}</span>
+    
+            <div class="content-panel source-list" cdkDropList [cdkDropListData]="availableQuestions" cdkDropListSortingDisabled
+                [cdkDropListEnterPredicate]="noReturnPredicate" (cdkDropListExited)="onSourceListExited($event)"
+                (cdkDropListEntered)="onSourceListEntered($event)">
+                <div class="flex-row source-box" style="cursor: move;" *ngFor="let question of availableQuestions" cdkDrag  [cdkDragDisabled]="!canAddQuestion()">
+                    <mat-icon class="quest-list-icon" [svgIcon]="question.svgIcon? question.svgIcon: null">{{ question.icon }}</mat-icon>
+                    <span class="source-label">{{ question.label | translate }}</span>
+                    <button class="quest-list-button" mat-icon-button type="button" (click)="addQuestion(question)" [disabled]="!canAddQuestion()" title="{{ 'add_question' | translate }}">
+                        <mat-icon>add_circle</mat-icon>
+                    </button>
+                    <div class="drag-placeholder" *cdkDragPlaceholder></div>
+                    <dynamic-template [item]="createQuestionPreview(question)" *cdkDragPreview></dynamic-template>
+                </div>
+            </div>
+        </div>
+    
+        <div class="dest-cnt" #destCnt>
+            <span class="dest-title">{{ 'questions' | translate }} ({{ survey.questions.length }})</span>
+
+            <p-paginator class="paginator-cnt" [first]="state.paginatorData.first" [rows]="state.paginatorData.rows" [totalRecords]="survey.questions.length" (onPageChange)="onPageChange($event)"
+                [showJumpToPageDropdown]="true" [showPageLinks]="false" [rowsPerPageOptions]="[5,10,15,20]">
+            </p-paginator>
+    
+            <div class="dest-list" [ngClass]="{'content-panel empty-list' : survey.questions.length == 0}" title="{{ 'drag_here_components' | translate }}" cdkDropList [cdkDropListData]="pageQuestions"
+                (cdkDropListDropped)="onDestDropped($event)" #destList>
+                <div class="dest-box" *ngFor="let question of pageQuestions" [id]="question.viewId" cdkDragLockAxis="y" cdkDrag>
+                    <mat-icon class="dest-move quest-move-icon" title="{{ 'move_question' | translate }}" cdkDragHandle>format_line_spacing</mat-icon>
+                    <question-impl [question]="question" [editableLabels]="true" [canAddQuestion]="canAddQuestion()"
+                    (onDuplicateQuestion)="duplicateQuestion($event)" (onRemoveQuestion)="removeQuestion($event)"></question-impl>
+                    <div class="drag-placeholder" style="margin: 20px 0;" *cdkDragPlaceholder></div>
+                </div>
+            </div>
+
+            <div class="dest-cnt-error"></div>
+        </div>
+
+    </div>
+
+    <div class="control-grid">
+
+        <button mat-flat-button class="template-icon" [class.template-spinner]="loading" [disabled]="loading" color="primary" (click)="loadSurveyPreview()">
+            <mat-icon icon="visibility"></mat-icon>
+            <span>{{ 'preview' | translate }}</span>
+        </button>
+
+    </div>
+</div>

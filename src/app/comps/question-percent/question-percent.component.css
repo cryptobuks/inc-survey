@@ -1,0 +1,14 @@
+.slider-percent {
+    width: 256px;
+    margin: 0 auto 10px auto;
+}
+
+.slider-percent > span {
+    font-size: 14px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.slider-percent > .disabled {
+    opacity:.5;
+}

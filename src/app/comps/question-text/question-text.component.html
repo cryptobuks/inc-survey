@@ -1,0 +1,11 @@
+<span *ngIf="!data.content.multiline" class="p-input-icon-right input-single-line">
+    <i *ngIf="!data.state.edited && !data.state.disabled && data.response.input" class="pi pi-times" (click)="data.response.input=''"></i>
+    <input placeholder="{{ 'short_text_response' | translate }}" type="text" pInputText maxlength="255"
+    [(ngModel)]="data.response.input" [disabled]="data.state.edited || data.state.disabled">
+</span>
+
+<span *ngIf="data.content.multiline" class="p-input-icon-right input-multi-line">
+    <i *ngIf="!data.state.edited && !data.state.disabled && data.response.input" class="pi pi-times" (click)="data.response.input=''"></i>
+    <textarea placeholder="{{ 'multiline_text_response' | translate }}" rows="2" pInputTextarea maxlength="1024"
+    [(ngModel)]="data.response.input" [disabled]="data.state.edited || data.state.disabled"></textarea>
+</span>

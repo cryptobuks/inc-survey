@@ -1,0 +1,58 @@
+.survey-list-cnt {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.survey-filter {
+    overflow: visible;
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: row;
+    place-content: center space-between;
+    align-items: center;
+    gap: 10px
+}
+
+.survey-filter .p-input-icon-left {
+    max-width: 50%;
+}
+
+.survey-filter .p-input-icon-left > i {
+    /*allow focus input*/
+    width: 16px;
+}
+
+.survey-filter .p-input-icon-right > .pi-times {
+    cursor: pointer;
+}
+
+.survey-filter .p-inputtext {
+    width: 100%;
+}
+
+::ng-deep .survey-filter p-multiselect {
+    max-width: 50%;
+}
+
+::ng-deep .survey-filter p-multiselect .p-multiselect {
+    width: 100%;
+}
+
+.survey-list {
+    margin-top: 20px;
+}
+
+.survey-list survey-list-item:not(:first-child) {
+    display: block;
+    margin-top: 20px;
+}
+
+.survey-list-cnt .paginator-cnt {
+    margin-top: 20px;
+}
+
+@media screen and (max-width: 1040px) {
+    .survey-list-cnt {
+        margin: 20px;
+    }
+}

@@ -1,0 +1,143 @@
+<div class="survey-cnt">
+
+    <div *ngIf="showDetails" class="content-panel survey-main-details">
+
+        <div class="survey-logo">
+            <img *ngIf="imageSrc" class="thumb-circle" alt="Logo" [src]="imageSrc" loading="lazy" onerror="this.src='assets/img/broken_image.png';" />
+            <img *ngIf="!imageSrc" class="thumb-circle" alt="Logo" src="assets/img/empty_image.png" />
+            
+            <div *ngIf="showLogoUrl && survey.logoUrl" class="data-item">
+                <label>{{ 'logo_url' | translate }}</label>
+                <span>{{ survey.logoUrl }}</span>
+            </div>
+
+            <div class="survey-logo-error"></div>
+        </div>
+
+        <div class="flex-grid survey-info">
+            <div *ngIf="survey.owner" class="grid-item survey-owner">
+                <label>{{ 'owner' | translate }}</label>
+                <span>{{ survey.owner }}</span>
+            </div>
+            
+            <div class="grid-item survey-title">
+                <label>{{ 'title' | translate }}</label>
+                <span>{{ survey.title }}</span>
+            </div>
+            
+            <div *ngIf="survey.description" class="grid-item survey-description">
+                <label>{{ 'description' | translate }}</label>
+                <span>{{ survey.description }}</span>
+            </div>
+
+            <div class="grid-item survey-start-date">
+                <label>{{ 'start_date' | translate }}</label>
+                <span>{{ survey.formatted.startDate }}</span>
+            </div>
+
+            <div class="grid-item survey-end-date">
+                <label>{{ 'end_date' | translate }}</label>
+                <span>{{ survey.formatted.endDate }}</span>
+            </div>
+
+            <div class="grid-item survey-budget">
+                <label>{{ 'total_budget' | translate }}</label>
+                <div class="grid-row" title="{{ survey.formatted.budgetAmount }} INC">
+                    <span class="line-limit">{{ survey.formatted.budgetAmount }}</span>
+                    <span class="coin-suffix">INC</span>
+                </div>
+            </div>
+
+            <div class="grid-item survey-reward">
+                <label>{{ 'reward_for_participation' | translate }}</label>
+                <div class="grid-row" title="{{ survey.formatted.rewardAmount }} INC">
+                    <span class="line-limit">{{ survey.formatted.rewardAmount }}</span>
+                    <span class="coin-suffix">INC</span>
+                </div>
+            </div>
+
+            <div *ngIf="showQuestionsNum || questionsNum" class="grid-item survey-quest-num">
+                <label>{{ 'questions' | translate }}</label>
+                <span>{{ survey.questions?.length || questionsNum }}</span>
+            </div>
+
+            <div *ngIf="showMaxParts" class="grid-item survey-max-parts">
+                <label>{{ 'maximum_participations' | translate }}</label>
+                <span class="line-limit" [title]="maxParts">{{ maxParts }}</span>
+            </div>
+
+            <div *ngIf="showLocation" class="grid-item survey-location">
+                <label>{{ 'location' | translate }}</label>
+                <a class="link grid-value" [href]="surveyLocation">{{ surveyLocation }}</a>
+            </div>
+        </div>
+    
+    </div>
+
+    <div *ngIf="showCostInfo" class="content-panel flex-grid survey-cost-info">
+    
+        <div *ngIf="gasReserve" class="grid-item survey-gas-reserve">
+            <label>{{ 'gas_reserve' | translate }}</label>
+            <div class="grid-row" title="{{ gasReserve }} {{ currSymbol }}">
+                <span class="line-limit">{{ gasReserve }}</span>
+                <span class="coin-suffix">{{ currSymbol }}</span>
+            </div>
+        </div>
+
+        <div *ngIf="engineRate" class="grid-item survey-engine-rate">
+            <label>{{ 'engine_rate' | translate }}</label>
+            <div class="grid-row" title="{{ engineRate }} {{ currSymbol }}">
+                <span class="line-limit">{{ engineRate }}</span>
+                <span class="coin-suffix">{{ currSymbol }}</span>
+            </div>
+        </div>
+
+        <div *ngIf="totalToPay" class="grid-item survey-total-pay">
+            <label>{{ 'total_cost_without_gas' | translate }}</label>
+            <div class="grid-row" title="{{ totalToPay }} {{ currSymbol }}">
+                <span class="line-limit">{{ totalToPay }}</span>
+                <span class="coin-suffix">{{ currSymbol }}</span>
+            </div>
+        </div>
+    
+    </div>
+
+    <div *ngIf="showKeys && survey.partKeys?.length > 0" class="content-panel survey-keys-panel">
+        <div class="survey-keys-cnt">
+            <div class="grid-item">
+                <label>{{ 'coupons' | translate }}</label>
+    
+                <div class="survey-keys">
+                    <span *ngFor="let key of survey.partKeys">{{ key }}</span>
+                </div>
+            </div>
+    
+            <button class="survey-keys-export" mat-mini-fab color="primary" title="{{ 'export_coupons' | translate }}" 
+                (click)="exportKeys()">
+                <mat-icon>ios_share</mat-icon>
+            </button>
+        </div>
+
+        <div class="survey-keys-error"></div>
+        <span class="field-info">{{ 'have_send_coupons_to_users' | translate }}</span>
+        <span class="field-info relevant-info"><i>{{ 'save_your_coupons' | translate }}</i></span>
+    </div>
+
+    <div *ngIf="showQuestions && pageQuestions.length > 0" class="question-list">
+        <div *ngIf="showQuestionsHead" class="questions-head">
+            <span>{{ 'questions' | translate }} ({{ survey.questions.length }})</span>
+            <span>{{ 'page' | translate }} {{ (paginatorData.page+1) }} / {{ paginatorData.pageCount }}</span>
+        </div>
+    
+        <div class="content-panel question-box" *ngFor="let question of pageQuestions; let i = index" id="question-box-{{ question.viewId }}">
+            <span class="question-title">{{ question.content.title }}</span>
+            <span *ngIf="question.content.description" class="question-desc">{{ question.content.description }}</span>
+            <dynamic-template class="question-comp" [item]="getQuestionItem(i)"></dynamic-template>
+            <div id="response-error-{{ question.viewId }}"></div>
+        </div>
+    </div>
+
+    <p-paginator *ngIf="showQuestions && pageQuestions.length > 0" class="paginator-cnt" [first]="paginatorData.first" [rows]="paginatorData.rows" [totalRecords]="survey.questions.length" (onPageChange)="onPageChange($event)"
+                [showJumpToPageDropdown]="true" [showPageLinks]="false" [rowsPerPageOptions]="[5,10,15,20]"></p-paginator>
+
+</div>

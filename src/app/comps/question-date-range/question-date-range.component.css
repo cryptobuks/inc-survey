@@ -1,0 +1,16 @@
+.date-range {
+  display: flex;
+  flex-direction: row;
+  place-content: center space-around;
+  align-items: center;
+  gap: 10px;
+}
+
+.date-range p-calendar {
+  display: block;
+  width: 256px;
+}
+
+::ng-deep .date-range .p-calendar {
+  width: 100%;
+}

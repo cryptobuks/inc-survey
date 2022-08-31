@@ -1,0 +1,140 @@
+.input-token {
+    flex-direction: row;
+    flex-wrap: wrap;
+    display: flex;
+    place-content: center space-between;
+    align-items: center;
+    padding: 16px;
+    background: var(--surface-c);
+    border: 1px solid var(--surface-border);
+    border-radius: 1rem;
+}
+
+.input-token .selector {
+    flex-direction: row;
+    display: flex;
+    align-items: center;
+    /*cursor: pointer;*/
+    width: 160px;
+}
+
+.input-token .selector .icon {
+  display: inline-block;
+  width: 54px;
+  height: 54px;
+  background: var(--surface-0);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.input-token .selector .icon > img {
+    width: 40px;
+    height: 40px;
+    margin: 7px 0 0 7px;
+    border-radius: 50%;
+}
+
+.input-token .selector .text {
+    margin-left: 10px;
+}
+
+.input-token .selector .text .desc {
+    display: block;
+    font-size: 14px;
+    color: var(--text-color-secondary);
+}
+
+.input-token .selector .text .tkn-name {
+    flex-direction: row;
+    display: flex;
+    place-content: center space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+.input-token .selector .text .select-btn {
+    font-size: 10px;
+    padding: 4px 10px;
+    margin-top: 4px;
+}
+
+.input-token .box {
+    flex-direction: row;
+    display: flex;
+    align-items: center;
+    padding: 11px;
+    background: var(--surface-0);
+    border: 1px solid var(--surface-border);
+    border-radius: 1rem;
+    min-width: 200px;
+    height: 54px;
+    flex: 1;
+}
+
+.input-token .box .amount-in {
+    display: block;
+    color: var(--text-color);
+    font-size: 1.5rem;
+    font-weight: 700;
+    border: 0;
+    outline: none;
+    background: none;
+    width: 100%;
+    flex: 1;
+}
+
+/*.input-token .box .amount-in::placeholder {
+    color: rgb(0 0 0 / 50%);
+}*/
+
+/* Chrome, Safari, Edge, Opera */
+.input-token .box .amount-in::-webkit-outer-spin-button,
+.input-token .box .amount-in::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Firefox */
+.input-token .box .amount-in {
+  -moz-appearance: textfield;
+}
+
+.input-token .box .max-btn {
+    font-size: 10px;
+    padding: 4px 10px;
+    min-width: 41px;
+    margin-left: .625rem;
+}
+
+.input-token .info {
+    width: 100%;
+    color: var(--text-color-secondary);
+    font-size: .85rem;
+    position: relative;
+    height: 20px;
+}
+
+.input-token .info .balance {
+    display: block;
+    cursor: pointer;
+    position: absolute;
+    top: 8px;
+}
+
+.input-token .info .price {
+    display: block;
+    cursor: pointer;
+    position: absolute;
+    top: 8px;
+    right: 0;
+}
+
+@media screen and (max-width: 480px) {
+    .input-token .selector {
+        width: 100%;
+    }
+    .input-token .box {
+        margin-top: 10px;
+    }
+}

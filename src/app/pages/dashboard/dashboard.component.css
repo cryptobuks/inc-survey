@@ -1,0 +1,46 @@
+.dashboard-cnt {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.dashboard-content {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap-reverse;
+    justify-content: center;
+    gap: 40px;
+}
+
+.dash-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    width: 320px;
+}
+
+.dash-cards dash-card {
+    display: block;
+}
+
+/*.dash-cards .dash-card {
+    height: 138px;
+}*/
+
+.dash-charts {
+    flex: 1;
+    width: 100%;
+}
+
+.dash-charts inc-timeline, .dash-charts own-surveys-chart {
+    display: block;
+}
+
+.dash-charts >*:not(:first-child) {
+    margin-top: 40px;
+}
+
+@media screen and (max-width: 1280px) {
+    .dashboard-cnt {
+        margin: 20px;
+    }
+}

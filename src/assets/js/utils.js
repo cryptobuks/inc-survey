@@ -1,0 +1,2 @@
+var components = {};
+var charts = {};

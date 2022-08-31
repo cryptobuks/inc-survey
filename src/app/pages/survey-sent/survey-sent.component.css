@@ -1,0 +1,15 @@
+.details-cnt {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.survey-tx, .survey-details {
+    margin-top: 20px;
+    display: block;
+}
+
+@media screen and (max-width: 1040px) {
+    .details-cnt {
+        margin: 20px;
+    }
+}

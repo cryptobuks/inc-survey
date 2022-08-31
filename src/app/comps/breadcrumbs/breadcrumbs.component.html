@@ -1,0 +1,14 @@
+<div *ngIf="items?.length > 1" class="content-panel breadcrumbs">
+    <button class="back" mat-icon-button (click)="back()">
+        <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <ul>
+        <li *ngFor="let item of items; let i = index">
+            <a *ngIf="item.url && i < items.length - 1" [routerLink]="item.url">
+                <span class="line-limit" title="{{ item.label | translate }}">{{ item.label | translate }}</span>
+            </a>
+            <span *ngIf="!item.url || i == items.length - 1" class="line-limit" title="{{ item.label | translate }}">{{ item.label | translate }}</span>
+        </li>
+    </ul>
+</div>

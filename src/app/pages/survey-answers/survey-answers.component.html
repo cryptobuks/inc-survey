@@ -1,0 +1,79 @@
+<div class="survey-answers-cnt">
+
+    <breadcrumbs></breadcrumbs>
+
+    <div *ngIf="loading" class="loading-cnt">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div *ngIf="!loading && partsNum > 0">
+        
+        <survey-banner [survey]="survey" [surveyStateInfo]="surveyStateInfo" (onClick)="backToDetails()"></survey-banner>
+
+        <p-tabView class="tab-view" [(activeIndex)]="selectedTab">
+            <p-tabPanel header="{{ 'resumen' | translate }}">
+
+                <div *ngIf="selectedTab == 0" class="resumen-cnt">
+                    <response-impl *ngFor="let qIndex of questionIndexes" [surveyId]="survey.id" [questionIndex]="qIndex"></response-impl>
+
+                    <p-paginator class="paginator-cnt" [first]="paginatorDataForResumen.first" [rows]="paginatorDataForResumen.rows" 
+                            [totalRecords]="survey.questions.length" (onPageChange)="onPageChangeForResumen($event)"
+                            [showJumpToPageDropdown]="true" [showPageLinks]="false" [rowsPerPageOptions]="[5,10,15,20]"></p-paginator>
+                </div>
+
+            </p-tabPanel>
+            <p-tabPanel header="{{ 'individual' | translate }}">
+
+                <div *ngIf="selectedTab == 1" class="individual-cnt">
+                    <div class="part-paginator">
+                        <span>{{ 'participation' | translate }}</span>
+
+                        <p-paginator [first]="paginatorDataForIndividual.first" [rows]="paginatorDataForIndividual.rows" 
+                            [totalRecords]="partsNum" (onPageChange)="onPageChangeIndividual($event)"
+                            [showJumpToPageDropdown]="true" [showPageLinks]="false"></p-paginator>
+                    </div>
+
+                    <div class="content-panel flex-grid part-data">
+
+                        <div class="grid-item">
+                            <label>{{ 'participant' | translate }}</label>
+                            <span>{{ partAddress }}</span>
+                        </div>
+
+                        <div class="grid-item">
+                            <label>{{ 'participation_date' | translate }}</label>
+                            <span>{{ partEntryTime }}</span>
+                        </div>
+                    
+                    </div>
+
+                    <survey-impl [survey]="survey" [showDetails]="false" [disabledQuestions]="true" [paginatorRows]="paginatorRowsForQuestions" #surveyComp></survey-impl>
+                </div>
+
+            </p-tabPanel>
+        </p-tabView>
+    
+        <div class="control-grid">
+    
+            <button mat-flat-button class="template-icon back-button" [disabled]="exporting" (click)="backToDetails()">
+                <mat-icon icon="arrow_back"></mat-icon>
+                <span>{{ 'back_to_survey_details' | translate }}</span>
+            </button>
+
+            <button mat-flat-button class="template-icon print-button" color="primary" [disabled]="exporting" (click)="printPage()">
+                <mat-icon icon="print"></mat-icon>
+                <span>{{ 'print_page' | translate }}</span>
+            </button>
+
+            <button mat-flat-button class="template-icon excel-button" [class.template-spinner]="exporting" [disabled]="exporting" 
+                color="accent" (click)="exportData()">
+                <mat-icon svgIcon="excel"></mat-icon>
+                <span>{{ 'export_data' | translate }}</span>
+            </button>
+    
+        </div>
+    </div>
+
+    <span *ngIf="!loading && partsNum == 0" class="no-results">{{ 'no_results_found' | translate }}</span>
+
+</div>

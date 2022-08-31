@@ -1,0 +1,26 @@
+.input-single-line, .input-multi-line {
+    width: 100%;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.input-single-line > input, .input-multi-line > textarea {
+    width: 100%;
+}
+
+.input-single-line > i, .input-multi-line > i {
+    cursor: pointer;
+}
+
+.input-multi-line > i {
+    top: 1.25rem;
+    /*right: 0.5rem;*/
+}
+
+.input-multi-line > textarea:not(disabled) {
+    resize: vertical;
+    max-height: 256px;
+}
+
+.input-multi-line > textarea:disabled {
+    resize: none;
+}

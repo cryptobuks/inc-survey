@@ -1,0 +1,24 @@
+<div *ngIf="state?.txHash" class="details-cnt">
+
+    <breadcrumbs></breadcrumbs>
+
+    <survey-banner [survey]="state.survey" [surveyStateInfo]="surveyStateInfo" (onClick)="backToDetails()">
+    </survey-banner>
+
+    <tx-status class="tx-details" [txHash]="state.txHash" [isMetaTx]="state.isMetaTx" (onReceipt)="onReceipt($event)"></tx-status>
+
+    <div class="control-grid">
+
+        <button mat-flat-button class="template-icon back-button" [disabled]="!receipt" (click)="goDashboard()">
+            <mat-icon icon="arrow_upward"></mat-icon>
+            <span>{{ 'go_to_dashboard' | translate }}</span>
+        </button>
+
+        <button mat-flat-button class="template-icon print-button" color="primary" [disabled]="!receipt" (click)="printDetails()">
+            <mat-icon icon="print"></mat-icon>
+            <span>{{ 'print_details' | translate }}</span>
+        </button>
+
+    </div>
+
+</div>

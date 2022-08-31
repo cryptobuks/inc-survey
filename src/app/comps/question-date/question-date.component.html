@@ -1,0 +1,7 @@
+<p-calendar *ngIf="!data.content.showTime" class="date-picker" placeholder="{{ 'date' | translate }}" 
+    [(ngModel)]="data.response.input" [disabled]="data.state.edited || data.state.disabled"
+    [showIcon]="true" (onSelect)="calendar.hideOverlay()" #calendar></p-calendar>
+
+<p-calendar *ngIf="data.content.showTime" class="date-picker" placeholder="{{ 'date_and_time' | translate }}"
+    [(ngModel)]="data.response.input" [disabled]="data.state.edited || data.state.disabled"
+    [showIcon]="true" [showTime]="true" [showSeconds]="true" (onSelect)="calendar.hideOverlay()" #calendar></p-calendar>

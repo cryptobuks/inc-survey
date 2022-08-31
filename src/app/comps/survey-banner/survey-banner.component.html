@@ -1,0 +1,25 @@
+<div class="content-panel survey-banner" matRipple (click)="onClick.emit($event)">
+
+    <div class="survey-logo">
+        <img *ngIf="survey.imageData" class="thumb-circle" alt="Logo" [src]="survey.imageData" loading="lazy" onerror="this.src='assets/img/broken_image.png';" />
+        <img *ngIf="!survey.imageData" class="thumb-circle" alt="Logo" src="assets/img/empty_image.png" />
+    </div>
+
+    <div class="survey-info">
+        <span class="line-limit survey-title" title="{{ survey.title }}">{{ survey.title }}</span>
+        <span class="line-limit survey-desc" title="{{ survey.description }}">{{ survey.description }}</span>
+    </div>
+
+    <div *ngIf="surveyStateInfo" class="survey-state">
+        <p-tag *ngIf="surveyStateInfo.isClosed" styleClass="p-mr-2" severity="success" value="{{ 'closed' | translate }}"></p-tag>
+        <p-tag *ngIf="surveyStateInfo.isOpened && surveyStateInfo.enoughBudget" styleClass="p-mr-2" severity="info" [value]="surveyStateInfo.rmngDuration"></p-tag>
+        <p-tag *ngIf="surveyStateInfo.isOpened && surveyStateInfo.enoughBudget == false" styleClass="p-mr-2" severity="danger" value="{{ 'no_budget' | translate }}"></p-tag>
+    </div>
+
+    <span *ngIf="!surveyStateInfo" class="survey-state">
+        <p-tag *ngIf="getState(survey) == SurveyState.OPENED" styleClass="p-mr-2" severity="info" value="{{ 'opened' | translate }}"></p-tag>
+        <p-tag *ngIf="getState(survey) == SurveyState.CLOSED" styleClass="p-mr-2" severity="success" value="{{ 'closed' | translate }}"></p-tag>
+        <p-tag *ngIf="getState(survey) == SurveyState.PENDING" styleClass="p-mr-2" severity="warning" value="{{ 'pending' | translate }}"></p-tag>
+    </span>
+
+</div>

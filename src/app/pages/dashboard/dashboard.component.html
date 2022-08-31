@@ -1,0 +1,31 @@
+<div class="dashboard-cnt">
+
+    <breadcrumbs></breadcrumbs>
+
+    <div class="dashboard-content">
+
+        <div class="dash-charts">
+    
+            <inc-timeline #incTimeline></inc-timeline>
+            <own-surveys-chart [surveyState]="SurveyState.OPENED" #ownOpenedSurveysChart></own-surveys-chart>
+            <own-surveys-chart [surveyState]="SurveyState.CLOSED" #ownClosedSurveysChart></own-surveys-chart>
+    
+        </div>
+
+        <div class="dash-cards">
+            <dash-card icon="fact_check" iconBg="linear-gradient(60deg,#ffa726,#fb8c00)"
+                title="{{ 'my_surveys' | translate }}" [value]="surveysLength"
+                infoIcon="open_in_new" info="{{ 'see_my_surveys' | translate }}"
+                (onInfoClick)="checkSurveys()" [disabledAction]="surveysLength == 0">
+            </dash-card>
+        
+            <dash-card icon="edit_note" iconBg="linear-gradient(60deg,#66bb6a,#43a047)"
+                title="{{ 'my_participations' | translate }}" [value]="participationsLength"
+                infoIcon="open_in_new" info="{{ 'see_my_participations' | translate }}"
+                (onInfoClick)="checkParticipations()" [disabledAction]="participationsLength == 0">
+            </dash-card>
+        </div>
+
+    </div>
+    
+</div>

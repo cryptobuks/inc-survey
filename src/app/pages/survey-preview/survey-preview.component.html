@@ -1,0 +1,31 @@
+<div class="preview-cnt">
+
+    <breadcrumbs></breadcrumbs>
+
+    <survey-impl *ngIf="state?.survey" [survey]="state.survey" [showLogoUrl]="true" [showQuestionsNum]="true" [showMaxParts]="true" [showKeys]="true" 
+    [gasReserve]="gasReserve" [engineRate]="engineRate" [totalToPay]="totalToPay" #surveyComp></survey-impl>
+
+    <div class="relevant-info">
+        {{ 'test_survey_before_submitting_to_blockchain' | translate }}
+    </div>
+
+    <div class="control-grid">
+
+        <button mat-flat-button class="template-icon back-button" [class.template-spinner]="editing" [disabled]="loading" (click)="editSurvey()">
+            <mat-icon icon="edit"></mat-icon>
+            <span>{{ 'edit_survey' | translate }}</span>
+        </button>
+
+        <button mat-flat-button class="template-icon test-button" [class.template-spinner]="testing" [disabled]="loading" color="accent" (click)="testSurvey()">
+            <mat-icon icon="gpp_good"></mat-icon>
+            <span>{{ 'test_survey' | translate }}</span>
+        </button>
+
+        <button mat-flat-button class="template-icon send-button" [class.template-spinner]="sending" [disabled]="loading" color="primary" (click)="confirmSurvey($event)">
+            <mat-icon icon="send"></mat-icon>
+            <span>{{ 'send_survey' | translate }}</span>
+        </button>
+
+    </div>
+
+</div>

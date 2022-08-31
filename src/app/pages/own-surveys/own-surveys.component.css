@@ -1,0 +1,23 @@
+.survey-list-cnt {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.survey-list {
+    margin-top: 20px;
+}
+
+.survey-list survey-list-item:not(:first-child) {
+    display: block;
+    margin-top: 20px;
+}
+
+.survey-list-cnt .paginator-cnt {
+    margin-top: 20px;
+}
+
+@media screen and (max-width: 1040px) {
+    .survey-list-cnt {
+        margin: 20px;
+    }
+}
