@@ -13,9 +13,7 @@
 
         <div *ngIf="surveyStateInfo.canParticipate">
 
-            <div class="relevant-info">
-                {{ 'dnot_provide_personal_data' | translate }}
-            </div>
+            <p-messages [(value)]="messages" [enableService]="false"></p-messages>
 
             <div *ngIf="survey.keyRequired" class="content-panel part-key-cnt">
                 <span class="question-title">{{ 'enter_oupon_provided_by_survey_owner' | translate }}</span>
@@ -28,15 +26,6 @@
             </div>
 
             <survey-impl [survey]="survey" [showDetails]="false" #surveyComp></survey-impl>
-
-            <div *ngIf="surveyStateInfo.isOpened && !surveyStateInfo.enoughBudget" class="relevant-info">
-                {{ 'no_more_parts_survey_not_have_budget' | translate }}
-            </div>
-
-            <div *ngIf="surveyStateInfo.isOpened && surveyStateInfo.enoughBudget && !enoughGasReserve"
-                class="relevant-info">
-                {{ 'not_enough_gas_reserve_to_assume_parts' | translate }}
-            </div>
 
         </div>
 
@@ -58,37 +47,6 @@
     </div>
 
 </div>
-
-<p-dialog header="{{ 'captcha_test' | translate }}" [(visible)]="displayCaptchaDialog"
-    [breakpoints]="{'960px': '75vw'}" [style]="{width: '50vw'}" [modal]="true" [draggable]="false" [resizable]="false"
-    [dismissableMask]="true">
-
-    <div class="captcha-cnt">
-        <span class="captcha-label">{{ 'solve_following_captcha' | translate }}</span>
-
-        <div class="captcha-image-cnt">
-            <img class="captcha-image" [src]="captchaUrl" alt="Captcha" loading="lazy" />
-
-            <button *ngIf="captchaUrl" mat-icon-button aria-label="Generate" [disabled]="generatingCaptcha" (click)="genCaptchaUrl()">
-                <mat-icon>autorenew</mat-icon>
-            </button>
-        </div>
-    
-        <span class="p-input-icon-right captcha-response">
-            <i *ngIf="captcha" class="pi pi-times" (click)="captcha=''"></i>
-            <input placeholder="{{ 'captcha_text' | translate }}" type="text" pInputText maxlength="36"
-                [(ngModel)]="captcha">
-        </span>
-    </div>
-
-    <ng-template pTemplate="footer">
-        <button class="icon-text-button" mat-flat-button color="primary" (click)="sendMetaTx()">
-            <mat-icon>send</mat-icon>
-            <span>{{ 'send' | translate }}</span>
-        </button>
-    </ng-template>
-
-</p-dialog>
 
 <p-dialog header="{{ 'signature_request' | translate }}" [(visible)]="displaySigReqDialog"
     [breakpoints]="{'960px': '75vw'}" [style]="{width: '50vw'}" [modal]="true" [draggable]="false" [resizable]="false"

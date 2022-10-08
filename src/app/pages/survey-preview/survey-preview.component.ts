@@ -67,6 +67,8 @@ export class SurveyPreviewComponent extends BasePageComponent {
     this.onAccountLoadedRemover = this.web3Service.onAccountLoaded.add(() => {
       this.loadAllowance();
     });
+
+    this.pushInfo(this.translateService.instant('test_survey_before_submitting_to_blockchain'));
   }
 
   onViewLoaded() {
@@ -100,11 +102,7 @@ export class SurveyPreviewComponent extends BasePageComponent {
         return;
       }
   
-      this.messageService.add({
-        severity:'info', 
-        summary: this.translateService.instant("info"),
-        detail: this.translateService.instant("data_entered_is_correct")
-      });
+      this.showInfo(this.translateService.instant("data_entered_is_correct"));
     } finally {
       this.loading = false;
       this.testing = false;

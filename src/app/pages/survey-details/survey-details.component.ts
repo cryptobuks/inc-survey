@@ -226,24 +226,16 @@ export class SurveyDetailsComponent extends BasePageComponent {
       setAppCover(this.translateService.instant("please_wait"));
 
       await this.web3Service.loadAccountData();
-      await this.surveyStateInfo.loadData(this.survey);
+      await this.surveyStateInfo.loadData(this.survey, this.checkAlerts.bind(this));
 
       if (tx.events.OnSurveySolved.returnValues.budgetRefund > 0) {
         let budgetRefund = toFormatBigNumber(toAmount(tx.events.OnSurveySolved.returnValues.budgetRefund));
-        this.messageService.add({
-          severity: 'success',
-          summary: this.translateService.instant("success"),
-          detail: this.translateService.instant("for_remaining_budget_received_refund_x", { val1: budgetRefund + ' INC' })
-        });
+        this.showSuccess(this.translateService.instant("for_remaining_budget_received_refund_x", { val1: budgetRefund + ' INC' }));
       }
 
       if (tx.events.OnSurveySolved.returnValues.gasRefund > 0) {
         let gasRefund = toFormatBigNumber(toAmount(tx.events.OnSurveySolved.returnValues.gasRefund));
-        this.messageService.add({
-          severity: 'success',
-          summary: this.translateService.instant("success"),
-          detail: this.translateService.instant("for_gas_reserve_received_refund_x", { val1: gasRefund + ' ' + this.currSymbol })
-        });
+        this.showSuccess(this.translateService.instant("for_gas_reserve_received_refund_x", { val1: gasRefund + ' ' + this.currSymbol }));
       }
 
     } catch (err: any) {
@@ -283,14 +275,10 @@ export class SurveyDetailsComponent extends BasePageComponent {
       setAppCover(this.translateService.instant("please_wait"));
 
       await this.web3Service.loadAccountData();
-      await this.surveyStateInfo.loadData(this.survey);
+      await this.surveyStateInfo.loadData(this.survey, this.checkAlerts.bind(this));
 
       let gasAdded = toFormatBigNumber(toAmount(tx.events.OnGasReserveIncreased.returnValues.gasAdded));
-      this.messageService.add({
-        severity: 'success',
-        summary: this.translateService.instant("success"),
-        detail: this.translateService.instant("added_x_for_gas_reserve", { val1: gasAdded + ' ' + this.currSymbol })
-      });
+      this.showSuccess(this.translateService.instant("added_x_for_gas_reserve", { val1: gasAdded + ' ' + this.currSymbol }));
 
     } catch (err: any) {
       this.showTxError(err);
@@ -320,7 +308,7 @@ export class SurveyDetailsComponent extends BasePageComponent {
 
       this.partPrice = await this.surveyService.calcPartPrice();
       this.questionsNum = await this.surveyService.getQuestionsLength(surveyId);
-      await this.surveyStateInfo.loadData(this.survey);
+      await this.surveyStateInfo.loadData(this.survey, this.checkAlerts.bind(this));
 
       setBreadcrumbForDetails(this.router, surveyId, this.survey.title);
 
@@ -329,6 +317,16 @@ export class SurveyDetailsComponent extends BasePageComponent {
       this.backToList();
     } finally {
       this.loading = false;
+    }
+  }
+
+  private async checkAlerts() {
+    if(this.surveyStateInfo.isOpened && this.surveyStateInfo.enoughBudget && this.survey.keyRequired) {
+      this.pushInfo(this.translateService.instant('survey_requires_coupon_participate'));
+    }
+
+    if(this.surveyStateInfo.isOpened && !this.surveyStateInfo.enoughBudget) {
+      this.pushWarn(this.translateService.instant('no_more_parts_survey_not_have_budget'));
     }
   }
 }

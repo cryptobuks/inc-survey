@@ -1,7 +1,7 @@
 import { Component, ElementRef } from '@angular/core';
-import BigNumber from 'bignumber.js';
 import { SurveyTakeState } from 'src/app/models/survey-take-state';
 import { SurveyStateInfoService } from 'src/app/services/survey-state-info.service';
+import { CURRENT_CHAIN } from 'src/app/shared/constants';
 import { printPage } from 'src/app/shared/helper';
 import { setBreadcrumbForDetails } from 'src/app/shared/menu';
 import { BasePageComponent } from '../base-page.component';
@@ -17,7 +17,11 @@ export class PartSentComponent extends BasePageComponent {
   readonly titleKey = "participation_status";
 
   state: SurveyTakeState;
+  txHash: string;
   receipt: any;
+
+  gettingHash: boolean;
+  attemps = 0;
 
   constructor(
     element: ElementRef,
@@ -28,7 +32,7 @@ export class PartSentComponent extends BasePageComponent {
   }
 
   onInit() {
-    if(!this.state?.txHash) {
+    if (!this.state?.txData) {
       this.goDashboard();
       return;
     }
@@ -36,10 +40,17 @@ export class PartSentComponent extends BasePageComponent {
     this.setTitle(this.translateService.instant("participation_status") + " ´" + this.state.survey.title + "´");
     setBreadcrumbForDetails(this.router, this.state.survey.id, this.state.survey.title);
     this.loadSurveyStateInfo();
+
+    if (this.state.isMetaTx) {
+      this.gettingHash = true;
+      this.getTxHash();
+    } else {
+      this.txHash = this.state.txData;
+    }
   }
 
   onViewLoaded() {
-    if(!this.state?.txHash) {
+    if (!this.state?.txData) {
       return;
     }
   }
@@ -67,5 +78,33 @@ export class PartSentComponent extends BasePageComponent {
 
   private async loadSurveyStateInfo() {
     await this.surveyStateInfo.loadData(this.state.survey);
+  }
+
+  private async getTxHash() {
+    this.attemps++;
+    const result = await this.utilService.getHash(CURRENT_CHAIN, this.state.txData);
+
+    if (result.success) {
+      this.gettingHash = false;
+      this.txHash = result.data;
+      return;
+    }
+
+    if(result.data != 'Relayer: no result') {
+      this.gettingHash = false;
+      this.showTxError(new Error(result.data));
+      return;
+    }
+
+    if(this.attemps >= 24) {
+      this.gettingHash = false;
+      this.showWarn(this.translateService.instant('not_possible_obtain_tx_hash'));
+      this.pushInfo(this.translateService.instant('if_relayer_processes_your_trade_later'));
+      return;
+    }
+
+    setTimeout(() => {
+      this.getTxHash();
+    }, 5000);// Check again in 5 seconds
   }
 }

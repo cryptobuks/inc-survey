@@ -261,6 +261,11 @@ input::placeholder, textarea::placeholder {
     white-space: pre-line;
 }
 
+.p-toast .p-toast-message .p-toast-icon-close {
+    width: 2.25rem;
+    height: 1.5rem;
+}
+
 .p-inputnumber-button, .p-selectbutton .p-button, .p-togglebutton {
     border-radius: 2rem;
 }
@@ -416,7 +421,7 @@ p-selectbutton
     animation: spinner 1s linear infinite;
     width: 16px;
     height: 16px;
-    /*margin-bottom: 4px;*/
+    margin-bottom: 4px;
     display: inline-block;
 }
 
@@ -614,6 +619,15 @@ div[contenteditable]:empty:not(:focus):before {
     border: none !important;
 }
 
+.p-message .p-message-detail {
+    white-space: pre-line;
+}
+
+.inline-msg {
+    display: block;
+    margin-top: 10px;
+}
+
 .grecaptcha-badge {
     bottom: 90px !important;
     /* Hide during rendering */
@@ -649,12 +663,6 @@ div[contenteditable]:empty:not(:focus):before {
     font-size: 24px;
     font-weight: 500;
     color: var(--text-color-secondary);
-}
-
-.relevant-info {
-    font-size: 16px;
-    font-weight: 500;
-    color: #ff4081;
 }
 
 .field-info {
@@ -724,6 +732,19 @@ div[contenteditable]:empty:not(:focus):before {
     text-shadow: 2px 2px var(--surface-500);
 }
 
+.dot-pulse {
+  display: inline-block;
+  width: 60px;
+  aspect-ratio: 4;
+  --_g: no-repeat radial-gradient(circle closest-side, var(--primary-color) 90%, #0000);
+  background: 
+    var(--_g) 0%   50%,
+    var(--_g) 50%  50%,
+    var(--_g) 100% 50%;
+  background-size: calc(100%/3) 100%;
+  animation: dot-pulse 1s infinite linear;
+}
+
 /* keyframes */
 
 @keyframes custom-progress-spinner-color {
@@ -758,6 +779,12 @@ div[contenteditable]:empty:not(:focus):before {
 
 @keyframes spinner {
     to {transform: rotate(360deg);}
+}
+
+@keyframes dot-pulse {
+    33%{background-size:calc(100%/3) 0%  ,calc(100%/3) 100%,calc(100%/3) 100%}
+    50%{background-size:calc(100%/3) 100%,calc(100%/3) 0%  ,calc(100%/3) 100%}
+    66%{background-size:calc(100%/3) 100%,calc(100%/3) 100%,calc(100%/3) 0%  }
 }
 
 /* Responsive Styles */

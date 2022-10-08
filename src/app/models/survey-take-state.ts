@@ -4,6 +4,6 @@ export class SurveyTakeState {
     survey: SurveyImpl;
     questionsNum: number;
     partKey: string = '';
-    txHash: string;
+    txData: string;
     isMetaTx: boolean;
 }

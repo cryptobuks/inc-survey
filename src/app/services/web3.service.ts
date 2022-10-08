@@ -44,7 +44,6 @@ export class Web3Service implements OnDestroy {
   get timeDiff(): any { return this._timeDiff; }
   get currenTime(): any { return new Date().getTime() + (this.timeDiff ?? 0); }
 
-
   private _web3: any;
   private _incContract: any;
   private _offerContract: any;
@@ -61,7 +60,7 @@ export class Web3Service implements OnDestroy {
   private _timeDiff: number;
 
   private web3Modal: any;
-  private intervalId: any;
+  //private intervalId: any;
 
   onAccountLoaded = new SimpleListener();// (accountData: AccountData) => void;
   onChainLoaded = new SimpleListener();// () => void;
@@ -74,16 +73,17 @@ export class Web3Service implements OnDestroy {
       providerOptions, // required
     });
 
-    this.intervalId = setInterval(() => {
+    // every 30 seconds
+    /*this.intervalId = setInterval(() => {
       if (this.web3) {
         this.loadTimeDiff();
       }
-    }, 30000);// every 30 seconds
+    }, 30000);*/
   }
 
   ngOnDestroy() {
-    clearInterval(this.intervalId);
-    this.intervalId = undefined;
+    //clearInterval(this.intervalId);
+    //this.intervalId = undefined;
 
     this.releaseAll();
 

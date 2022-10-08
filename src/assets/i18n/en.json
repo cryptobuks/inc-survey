@@ -30,7 +30,7 @@
     "coupons": "Coupons",
     "coupons_guarantee_but_increase_cost": "Coupons guarantee the participation of specific users but this will increase the cost of the transaction (gas). Alternatively, you can choose not to use the coupons, this way everyone can participate in this survey.",
     "have_send_coupons_to_users": "Each coupon allows a single participation, you will need to send these coupons to the users you want to survey.",
-    "save_your_coupons": "Please save your coupons now as they will not be sent to the blockchain. Instead, part of the resulting hashes will be sent.",
+    "save_your_coupons": "Please save your coupons now as they will not be sent to the blockchain.",
     "export_your_coupons": "Please export your coupons and save them, you might not see them again.",
     "maximum_x_coupons": "Maximum {{val1}} coupons.",
 
@@ -65,13 +65,12 @@
     "token_rate": "Token rate",
     "token_units_per_wei": "TKNbits per 1 wei",
     "during_initial_offering": "During the initial offering",
-    "tokens_are_assigned_immediately": "Tokens are assigned immediately",
-    "obtained_tokens_cannot_be_exchanged": "The obtained tokens can be used to create surveys but cannot be exchanged for others since INC is not listed on any exchange yet.",
+    "tokens_are_assigned_immediately": "Tokens are assigned immediately.",
+    "tokens_used_for_surveys_and_governance": "The obtained tokens can be used to create surveys and participate in governance.",
+    "tokens_cannot_be_exchanged": "The tokens cannot be exchanged for others as INC is not listed on any exchange yet.",
     "rate_decreases_continuously": "The rate decreases continuously until the established minimum, so the price rises.",
     "remaining_amount": "Remaining amount",
     "x_of_total": "{{val1}} of the total",
-
-
 
     "survey_created_successfully": "The survey has been created successfully",
     "survey_solved_correctly": "The survey has been solved correctly",
@@ -357,11 +356,10 @@
     "to_participate_must_send_from_your_account": "To participate you must send the transaction from your account and paying for the gas.",
 
     "gas_reserve_used_to_finance_transactions": "The gas reserve will be used to finance the transactions of the participants.",
-    "you_can_retrieve_remaining_gas_reserve": "You can recover the remaining gas reserve when you finish the survey.",
+    "gas_reserve_estimate_on_current_gas_price": "This is an estimate on the current price of gas, so it does not necessarily cover all participations.",
+    "you_can_add_and_recover_gas_reserve": "You can add more gas reserves at any time and recover the remaining one when the survey ends.",
 
-    "low_gas_reserve": "Low gas reserve.",
-    "survey_not_profitable_no_one_take_it": "If the survey is not profitable, it is unlikely that anyone will take it.",
-    "survey_can_expensive_for_participants": "A survey can even be expensive for the participants if they have to pay gas for the transactions, unless the reward value is high.",
+    "low_gas_reserve_survey_not_profitable": "Low gas reserve. If the survey is not profitable, it is unlikely that anyone will take it, unless the reward value is high.",
     "insufficient_x_balance": "Insufficient {{val1}} balance",
     "answer": "Answer",
     "answers": "Answers",
@@ -455,11 +453,19 @@
 
     "total_amount": "Total amount",
     "raised_amount": "Raised amount",
+    "initial_offer_not_started": "The initial offer has not yet started.",
     "initial_offer_has_ended": "The initial offer has ended, thank you for your participation.",
     "finished": "Finished",
     "export_data": "Export data",
 
     "follow_us_on_twitter_for_progress": "Follow us on twitter to stay up to date with our progress",
+
+    "getting_transaction_hash": "Getting transaction hash",
+
+    "not_possible_obtain_tx_hash": "It has not been possible to obtain the hash of the transaction.",
+    "if_relayer_processes_your_trade_later": "If the relayer processes your trade later, it will appear on the dashboard and you will receive your reward.",
+    
+
 
     "dnot_provide_personal_data": "Please do not provide personal data, the results of the surveys are public.",
     "not_possible_establish_connection": "It has not been possible to establish the connection with the smart contracts of this tool.",

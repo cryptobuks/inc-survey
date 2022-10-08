@@ -51,7 +51,8 @@ export const HTTP_OPTIONS = {
 
 export const RELAYER_API_URL: { [chainId: number]: string } = {
   [ChainId.MATIC]: "https://relayer.inctoken.org/api",
-  [ChainId.MUMBAI]: "http://localhost:3000/api"
+  //[ChainId.MUMBAI]: "http://localhost:3000/api"
+  [ChainId.MUMBAI]: "https://relayer.inctoken.org/api"
 };
 
 export const NET_PARAMS: { [chainId: number]: NetData } = {
@@ -74,37 +75,42 @@ export const WRAPPED_CURRENCY: { [chainId: number]: TokenData } = {
 // TODO add addresses
 export const INC_TOKEN: { [chainId: number]: TokenData } = {
     [ChainId.MATIC]: newToken(ChainId.MATIC, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "Incentive", "INC", 18, INC_LOGO_URL),
-    [ChainId.MUMBAI]: newToken(ChainId.MUMBAI, "0xB7EC48DCD88D33F38f57383D7AB8534E895186a6", "Incentive", "INC", 18, INC_LOGO_URL)
+    [ChainId.MUMBAI]: newToken(ChainId.MUMBAI, "0x0D19cc1c6dc90a312E80DF76068ff9FB518B8ab2", "Incentive", "INC", 18, INC_LOGO_URL)
 };
 
 export const OFFER_ADDRESS: { [chainId: number]: string } = {
   [ChainId.MATIC]: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  [ChainId.MUMBAI]: "0xc994C737eD444F025fc9AD15CF231bd1D04D556C"
+  [ChainId.MUMBAI]: "0x3005acb6Ca55A62161B2Cc94eFE80bcb1f827D8C"
 };
 
 export const SURVEY_ADDRESS: { [chainId: number]: string } = {
     [ChainId.MATIC]: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    [ChainId.MUMBAI]: "0x3a75d4B154830BFd41E2e89f9f06dC209c31FD0d"
+    [ChainId.MUMBAI]: "0x9807BF2C25586e86c14f968785c836d812757496"
 };
 
 export const VALIDATOR_ADDRESS: { [chainId: number]: string } = {
   [ChainId.MATIC]: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  [ChainId.MUMBAI]: "0xC4C1e242dB4Fd0DF76D1A5e8703d40991DD39629"
+  [ChainId.MUMBAI]: "0x3C058e0792ddAB253f7f624A4C1B6878272d9fBa"
 };
 
 export const FORWARDER_ADDRESS: { [chainId: number]: string } = {
   [ChainId.MATIC]: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  [ChainId.MUMBAI]: "0xA55Cd0Cae930AbB829078be16f9d063d1f89763F"
+  [ChainId.MUMBAI]: "0x4ec70b4070563089bAaB0b7d46c595aa16e467D6"
 };
 
 export const ENGINE_ADDRESS: { [chainId: number]: string } = {
     [ChainId.MATIC]: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    [ChainId.MUMBAI]: "0xBf6Dbb44ffA75866361f502a53606bE0dE09837d"
+    [ChainId.MUMBAI]: "0x798a58DDF63D69bc413cbdFD582Fb635B5168F18"
 };
 
 export const WETH_ADDRESS: { [chainId: number]: string } = {
   [ChainId.MATIC]: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
   [ChainId.MUMBAI]: "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889"
+};
+
+export const CONVENIENCE_FEE_ADDRESS: { [chainId: number]: string } = {
+  [ChainId.MATIC]: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  [ChainId.MUMBAI]: "0xd60895f56be15E15fc450bcad08f97937Eb6D31a"
 };
 
 export const chartThemeLight: any = {

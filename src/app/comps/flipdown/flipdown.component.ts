@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { AppComponent } from 'src/app/app.component';
+import { Web3Service } from 'src/app/services/web3.service';
 import { ListenerRemover } from 'src/app/shared/simple-listener';
 
 @Component({
@@ -67,7 +68,7 @@ export class FlipdownComponent implements OnInit {
 
   private onThemeChangedRemover: ListenerRemover;
 
-  constructor() {
+  constructor(private web3Service: Web3Service) {
   }
 
   ngOnInit(): void {
@@ -127,8 +128,8 @@ export class FlipdownComponent implements OnInit {
    * @description Get the time in seconds (unix timestamp)
    **/
   _getTime() {
-    //return this.web3Service.currenTime / 1000;
-    return new Date().getTime() / 1000;
+    //return Math.round(new Date().getTime() / 1000);
+    return Math.round(this.web3Service.currenTime / 1000);
   }
 
   /**
@@ -148,6 +149,8 @@ export class FlipdownComponent implements OnInit {
         // Remove the callback
         this.hasEndedCallback = null;
       }
+
+      clearInterval(this.countdown);
 
       return true;
 

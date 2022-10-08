@@ -3,12 +3,6 @@
     margin: 0 auto;
 }
 
-.take-survey-cnt .relevant-info {
-    display: block;
-    margin-top: 20px;
-    text-align: center;
-}
-
 .part-key-cnt {
     margin-top: 20px;
     text-align: start;
@@ -30,37 +24,6 @@
 
 .part-key-cnt .part-key > i {
     cursor: pointer;
-}
-
-.captcha-cnt .captcha-label {
-    display: block;
-}
-
-.captcha-cnt .captcha-image-cnt,
-.captcha-cnt .captcha-response {
-    margin-top: 20px;
-}
-
-.captcha-cnt .captcha-image-cnt {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-}
-
-.captcha-cnt .captcha-image {
-    width: 256px;
-    height: 128px;
-}
-
-.captcha-cnt .captcha-response {
-    display: block;
-}
-
-.captcha-cnt .captcha-response > input {
-    width: 100%;
 }
 
 .sign-req {

@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { AppComponent } from 'src/app/app.component';
-import { CURRENT_CHAIN, INC_TOKEN, NET_PARAMS } from 'src/app/shared/constants';
+import { CONVENIENCE_FEE_ADDRESS, CURRENT_CHAIN, INC_TOKEN, NET_PARAMS } from 'src/app/shared/constants';
 import { ListenerRemover } from 'src/app/shared/simple-listener';
 import { UniswapWidgetWrapper } from 'src/extensions/UniswapWidgetWrapper';
 import { BasePageComponent } from '../base-page.component';
@@ -18,6 +18,7 @@ export class UniswapComponent extends BasePageComponent {
   jsonRpcEndpoint: string;
   defaultInputTokenAddress: string;
   defaultOutputTokenAddress: string;
+  convenienceFeeRecipient: string;
   darkMode: boolean;
 
   @ViewChild('uniswapWidget') uniswapWidget: UniswapWidgetWrapper;
@@ -34,6 +35,7 @@ export class UniswapComponent extends BasePageComponent {
     this.jsonRpcEndpoint = NET_PARAMS[CURRENT_CHAIN].rpcUrls[0];
     this.defaultInputTokenAddress = 'NATIVE';
     this.defaultOutputTokenAddress = INC_TOKEN[CURRENT_CHAIN].address;
+    this.convenienceFeeRecipient = CONVENIENCE_FEE_ADDRESS[CURRENT_CHAIN];
     this.darkMode = AppComponent.instance.isDarkTheme;
 
     /*this.onChainLoadedRemover = this.web3Service.onChainLoaded.add(() => {

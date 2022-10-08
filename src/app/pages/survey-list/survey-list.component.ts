@@ -57,7 +57,7 @@ export class SurveyListComponent extends BasePageComponent {
 
     if(!this.state.selectedFilters) {
       this.state.selectedFilters = [
-        this.filters[0], this.filters[1]
+        /*this.filters[0], */this.filters[1]
       ];
     }
 

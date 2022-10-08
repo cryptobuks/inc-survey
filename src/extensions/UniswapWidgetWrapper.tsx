@@ -30,6 +30,7 @@ export class UniswapWidgetWrapper implements OnChanges, OnDestroy, AfterViewInit
     @Input() public jsonRpcEndpoint: string;
     @Input() public defaultInputTokenAddress: string;
     @Input() public defaultOutputTokenAddress: string;
+    @Input() public convenienceFeeRecipient: string;
     @Input() public darkMode: boolean;
 
     tokenList: any;
@@ -63,13 +64,16 @@ export class UniswapWidgetWrapper implements OnChanges, OnDestroy, AfterViewInit
     // https://docs.uniswap.org/sdk/widgets/swap-widget/api
 
     private render() {
-        const { provider, jsonRpcEndpoint, defaultInputTokenAddress, defaultOutputTokenAddress, darkMode } = this;
+        const { provider, jsonRpcEndpoint, defaultInputTokenAddress, defaultOutputTokenAddress, convenienceFeeRecipient, darkMode } = this;
 
         ReactDOM.render(
             <React.StrictMode>
                 <div>
-                    <UniswapWidget provider={provider} jsonRpcEndpoint={jsonRpcEndpoint}  
-                    defaultInputTokenAddress={defaultInputTokenAddress} defaultOutputTokenAddress={defaultOutputTokenAddress}
+                    <UniswapWidget provider={provider} 
+                    jsonRpcEndpoint={jsonRpcEndpoint}  
+                    defaultInputTokenAddress={defaultInputTokenAddress} 
+                    defaultOutputTokenAddress={defaultOutputTokenAddress}
+                    convenienceFeeRecipient={convenienceFeeRecipient}
                     darkMode={darkMode} tokenList={this.tokenList} />
                 </div>
             </React.StrictMode>, 

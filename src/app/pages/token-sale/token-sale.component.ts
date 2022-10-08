@@ -22,6 +22,13 @@ const SUGGESTED_AMOUNT: { [chainId: number]: BigNumber } = {
   [ChainId.MUMBAI]: SUGGESTED_MATIC
 };
 
+enum SaleState {
+  NONE,
+  PENDING,
+  STARTED,
+  FINISHED
+}
+
 export interface TxData {
   autoTolerance: boolean;
   tolerance: number | undefined;// decimal percent [0-100]
@@ -62,7 +69,11 @@ export class TokenSaleComponent extends BasePageComponent {
   switchedValueInfo = false;
   displayTxConfig = false;
   buying = false;
-  saleFinished = false;
+
+  saleState = SaleState.NONE;
+  get SaleState() {
+    return SaleState;
+  }
 
   get minAmount(): BigNumber {
     return MIN_AMOUNT[CURRENT_CHAIN];
@@ -161,7 +172,11 @@ export class TokenSaleComponent extends BasePageComponent {
     this.loadCcyPrice();
   }
 
-  onEndTime() {
+  onOfferStarted() {
+    this.refresh();
+  }
+
+  onOfferFinished() {
     this.finalizeSale();
   }
 
@@ -256,20 +271,11 @@ export class TokenSaleComponent extends BasePageComponent {
       await this.web3Service.loadAccountData();
 
       let incAmount = toAmount(tx.events.OnBought.returnValues.tokenAmount);
-      this.messageService.add({
-        severity:'success', 
-        summary: this.translateService.instant("success"),
-        detail: this.translateService.instant("have_bought_x", { val1: incAmount + ' INC' })
-      });
+      this.showSuccess(this.translateService.instant("have_bought_x", { val1: incAmount + ' INC' }));
 
       if(tx.events.OnReward) {
         incAmount = toAmount(tx.events.OnReward.returnValues.amount);
-
-        this.messageService.add({
-          severity:'info', 
-          summary: this.translateService.instant("info"),
-          detail: this.translateService.instant("have_received_reward_x", { val1: incAmount + ' INC' })
-        });
+        this.showInfo(this.translateService.instant("have_received_reward_x", { val1: incAmount + ' INC' }));
       }
 
     } catch (err: any) {
@@ -290,7 +296,7 @@ export class TokenSaleComponent extends BasePageComponent {
   }
 
   private setRefreshInterval() {
-    if(this.saleFinished) {
+    if(this.saleState != SaleState.STARTED) {
       return;
     }
 
@@ -310,7 +316,7 @@ export class TokenSaleComponent extends BasePageComponent {
     clearInterval(this.refreshInterval);
     this.rateAmount = "0";
     this.refreshTimeout = undefined;
-    this.saleFinished = true;
+    this.saleState = SaleState.FINISHED;
   }
 
   private setTokenRate() {
@@ -358,10 +364,17 @@ export class TokenSaleComponent extends BasePageComponent {
   }
 
   private async setSaleProgress()  {
-    let owner = await this.incContract.methods.owner().call();
+    const timestamp = Math.round(this.web3Service.currenTime / 1000);
+    this.saleState = (timestamp >= this.offerProps.openingTime)? SaleState.STARTED: SaleState.PENDING;
+
+    if(this.saleState == SaleState.PENDING) {
+      return;
+    }
+    
+    const owner = await this.incContract.methods.owner().call();
     const rmngUnits = await this.web3Service.getIncAllowance(owner, this.offerContract._address);
     const totalSupply = await this.web3Service.getIncTotalSupply();
-    const offerUnits = totalSupply.multipliedBy(.2);
+    const offerUnits = totalSupply.multipliedBy(.15);
     const raisedUnits = offerUnits.minus(rmngUnits);
 
     this.offerAmount = toFormatBigNumber(toAmount(offerUnits));

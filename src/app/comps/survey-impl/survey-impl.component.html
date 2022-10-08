@@ -120,7 +120,7 @@
 
         <div class="survey-keys-error"></div>
         <span class="field-info">{{ 'have_send_coupons_to_users' | translate }}</span>
-        <span class="field-info relevant-info"><i>{{ 'save_your_coupons' | translate }}</i></span>
+        <p-message severity="info" styleClass="mr-2 inline-msg" text="{{ 'save_your_coupons' | translate }}"></p-message>
     </div>
 
     <div *ngIf="showQuestions && pageQuestions.length > 0" class="question-list">

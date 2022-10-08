@@ -37,27 +37,32 @@ export class UtilService {
         return Promise.resolve<number>(data?.current_price);
     }
 
-    async getCaptchaUrl(chainId: number): Promise<string> {
-        let recaptcha = await grecaptcha.execute('6LfrfcQdAAAAAFqwpMDyFMDLJn2HU3zWQqwgnu1E', { action: 'submit' });
-        return RELAYER_API_URL[chainId] + '/captcha/' + recaptcha;
-    }
-
-    async estimatePart(chainId: number, surveyId: number, responses: string[], key: string, captcha: string): Promise<FwdResponse> {
+    async estimatePart(chainId: number, surveyId: number, responses: string[], key: string): Promise<FwdResponse> {
+        const recaptcha = await grecaptcha.execute('6LfrfcQdAAAAAFqwpMDyFMDLJn2HU3zWQqwgnu1E', { action: 'submit' });
         return this.http.post<FwdResponse>(RELAYER_API_URL[chainId] + '/estimate-part', {
             chainId,
             surveyId,
             responses,
             key,
-            captcha
+            recaptcha
         }, HTTP_OPTIONS).toPromise();
     }
 
-    async sendPart(chainId: number, request: FwdRequest, signature: string, captcha: string): Promise<FwdResponse> {
+    async sendPart(chainId: number, request: FwdRequest, signature: string): Promise<FwdResponse> {
+        const recaptcha = await grecaptcha.execute('6LfrfcQdAAAAAFqwpMDyFMDLJn2HU3zWQqwgnu1E', { action: 'submit' });
         return this.http.post<FwdResponse>(RELAYER_API_URL[chainId] + '/send-part', {
             chainId,
             request,
             signature,
-            captcha
+            recaptcha
+        }, HTTP_OPTIONS).toPromise();
+    }
+
+    async getHash(chainId: number, messageId: string): Promise<FwdResponse> {
+        const recaptcha = await grecaptcha.execute('6LfrfcQdAAAAAFqwpMDyFMDLJn2HU3zWQqwgnu1E', { action: 'submit' });
+        return this.http.post<FwdResponse>(RELAYER_API_URL[chainId] + '/part-hash', {
+            messageId,
+            recaptcha
         }, HTTP_OPTIONS).toPromise();
     }
 

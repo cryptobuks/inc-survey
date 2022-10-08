@@ -3,6 +3,12 @@
     margin: 0 auto;
 }
 
+.tx-loading {
+    margin-top: 20px;
+    padding: 100px;
+    text-align: center;
+}
+
 .tx-details {
     margin-top: 20px;
     display: block;

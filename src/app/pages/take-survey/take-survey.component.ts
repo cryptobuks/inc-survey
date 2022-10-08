@@ -26,13 +26,9 @@ export class TakeSurveyComponent extends BasePageComponent {
   survey: SurveyImpl;
   request: FwdRequest;
   decodedData: string;
-  captchaUrl: string;
-  captcha: string;
 
   loading = true;// waiting onDataLoaded
   sending = false;
-  generatingCaptcha = false;
-  displayCaptchaDialog = false;
   displaySigReqDialog = false;
   showDecodedData = false;
   enoughGasReserve: boolean;
@@ -101,6 +97,8 @@ export class TakeSurveyComponent extends BasePageComponent {
     }, () => {
       return this.loadedChainData;
     });
+
+    this.pushInfo(this.translateService.instant('dnot_provide_personal_data'));
   }
 
   onViewLoaded() {
@@ -181,62 +179,27 @@ export class TakeSurveyComponent extends BasePageComponent {
         return;
       }
 
-      if (useMetaTx) {
-        this.genCaptchaUrl();
-        this.displayCaptchaDialog = true;
-      } else {
-        const surveyId = this.survey.id;
-        const responses = this.surveyComp.getResponses();
+      const surveyId = this.survey.id;
+      const responses = this.surveyComp.getResponses();
 
-        setAppCover(this.translateService.instant("waiting_reply"));
+      setAppCover(this.translateService.instant("waiting_reply"));
+
+      if (useMetaTx) {
+        this.request = await this.surveyService.estimatePartFromForwarder(CURRENT_CHAIN, surveyId, responses, this.state.partKey);
+
+        const abiDecoder = new AbiDecoder(this.web3.eth.abi);
+        abiDecoder.addABI(this.engineContract._jsonInterface);
+        const decoded = abiDecoder.decodeMethod(this.request.data);
+        this.decodedData = JSON.stringify(decoded, null, 2);
+
+        this.displaySigReqDialog = true;
+      } else {
         const txHash = await this.surveyService.sendParticipation(surveyId, responses, this.state.partKey);
-        
+
         setAppCover(this.translateService.instant("please_wait"));
         this.finishPart(txHash, false);
       }
 
-    } catch (err: any) {
-      this.showTxError(err);
-    } finally {
-      removeAppCover();
-      this.sending = false;
-    }
-  }
-
-  async genCaptchaUrl() {
-    this.generatingCaptcha = true;
-    this.captcha = undefined;
-
-    try {
-      this.captchaUrl = await this.utilService.getCaptchaUrl(CURRENT_CHAIN);
-    } finally {
-      this.generatingCaptcha = false;
-    }
-  }
-
-  async sendMetaTx() {
-    this.sending = true;
-
-    try {
-      setAppCover(this.translateService.instant("please_wait"));
-
-      if (!this.captcha) {
-        insertValidationError('.captcha-cnt', this.translateService.instant("enter_captcha"));
-        return;
-      }
-
-      this.displayCaptchaDialog = false;
-
-      const surveyId = this.survey.id;
-      const responses = this.surveyComp.getResponses();
-      this.request = await this.surveyService.estimatePartFromForwarder(CURRENT_CHAIN, surveyId, responses, this.state.partKey, this.captcha);
-
-      const abiDecoder = new AbiDecoder(this.web3.eth.abi);
-      abiDecoder.addABI(this.engineContract._jsonInterface);
-      const decoded = abiDecoder.decodeMethod(this.request.data);
-      this.decodedData = JSON.stringify(decoded, null, 2);
-
-      this.displaySigReqDialog = true;
     } catch (err: any) {
       this.showTxError(err);
     } finally {
@@ -253,12 +216,11 @@ export class TakeSurveyComponent extends BasePageComponent {
       setAppCover(this.translateService.instant("waiting_reply"));
 
       const signature = await this.surveyService.signTypedData(this.request);
-      //console.log('TYPED SIGNED: ' + signature);
+      const messageId = await this.surveyService.sendPartFromForwarder(CURRENT_CHAIN, this.request, signature);
 
       setAppCover(this.translateService.instant("please_wait"));
-  
-      const txHash = await this.surveyService.sendPartFromForwarder(CURRENT_CHAIN, this.request, signature, this.captcha);
-      this.finishPart(txHash, true);
+
+      this.finishPart(messageId, true);
 
     } catch (err: any) {
       this.showTxError(err);
@@ -270,15 +232,12 @@ export class TakeSurveyComponent extends BasePageComponent {
     }
   }
 
-  private async finishPart(txHash: string, isMetaTx: boolean) {
-    if (!txHash) {
-      throw new Error("Inconsistency, no transaction hash.");
+  private async finishPart(txData: string, isMetaTx: boolean) {
+    if (!txData) {
+      throw new Error("Inconsistency, no transaction data.");
     }
 
-    //console.log('txHash: ' + JSON.stringify(txHash));
-    //await this.web3Service.loadAccountData(false);
-
-    this.state.txHash = txHash;
+    this.state.txData = txData;
     this.state.isMetaTx = isMetaTx;
     this.survey.questions = undefined;
     this.router.navigate(['/take-survey/status']);
@@ -288,6 +247,14 @@ export class TakeSurveyComponent extends BasePageComponent {
     let gasReserve = this.surveyStateInfo.rmngGasReserve;
     let partPrice = await this.surveyService.calcPartPrice();
     this.enoughGasReserve = !gasReserve.isLessThan(partPrice);
+
+    if(this.surveyStateInfo.isOpened && !this.surveyStateInfo.enoughBudget) {
+      this.pushWarn(this.translateService.instant('no_more_parts_survey_not_have_budget'));
+    }
+
+    if(this.surveyStateInfo.isOpened && this.surveyStateInfo.enoughBudget && !this.enoughGasReserve) {
+      this.pushWarn(this.translateService.instant('not_enough_gas_reserve_to_assume_parts'));
+    }
   }
 
   private async loadSurveyData(surveyId: number) {

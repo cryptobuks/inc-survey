@@ -4,19 +4,20 @@
 
     <p-panel header="{{ 'initial_offer' | translate }}">
         <ng-template pTemplate="icons">
-            <button *ngIf="!saleFinished" class="refresh-button" mat-icon-button type="button" (click)="refresh()" [attr.data-before]="refreshTimeout || ''">
+            <button *ngIf="saleState == SaleState.STARTED" class="refresh-button" mat-icon-button type="button" (click)="refresh()" [attr.data-before]="refreshTimeout || ''">
                 <mat-icon>autorenew</mat-icon>
             </button>
 
-            <button *ngIf="!saleFinished" mat-icon-button type="button" (click)="openTxConfig()" cdkOverlayOrigin
+            <button *ngIf="saleState == SaleState.STARTED" mat-icon-button type="button" (click)="openTxConfig()" cdkOverlayOrigin
                 #menuTrigger="cdkOverlayOrigin">
                 <mat-icon>settings</mat-icon>
             </button>
 
-            <p-tag *ngIf="saleFinished" styleClass="mr-2" severity="success" value="{{ 'finished' | translate }}"></p-tag>
+            <p-tag *ngIf="saleState == SaleState.PENDING" styleClass="mr-2" severity="info" value="{{ 'pending' | translate }}"></p-tag>
+            <p-tag *ngIf="saleState == SaleState.FINISHED" styleClass="mr-2" severity="success" value="{{ 'finished' | translate }}"></p-tag>
         </ng-template>
 
-        <div *ngIf="!saleFinished">
+        <div *ngIf="saleState == SaleState.STARTED">
             <div *ngIf="rateAmount" class="offer-info">
                 <label>{{ 'token_rate' | translate }}:</label>
                 <span>{{ rateAmount }} {{ 'token_units_per_wei' | translate }}</span>
@@ -45,7 +46,11 @@
             </button>
         </div>
 
-        <div *ngIf="saleFinished" class="sale-end">
+        <div *ngIf="saleState == SaleState.PENDING" class="sale-pnd">
+            {{ 'initial_offer_not_started' | translate }}
+        </div>
+
+        <div *ngIf="saleState == SaleState.FINISHED" class="sale-end">
             {{ 'initial_offer_has_ended' | translate }}
         </div>
 
@@ -63,17 +68,23 @@
             </div>
             <mat-slider min="0" max="100" step="0" [value]="raisedPercent"></mat-slider>
         </div>
-    
-        <div *ngIf="offerProps?.closingTime" class="sale-time">
+
+        <div *ngIf="saleState == SaleState.PENDING && offerProps?.openingTime" class="sale-time">
             <label>{{ 'remaining_time' | translate }}</label>
-            <flipdown [uts]="offerProps.closingTime" (onEndTime)="onEndTime()"></flipdown>
+            <flipdown [uts]="offerProps.openingTime" (onEndTime)="onOfferStarted()"></flipdown>
+        </div>
+    
+        <div *ngIf="saleState == SaleState.STARTED && offerProps?.closingTime" class="sale-time">
+            <label>{{ 'remaining_time' | translate }}</label>
+            <flipdown [uts]="offerProps.closingTime" (onEndTime)="onOfferFinished()"></flipdown>
         </div>
 
-        <div *ngIf="!saleFinished" class="sale-info">
+        <div *ngIf="saleState == SaleState.STARTED" class="sale-info">
             <label>{{ 'during_initial_offering' | translate }}</label>
             <ul>
                 <li>{{ 'tokens_are_assigned_immediately' | translate }}</li>
-                <li>{{ 'obtained_tokens_cannot_be_exchanged' | translate }}</li>
+                <li>{{ 'tokens_used_for_surveys_and_governance' | translate }}</li>
+                <li>{{ 'tokens_cannot_be_exchanged' | translate }}</li>
                 <li>{{ 'rate_decreases_continuously' | translate }}</li>
             </ul>
         </div>

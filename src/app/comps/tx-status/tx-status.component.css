@@ -2,6 +2,10 @@
     padding: 40px;
 }
 
+::ng-deep .tx-status .template-spinner .p-inline-message-icon:before {
+    margin-bottom: 0;
+}
+
 @media screen and (max-width: 991px) {
     .tx-status {
         padding: 30px 20px;

@@ -15,6 +15,7 @@ import { Web3Error } from './shared/web3-error';
 import { Breadcrumb, getBreadcrumbs } from './shared/menu';
 import { TokenData } from './models/token-data';
 import { NetData } from './models/net-data';
+import { SurveyService } from './services/survey.service';
 declare var $: any;
 declare var charts: any;
 
@@ -82,8 +83,6 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  private onChainLoadedRemover: ListenerRemover;
-
   constructor(
     private titleService: Title,
     private translateService: TranslateService,
@@ -92,6 +91,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
     private web3Service: Web3Service,
+    private surveyService: SurveyService,// Initialize the service before connecting
     private appRef: ApplicationRef,
     public ngZone: NgZone
   ) {
@@ -162,12 +162,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.onChainLoadedRemover = this.web3Service.onChainLoaded.addAndFire(() => {
-      //this.setTransferListener();
-    }, () => {
-      return this.loadedChainData;
-    });
-
     this.translateService.get(['']).subscribe(translations => {
       this.appName = this.translateService.instant("app_name");
       this.options = [
@@ -187,7 +181,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.onChainLoadedRemover();
   }
 
   switchTheme() {
@@ -348,48 +341,4 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.onThemeChanged.fire();
   }
-
-  /*private setTransferListener() {
-    let comp = this;
-    this.incContract.events.Transfer({}, function (err: any, result: any) {
-      const { from, to, value } = result.returnValues;
-
-      if (to.toLowerCase() === comp.accountData.address) {
-        setTimeout(() => {
-          comp.onReceive(value);
-        }, 1000);
-      } else if (from.toLowerCase() === comp.accountData.address) {
-        setTimeout(() => {
-          comp.onSend(value);
-        }, 1000);
-      }
-
-    }.bind(this));
-  }
-
-  private onReceive(value: string) {
-    let incAmount = toFormatBigNumber(toAmount(value));
-    let message = this.translateService.instant("have_received_x", { val1: incAmount + ' INC' });
-    this.messageService.add({
-      severity: 'success',
-      summary: this.translateService.instant("success"),
-      detail: message
-    });
-
-    this.web3Service.loadAccountData();
-    console.log(message);
-  }
-
-  private onSend(value: string) {
-    let incAmount = toFormatBigNumber(toAmount(value));
-    let message = this.translateService.instant("have_sent_x", { val1: incAmount + ' INC' });
-    this.messageService.add({
-      severity: 'info',
-      summary: this.translateService.instant("info"),
-      detail: message
-    });
-
-    this.web3Service.loadAccountData();
-    console.log(message);
-  }*/
 }

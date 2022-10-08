@@ -181,10 +181,11 @@
     text-align: center;
 }
 
-.sale-end {
+.sale-pnd, .sale-end {
     font-size: 18px;
     line-height: 24px;
     font-weight: 500;
+    margin-bottom: 20px;
 }
 
 @media screen and (max-width: 712px) {

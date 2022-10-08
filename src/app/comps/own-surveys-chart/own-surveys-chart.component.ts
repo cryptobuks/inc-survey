@@ -2,7 +2,7 @@ import { Component, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from 'src/app/app.component';
 import { AccountData } from 'src/app/models/account-data';
-import { SurveyProps } from 'src/app/models/survey-model';
+import { SurveyFilter, SurveyProps } from 'src/app/models/survey-model';
 import { SurveyState } from 'src/app/models/survey-support';
 import { SurveyService } from 'src/app/services/survey.service';
 import { Web3Service } from 'src/app/services/web3.service';
@@ -56,12 +56,10 @@ export class OwnSurveysChartComponent implements OnInit, OnDestroy {
         this.chart = undefined;
       }
 
-      let surveysLength = await this.surveyService.getOwnSurveysLength();
-      let index = surveysLength - 1;
-
       let data = [];
 
-      // TODO try to use findOwnSurveys()
+      /*let surveysLength = await this.surveyService.getOwnSurveysLength();
+      let index = surveysLength - 1;
 
       while (index >= 0 && data.length < this.count) {
         let survey = await this.surveyService.getOwnSurvey(index);
@@ -78,6 +76,45 @@ export class OwnSurveysChartComponent implements OnInit, OnDestroy {
         }
 
         index--;
+      }*/
+
+      let total = await this.surveyService.getOwnSurveysLength();
+
+      if(total > 0) {
+        let len = (total < this.count)? total: this.count;
+        let cursor = (total > this.count)? total - this.count: 0;
+        let currTime = Math.round(this.web3Service.currenTime / 1000);
+      
+        let filter: SurveyFilter = {
+          search: '',
+          onlyPublic: false,
+          withRmngBudget: false,
+          minStartTime: 0,
+          maxStartTime: 0,
+          minEndTime: 0,
+          maxEndTime: 0,
+          minBudget: '0',
+          minReward: '0',
+          minGasReserve: '0'
+        };
+  
+        if(this.surveyState == SurveyState.OPENED) {
+          filter.maxStartTime = currTime;
+          filter.minEndTime = currTime;
+        } else {// CLOSED
+          filter.maxEndTime = currTime;
+        }
+  
+        const surveys = await this.surveyService.findOwnSurveys(cursor, len, filter);
+  
+        for(let survey of surveys) {
+          let partsNum = await this.surveyService.getParticipantsLength(survey.id);
+  
+          data.push({
+            title: survey.title,
+            partsNum: partsNum
+          });
+        }
       }
 
       let tooltipTitle = this.translateService.instant("participations");

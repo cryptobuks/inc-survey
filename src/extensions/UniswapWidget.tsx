@@ -8,6 +8,7 @@ export interface IUniswapWidgetProps {
   jsonRpcEndpoint: string;
   defaultInputTokenAddress: string;
   defaultOutputTokenAddress: string;
+  convenienceFeeRecipient: string;
   darkMode: boolean;
   tokenList: any;
 }
@@ -21,7 +22,7 @@ const useConstructor = (callBack: () => void) => {
 
 export const UniswapWidget: FunctionComponent<IUniswapWidgetProps> = (props: IUniswapWidgetProps) => {
 
-  const { provider, jsonRpcEndpoint, defaultInputTokenAddress, defaultOutputTokenAddress, darkMode, tokenList } = props;
+  const { provider, jsonRpcEndpoint, defaultInputTokenAddress, defaultOutputTokenAddress, convenienceFeeRecipient, darkMode, tokenList } = props;
 
   useConstructor(() => {
     // Occurs ONCE, BEFORE the initial render.
@@ -35,11 +36,11 @@ export const UniswapWidget: FunctionComponent<IUniswapWidgetProps> = (props: IUn
           jsonRpcEndpoint={jsonRpcEndpoint}
           defaultInputTokenAddress={defaultInputTokenAddress}
           defaultOutputTokenAddress={defaultOutputTokenAddress}
+          convenienceFeeRecipient={convenienceFeeRecipient}
           theme={darkMode ? darkTheme : lightTheme}
           tokenList={tokenList}
           width="100%"
           convenienceFee={5}
-          convenienceFeeRecipient="0x8d7fb50F7f87c63C718f31a8d10362349720b56d"
         />
     </div>
   );

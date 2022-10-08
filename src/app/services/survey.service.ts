@@ -92,7 +92,10 @@ export class SurveyService implements OnDestroy {
   async txGasSamples(maxLength: number): Promise<number[]> {
     this.checkContracts();
     let samples = await this.surveyContract.methods.txGasSamples(maxLength).call();
-    return Promise.resolve<number[]>(samples);
+    const arrOfNum = samples.map((str: string) => {
+      return parseInt(str);
+    });
+    return Promise.resolve<number[]>(arrOfNum);
   }
 
   async remainingBudgetOf(surveyId: number): Promise<BigNumber> {
@@ -207,7 +210,7 @@ export class SurveyService implements OnDestroy {
 
   async findOwnSurveys(cursor: number, length: number, filter: SurveyFilter): Promise<SurveyImpl[]> {
     this.checkContracts();
-    let surveys = await this.surveyContract.methods.findOwnSurveys(cursor, length, filter).call();
+    let surveys = await this.surveyContract.methods.findOwnSurveys(cursor, length, filter).call({ from : this.accountData.address });
     let impls: SurveyImpl[] = [];
 
     for(let survey of surveys) {
@@ -476,15 +479,15 @@ export class SurveyService implements OnDestroy {
     return txHash;
   }
 
-  async estimatePartFromForwarder(chainId: number, surveyId: number, responses: string[], key: string, captcha: string): Promise<FwdRequest> {
+  async estimatePartFromForwarder(chainId: number, surveyId: number, responses: string[], key: string): Promise<FwdRequest> {
     const account = this.accountData.address;
-    let result = await this.utilService.estimatePart(chainId, surveyId, responses, key, captcha);
+    let result = await this.utilService.estimatePart(chainId, surveyId, responses, key);
 
     if (!result.success) {
       throw new Error(result.data);
     }
 
-    const { txGas, exGas } = result.data;
+    const txGas = result.data;
     const nonce = await this.forwarderContract.methods.getNonce(account).call();
     const data = this.engineContract.methods.addParticipationFromForwarder(surveyId, responses, key, txGas).encodeABI();
 
@@ -492,7 +495,7 @@ export class SurveyService implements OnDestroy {
       from: account,
       to: this.engineContract._address,
       value: '0',
-      gas: exGas,
+      gas: txGas,
       nonce: nonce,
       data: data
     };
@@ -500,8 +503,8 @@ export class SurveyService implements OnDestroy {
     return Promise.resolve<FwdRequest>(request);
   }
 
-  async sendPartFromForwarder(chainId: number, request: FwdRequest, signature: string, captcha: string) {
-    let result = await this.utilService.sendPart(chainId, request, signature, captcha);
+  async sendPartFromForwarder(chainId: number, request: FwdRequest, signature: string) {
+    let result = await this.utilService.sendPart(chainId, request, signature);
 
     if (!result.success) {
       throw new Error(result.data);
@@ -577,16 +580,11 @@ export class SurveyService implements OnDestroy {
     this._txGasWgtSamples = filterOutliers(await this.txGasSamples(100));
 
     if(this.txGasWgtSamples.length > 0) {
+      const total = this.txGasWgtSamples.reduce((a, b) => a + b, 0);
       this._minTxGas = Math.min.apply(Math, this.txGasWgtSamples);
-      let total = this.txGasWgtSamples.reduce((a, b) => a + b, 0);
       this._avgTxGas = total / this.txGasWgtSamples.length;
-
-      // TODO comprobar que txGasSamples devuelve numbers no strings
-      console.log("samples: " + this.txGasWgtSamples);
-      console.log("total: " + total);
-      console.log("avgTxGas: " + this.avgTxGas);
     } else {
-      this._avgTxGas = this._minTxGas = 3000000;// Default value
+      this._avgTxGas = this._minTxGas = 3000000;// Default value for the first survey when there are no participations
     }
   }
   

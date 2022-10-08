@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { IncProps, OfferProps } from '../models/inc-model';
 import { SurveyService } from '../services/survey.service';
 import { UtilService } from '../services/util.service';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, Message, MessageService } from 'primeng/api';
 import { EngineProps, SurveyProps } from '../models/survey-model';
 import { StateService } from '../services/state.service';
 import { CURRENT_CHAIN, NATIVE_CURRENCY, WRAPPED_CURRENCY } from '../shared/constants';
@@ -20,6 +20,7 @@ declare var $: any;
 
 const blockchainErrorRegex = /"message": "(?:execution reverted: )?([^"]+)"/g;
 const serverErrorRegex = /Relayer:\s*(.+)/g;
+const toastDefaultLive = 10000;
 
 // Ciclo de vida de los componentes: https://angular.io/guide/lifecycle-hooks
 @Component({
@@ -62,6 +63,8 @@ export abstract class BasePageComponent implements OnInit, OnDestroy {
   get engineProps(): EngineProps { return this.surveyService.engineProps; };
 
   get lang(): Lang { return AppComponent.instance.selectedLang; };
+
+  messages: Message[] = [];
 
   constructor(protected element: ElementRef) {
     this.router = AppModule.injector.get(Router);
@@ -113,25 +116,69 @@ export abstract class BasePageComponent implements OnInit, OnDestroy {
     AppComponent.instance.setTitle(title);
   }
 
-  showTxError(error: any) {
+  pushMessage(severity: string, detail: string) {
+    if(this.messages.some(item => item.detail == detail)) {
+      return;
+    }
+
+    const message = { severity, summary: this.translateService.instant(severity), detail };
+    //this.messages.push(message); does not show the message
+    this.messages = this.messages.concat(message);
+  }
+
+  pushSuccess(detail: string) {
+    this.pushMessage('success', detail);
+  }
+
+  pushInfo(detail: string) {
+    this.pushMessage('info', detail);
+  }
+
+  pushWarn(detail: string) {
+    this.pushMessage('warn', detail);
+  }
+
+  pushError(detail: string) {
+    this.pushMessage('error', detail);
+  }
+
+  showMessage(severity: string, detail: string, life: number) {
+    this.messageService.add({
+      sticky: true,
+      severity,
+      summary: this.translateService.instant(severity),
+      detail,
+      life
+    });
+  }
+
+  showSuccess(detail: string, life = toastDefaultLive) {
+    this.showMessage('success', detail, life);
+  }
+
+  showInfo(detail: string, life = toastDefaultLive) {
+    this.showMessage('info', detail, life);
+  }
+
+  showWarn(detail: string, life = toastDefaultLive) {
+    this.showMessage('warn', detail, life);
+  }
+
+  showError(detail: string, life = toastDefaultLive) {
+    this.showMessage('error', detail, life);
+  }
+
+  getTxError(error: any) {
     if (error.code === 4001) {
       // User rejected request
-      return;
+      return undefined;
     }
 
     if (error.status === 0 || error.status === 503) {
       // The server does not respond
-      this.messageService.add({
-        severity: 'error',
-        summary: this.translateService.instant("error"),
-        detail: this.translateService.instant("server_in_maintenance"),
-        //life: 30000
-      });
-      return;
+      return this.translateService.instant("server_in_maintenance");
     }
-    
-    //console.error(error);
-    let message: string;
+
     let details = error.message || error.error?.message;
 
     if(details) {
@@ -147,16 +194,18 @@ export abstract class BasePageComponent implements OnInit, OnDestroy {
     }
 
     if(!isEmpty(details)) {
-      message = this.translateService.instant("transaction_has_failed") + ':\n' + details;
-    } else {
-      message = this.translateService.instant("transaction_failed_try_again_later");
+      return this.translateService.instant("transaction_has_failed") + ':\n' + details;
     }
 
-    this.messageService.add({
-      severity: 'error',
-      summary: this.translateService.instant("error"),
-      detail: message,
-      //life: 30000
-    });
+    return this.translateService.instant("transaction_failed_try_again_later");
+  }
+
+  showTxError(error: any) {
+    //console.error(error);
+    let errorMsg = this.getTxError(error);
+
+    if(errorMsg) {
+      this.showError(errorMsg);
+    }
   }
 }

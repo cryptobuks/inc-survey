@@ -788,3 +788,11 @@ export function filterOutliers(someArray: number[]) {
 
   return values.filter((x) => (x >= minValue) && (x <= maxValue));
 }
+
+export function delay(time: number) {
+  return new Promise<void>(resolve => {
+      setTimeout(() => {
+          resolve();
+      }, time);
+  });
+}

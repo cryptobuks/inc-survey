@@ -84,11 +84,11 @@
                 </mat-form-field>
 
                 <span class="field-info">{{ 'gas_reserve_used_to_finance_transactions' | translate }}</span>
-                <span class="field-info">{{ 'you_can_retrieve_remaining_gas_reserve' | translate }}</span>
+                <span class="field-info">{{ 'gas_reserve_estimate_on_current_gas_price' | translate }}</span>
+                <span class="field-info">{{ 'you_can_add_and_recover_gas_reserve' | translate }}</span>
 
-                <div *ngIf="isLowGasReserve" class="relevant-info">
-                    <span class="field-info">{{ 'low_gas_reserve' | translate }} {{ 'survey_not_profitable_no_one_take_it' | translate }} {{ 'survey_can_expensive_for_participants' | translate }}</span>
-                </div>
+                <p-message *ngIf="isLowGasReserve" severity="warn" styleClass="mr-2 inline-msg" 
+                    text="{{ 'low_gas_reserve_survey_not_profitable' | translate }}"></p-message>
             </div>
 
             <div class="survey-keys-cnt">
