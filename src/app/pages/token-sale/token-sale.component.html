@@ -74,12 +74,12 @@
             <flipdown [uts]="offerProps.openingTime" (onEndTime)="onOfferStarted()"></flipdown>
         </div>
     
-        <div *ngIf="saleState == SaleState.STARTED && offerProps?.closingTime" class="sale-time">
+        <div *ngIf="(saleState == SaleState.STARTED || saleState == SaleState.FINISHED) && offerProps?.closingTime" class="sale-time">
             <label>{{ 'remaining_time' | translate }}</label>
             <flipdown [uts]="offerProps.closingTime" (onEndTime)="onOfferFinished()"></flipdown>
         </div>
 
-        <div *ngIf="saleState == SaleState.STARTED" class="sale-info">
+        <div *ngIf="saleState == SaleState.PENDING || saleState == SaleState.STARTED" class="sale-info">
             <label>{{ 'during_initial_offering' | translate }}</label>
             <ul>
                 <li>{{ 'tokens_are_assigned_immediately' | translate }}</li>
