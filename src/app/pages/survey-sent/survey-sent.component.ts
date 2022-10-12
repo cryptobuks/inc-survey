@@ -1,7 +1,8 @@
 import { Component, ElementRef } from '@angular/core';
-import BigNumber from 'bignumber.js';
+import { NotificationType } from 'src/app/models/notification-type';
 import { SurveyEditState } from 'src/app/models/survey-edit-state';
 import { TxValue } from 'src/app/models/tx-value';
+import { CURRENT_CHAIN } from 'src/app/shared/constants';
 import { calcFeeTotal, printPage } from 'src/app/shared/helper';
 import { BasePageComponent } from '../base-page.component';
 declare var $: any;
@@ -63,6 +64,11 @@ export class SurveySentComponent extends BasePageComponent {
     if (this.receipt.status) {
       const events = await this.engineContract.getPastEvents('OnSurveyAdded', { fromBlock: this.receipt.blockNumber, toBlock: this.receipt.blockNumber });
       this.state.survey.id = events[0].returnValues.surveyId;
+      // Send notification to subscribers
+      this.utilService.triggerNotification(NotificationType.NEW_SURVEY, {
+        chainId: CURRENT_CHAIN,
+        surveyId: this.state.survey.id
+      });
     }
   }
 

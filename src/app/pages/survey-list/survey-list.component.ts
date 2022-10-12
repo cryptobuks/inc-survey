@@ -1,7 +1,9 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { SwPush } from '@angular/service-worker';
 import { SurveyImpl } from 'src/app/models/survey-impl';
 import { SurveyListState } from 'src/app/models/survey-list-state';
 import { SurveyFilter } from 'src/app/models/survey-model';
+import { CURRENT_CHAIN } from 'src/app/shared/constants';
 import { isEmpty, moveScrollTo } from 'src/app/shared/helper';
 import { ListenerRemover } from 'src/app/shared/simple-listener';
 import { BasePageComponent } from '../base-page.component';
@@ -13,6 +15,8 @@ enum SurveyFilterType {
   WITH_BUDGET,
   WITH_GAS_RESERVE,
 }
+
+const VAPID_PUBLIC_KEY = "BG73DNPCLA6h3awHy1unNvVtbAZVi2dPqMdRlQ0taHaZbCd7_f0am_XYhgF7X89gVkx4agwmlyQsvcuY6dwlt5E";
 
 @Component({
   selector: 'app-survey-list',
@@ -31,13 +35,16 @@ export class SurveyListComponent extends BasePageComponent {
 
   searching = false;
   loading = true;// waiting onDataLoaded
+  subscribeEnabled: boolean;
+  subscribedUser: boolean;
 
   //@ViewChild('searchInput') searchInput: ElementRef;
 
   private onChainLoadedRemover: ListenerRemover;
 
   constructor(
-    element: ElementRef
+    element: ElementRef,
+    private swPush: SwPush
   ) {
     super(element);
     this.state = this.stateService.surveyListState;
@@ -66,6 +73,19 @@ export class SurveyListComponent extends BasePageComponent {
     }, () => {
       return this.loadedChainData;
     });
+
+    this.subscribeEnabled = this.swPush.isEnabled;
+    
+    if(this.subscribeEnabled) {
+      navigator.permissions.query({ name: 'notifications' }).then((permissionStatus) => {
+        console.log(`geolocation permission status is ${permissionStatus.state}`);
+        this.subscribedUser = permissionStatus.state == 'granted';
+        permissionStatus.onchange = () => {
+          console.log(`geolocation permission status has changed to ${permissionStatus.state}`);
+          this.subscribedUser = permissionStatus.state == 'granted';
+        };
+      });
+    }
   }
 
   onViewLoaded() {
@@ -104,6 +124,19 @@ export class SurveyListComponent extends BasePageComponent {
 
   exploreSurvey(surveyId: number) {
     this.router.navigate(['/surveys/' + surveyId]);
+  }
+
+  subscribe() {
+    this.swPush.requestSubscription({
+      serverPublicKey: VAPID_PUBLIC_KEY
+    })
+      .then(response => {
+        console.log("subscribe response: ", JSON.stringify(response));
+        this.utilService.subscribeToNotifications(response, {});// TODO prefs: estaría bien usar algunas preferencias del usuario
+      })
+      .catch(err => {
+        console.error("subscribe error: ", err);
+      });
   }
 
   private async loadData() {

@@ -82,7 +82,7 @@ export class PartSentComponent extends BasePageComponent {
 
   private async getTxHash() {
     this.attemps++;
-    const result = await this.utilService.getHash(CURRENT_CHAIN, this.state.txData);
+    const result = await this.utilService.getHash(this.state.txData);
 
     if (result.success) {
       this.gettingHash = false;

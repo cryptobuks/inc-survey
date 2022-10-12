@@ -1,8 +1,8 @@
 import { HttpHeaders } from "@angular/common/http";
-import { isDevMode } from "@angular/core";
+import { environment } from "src/environments/environment";
 import { NetData, newNetwork } from "../models/net-data";
 import { newToken, TokenData } from "../models/token-data";
-import { ChainId } from "./chains";
+import { ChainId } from "../models/chains";
 declare var Web3: any;
 
 export const Web3Utils = Web3.utils;
@@ -19,12 +19,14 @@ export const MAX_UINT256 = new BN('2').pow(new BN('256')).sub(new BN('1'));
 export const DOMAIN_URL = 'https://survey.inctoken.org';
 export const LOCALHOST_URL = 'http://localhost:4200';
 export const COINGECKO_PRICE_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=";
+export const RELAYER_API_URL = "https://relayer.inctoken.org/api";
 
 export const MATIC_LOGO_URL = 'assets/img/matic_logo.png';
 export const WMATIC_LOGO_URL = 'assets/img/wmatic_logo.png';
 // Used in the uniswap list, it seems that React can't resolve the relative path.
-export const INC_LOGO_URL = isDevMode()? LOCALHOST_URL + '/assets/img/inc_logo.png': DOMAIN_URL + '/assets/img/inc_logo.png';
-export const CURRENT_CHAIN = isDevMode()? ChainId.MUMBAI: ChainId.MATIC;
+export const INC_LOGO_URL = !environment.production? LOCALHOST_URL + '/assets/img/inc_logo.png': DOMAIN_URL + '/assets/img/inc_logo.png';
+export const CURRENT_CHAIN = !environment.production? ChainId.MUMBAI: ChainId.MATIC;
+export const RECAPTCHA_RENDER = "6LfrfcQdAAAAAFqwpMDyFMDLJn2HU3zWQqwgnu1E";
 
 export const MINUTE_MILLIS = 1000 * 60;
 export const HOUR_MILLIS = MINUTE_MILLIS * 60;
@@ -47,12 +49,6 @@ export const HTTP_OPTIONS = {
       'Content-Type': 'application/json'
   }),
   withCredentials: true
-};
-
-export const RELAYER_API_URL: { [chainId: number]: string } = {
-  [ChainId.MATIC]: "https://relayer.inctoken.org/api",
-  //[ChainId.MUMBAI]: "http://localhost:3000/api"
-  [ChainId.MUMBAI]: "https://relayer.inctoken.org/api"
 };
 
 export const NET_PARAMS: { [chainId: number]: NetData } = {

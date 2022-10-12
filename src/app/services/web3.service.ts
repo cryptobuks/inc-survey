@@ -14,7 +14,7 @@ import { EngineProps, SurveyProps } from '../models/survey-model';
 import { CURRENT_CHAIN, WRAPPED_CURRENCY, Theme } from '../shared/constants';
 import { providerOptions } from '../shared/provider-options';
 import { SimpleListener } from '../shared/simple-listener';
-import { Web3Error } from '../shared/web3-error';
+import { Web3Error } from '../models/web3-error';
 declare var window: any;
 declare var Web3: any;
 

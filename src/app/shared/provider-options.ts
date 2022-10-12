@@ -1,6 +1,7 @@
+declare var require: any;
+declare var window: any;
 var process = require('.env');
 import { CURRENT_CHAIN } from "./constants";
-declare var window: any;
 
 const WalletConnectProvider = window.WalletConnectProvider.default;
 const CoinbaseWalletSDK = window.CoinbaseWalletSDK;

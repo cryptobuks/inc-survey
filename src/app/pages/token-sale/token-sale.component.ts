@@ -6,7 +6,7 @@ import { TokenData } from 'src/app/models/token-data';
 import { CURRENT_CHAIN, NATIVE_CURRENCY, INC_TOKEN, NET_PARAMS } from 'src/app/shared/constants';
 import BigNumber from 'bignumber.js';
 import { ListenerRemover } from 'src/app/shared/simple-listener';
-import { ChainId } from 'src/app/shared/chains';
+import { ChainId } from 'src/app/models/chains';
 declare var $: any;
 
 const MIN_MATIC = new BigNumber(0.01);

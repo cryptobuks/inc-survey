@@ -26,7 +26,8 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/.htaccess"
+              "src/.htaccess",
+              "src/manifest.webmanifest"
             ],
             "styles": [
               "src/app-theme.scss",
@@ -51,20 +52,22 @@
               "src/assets/js/xlsx.full@0.17.2.js",
               "src/assets/js/utils.js"
             ],
-            "showCircularDependencies": false
+            "showCircularDependencies": false,
+            "serviceWorker": true,
+            "ngswConfigPath": "ngsw-config.json"
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumWarning": "25mb",
+                  "maximumError": "50mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "5kb",
-                  "maximumError": "10kb"
+                  "maximumWarning": "25kb",
+                  "maximumError": "50kb"
                 }
               ],
               "fileReplacements": [
@@ -75,7 +78,7 @@
               ],
               "outputHashing": "all",
               "buildOptimizer": true,
-              "optimization": true,
+              "optimization": false,
               "vendorChunk": false,
               "extractLicenses": true,
               "sourceMap": false,
@@ -119,7 +122,8 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/manifest.webmanifest"
             ],
             "styles": [
               "src/app-theme.scss",

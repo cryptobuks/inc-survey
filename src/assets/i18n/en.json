@@ -375,5 +375,6 @@
     "if_relayer_processes_your_trade_later": "If the relayer processes your trade later, it will appear on the dashboard and you will receive your reward.",
     "dnot_provide_personal_data": "Please do not provide personal data, the results of the surveys are public.",
     "not_possible_establish_connection": "It has not been possible to establish the connection with the smart contracts of this tool.",
-    "must_select_main_network_of_x": "You must select the main network of {{val1}} in your client."
+    "must_select_main_network_of_x": "You must select the main network of {{val1}} in your client.",
+    "subscribe_new_surveys": "Subscribe to new surveys"
 }

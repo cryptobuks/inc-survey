@@ -10,8 +10,8 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { Web3Service } from './services/web3.service';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { AccountData } from './models/account-data';
-import { ListenerRemover, SimpleListener } from './shared/simple-listener';
-import { Web3Error } from './shared/web3-error';
+import { SimpleListener } from './shared/simple-listener';
+import { Web3Error } from './models/web3-error';
 import { Breadcrumb, getBreadcrumbs } from './shared/menu';
 import { TokenData } from './models/token-data';
 import { NetData } from './models/net-data';
@@ -316,9 +316,11 @@ export class AppComponent implements OnInit, OnDestroy {
     themeLink.href = 'assets/themes/' + themeFile + '/theme.css';
 
     if(this.isDarkTheme) {
+      document.body.classList.remove('light-theme');
       document.body.classList.add('dark-theme');
 		} else {
 		  document.body.classList.remove('dark-theme');
+      document.body.classList.add('light-theme');
 		}
 
     this.web3Service.setModalTheme(theme);

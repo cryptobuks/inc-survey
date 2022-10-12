@@ -3,7 +3,8 @@ import { Injectable } from "@angular/core";
 import { retry } from "rxjs/operators";
 import { FwdRequest } from "../models/fwd-request";
 import { FwdResponse } from "../models/fwd-response";
-import { RELAYER_API_URL, COINGECKO_PRICE_URL, HTTP_OPTIONS } from "../shared/constants";
+import { NotificationType } from "../models/notification-type";
+import { RELAYER_API_URL, COINGECKO_PRICE_URL, HTTP_OPTIONS, RECAPTCHA_RENDER } from "../shared/constants";
 declare var grecaptcha: any;
 
 @Injectable({
@@ -38,8 +39,8 @@ export class UtilService {
     }
 
     async estimatePart(chainId: number, surveyId: number, responses: string[], key: string): Promise<FwdResponse> {
-        const recaptcha = await grecaptcha.execute('6LfrfcQdAAAAAFqwpMDyFMDLJn2HU3zWQqwgnu1E', { action: 'submit' });
-        return this.http.post<FwdResponse>(RELAYER_API_URL[chainId] + '/estimate-part', {
+        const recaptcha = await grecaptcha.execute(RECAPTCHA_RENDER, { action: 'submit' });
+        return this.http.post<FwdResponse>(RELAYER_API_URL + '/estimate-part', {
             chainId,
             surveyId,
             responses,
@@ -49,8 +50,8 @@ export class UtilService {
     }
 
     async sendPart(chainId: number, request: FwdRequest, signature: string): Promise<FwdResponse> {
-        const recaptcha = await grecaptcha.execute('6LfrfcQdAAAAAFqwpMDyFMDLJn2HU3zWQqwgnu1E', { action: 'submit' });
-        return this.http.post<FwdResponse>(RELAYER_API_URL[chainId] + '/send-part', {
+        const recaptcha = await grecaptcha.execute(RECAPTCHA_RENDER, { action: 'submit' });
+        return this.http.post<FwdResponse>(RELAYER_API_URL + '/send-part', {
             chainId,
             request,
             signature,
@@ -58,13 +59,31 @@ export class UtilService {
         }, HTTP_OPTIONS).toPromise();
     }
 
-    async getHash(chainId: number, messageId: string): Promise<FwdResponse> {
-        const recaptcha = await grecaptcha.execute('6LfrfcQdAAAAAFqwpMDyFMDLJn2HU3zWQqwgnu1E', { action: 'submit' });
-        return this.http.post<FwdResponse>(RELAYER_API_URL[chainId] + '/part-hash', {
+    async getHash(messageId: string): Promise<FwdResponse> {
+        const recaptcha = await grecaptcha.execute(RECAPTCHA_RENDER, { action: 'submit' });
+        return this.http.post<FwdResponse>(RELAYER_API_URL + '/part-hash', {
             messageId,
             recaptcha
         }, HTTP_OPTIONS).toPromise();
     }
+
+    async subscribeToNotifications(subscription: PushSubscription, prefs: any) {
+        const recaptcha = await grecaptcha.execute(RECAPTCHA_RENDER, { action: 'submit' });
+        return this.http.post<FwdResponse>(RELAYER_API_URL + '/subscribe-notif', {
+            subscription,
+            prefs,
+            recaptcha
+        }, HTTP_OPTIONS).toPromise();
+    }
+
+    async triggerNotification(type: NotificationType, data: any) {
+        const recaptcha = await grecaptcha.execute(RECAPTCHA_RENDER, { action: 'submit' });
+        return this.http.post<FwdResponse>(RELAYER_API_URL + '/trigger-notif', {
+            type,
+            data,
+            recaptcha
+        }, HTTP_OPTIONS).toPromise();
+    } 
 
     async request(method: string, url: string, timeout?: number): Promise<XMLHttpRequest> {
         return new Promise(function (resolve, reject) {
