@@ -75,6 +75,7 @@ import { TokenSaleComponent } from './pages/token-sale/token-sale.component';
 import { FlipdownComponent } from './comps/flipdown/flipdown.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { NotifSubscriptionComponent } from './comps/notif-subscription/notif-subscription.component';
 
 @NgModule({
   declarations: [
@@ -132,7 +133,8 @@ import { environment } from '../environments/environment';
     UniswapWidgetWrapper,
     TxStatusComponent,
     TokenSaleComponent,
-    FlipdownComponent
+    FlipdownComponent,
+    NotifSubscriptionComponent
   ],
   imports: [
     BrowserModule,

@@ -201,7 +201,7 @@ export class TakeSurveyComponent extends BasePageComponent {
       }
 
     } catch (err: any) {
-      this.showTxError(err);
+      this.messageHelperService.showTxError(err);
     } finally {
       removeAppCover();
       this.sending = false;
@@ -223,7 +223,7 @@ export class TakeSurveyComponent extends BasePageComponent {
       this.finishPart(messageId, true);
 
     } catch (err: any) {
-      this.showTxError(err);
+      this.messageHelperService.showTxError(err);
     } finally {
       removeAppCover();
       this.request = undefined;

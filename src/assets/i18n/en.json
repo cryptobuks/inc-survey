@@ -222,10 +222,9 @@
     "page": "Page",
     "test_survey_before_submitting_to_blockchain": "Please carefully test your survey before submitting to the blockchain, as once submitted, it cannot be modified.",
     "first_time_two_transactions_x_executed": "Since this is your first time, 2 transactions will be executed, the first to approve the {{val1}} tokens and the second to send the survey.",
-    "transaction_failed": "Transaction failed.",
     "transaction_has_failed": "The transaction has failed",
-    "sorry_transaction_failed": "Sorry, the transaction has failed.",
     "transaction_failed_try_again_later": "The transaction has failed, please try again later.",
+    "operation_has_failed": "The operation has failed",
     "operation_failed_try_again_later": "The operation has failed, please try again later.",
     "unexpected_error_try_again_later": "An unexpected error has occurred, please try again later.",
     "drag_here_components": "Drag here the components",
@@ -376,5 +375,12 @@
     "dnot_provide_personal_data": "Please do not provide personal data, the results of the surveys are public.",
     "not_possible_establish_connection": "It has not been possible to establish the connection with the smart contracts of this tool.",
     "must_select_main_network_of_x": "You must select the main network of {{val1}} in your client.",
-    "subscribe_new_surveys": "Subscribe to new surveys"
+    "subscribe_new_surveys": "Subscribe to new surveys",
+    "notification_preferences": "Notification preferences",
+    "parameters_to_filter_survey_notifications": "Use the following parameters to filter the new surveys you want to receive notifications about.",
+    "minimum_reward": "Minimum reward",
+    "creator_addresses": "Creator addresses",
+    "keywords": "Keywords",
+    "save": "Save",
+    "edit_preferences": "Edit preferences"
 }

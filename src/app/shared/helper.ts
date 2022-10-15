@@ -173,6 +173,17 @@ export const containsIgnoreCase = (array: any[], val: any): boolean => {
   return indexOfIgnoreCase(array, val) >= 0;
 }
 
+export function getUniqueItemsIgnoreCase(items: string[]) {
+  const dest = [];
+  for(let item of items) {
+    if(!dest.some(it => it.toLowerCase() == item.toLowerCase())) {
+      dest.push(item);
+    }
+  }
+
+  return dest;
+}
+
 // min and max included 
 export function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);

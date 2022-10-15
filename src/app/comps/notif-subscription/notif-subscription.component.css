@@ -1,0 +1,26 @@
+.notif-subscription .prefs-dialog-body > div:not(:first-child) {
+    margin-top: 20px;
+}
+
+.notif-subscription .prefs-dialog-body > div > label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.notif-subscription .prefs-dialog-body .field-checkbox > label {
+  display: unset !important;
+  overflow: hidden;
+  white-space: normal;
+  cursor: pointer;
+  padding-left: 10px;
+}
+
+.notif-subscription .prefs-dialog-body .p-inputgroup {
+    display: inline-flex;
+    align-items: stretch;
+    width: auto;
+}
+
+::ng-deep .notif-subscription .prefs-dialog-body .p-chips {
+    display: block;
+}

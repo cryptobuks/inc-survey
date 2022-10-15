@@ -446,28 +446,29 @@ export class Web3Service implements OnDestroy {
 
   private async loadIncProps() {
     this._incProps = await this.getIncProps();
-    console.debug("incProps:: " + JSON.stringify(this.incProps));
+    //console.debug("incProps:: " + JSON.stringify(this.incProps));
   }
 
   private async loadOfferProps() {
     this._offerProps = await this.getOfferProps();
-    console.debug("offerProps:: " + JSON.stringify(this.offerProps));
+    //console.debug("offerProps:: " + JSON.stringify(this.offerProps));
   }
 
   private async loadSurveyProps() {
     this._surveyProps = await this.getSurveyProps();
-    console.debug("surveyProps:: " + JSON.stringify(this.surveyProps));
+    //console.debug("surveyProps:: " + JSON.stringify(this.surveyProps));
   }
 
   private async loadEngineProps() {
     this._engineProps = await this.getEngineProps();
-    console.debug("engineProps:: " + JSON.stringify(this.engineProps));
+    //console.debug("engineProps:: " + JSON.stringify(this.engineProps));
   }
 
   private configProvider(provider: any) {
     // Subscribe to chainId change
     provider.on("chainChanged", (chainId: number) => {
-      console.debug("chainChanged: " + chainId);
+      console.debug("Chain changed: " + chainId);
+
       if (AppComponent.instance) {
         AppComponent.instance.ngZone.run(() => {
           AppComponent.instance.connect();
@@ -478,7 +479,7 @@ export class Web3Service implements OnDestroy {
     // Subscribe to accounts change
     // MetaMask bug: this method is called many times for no reason
     provider.on("accountsChanged", (accounts: string[]) => {
-      console.debug("accountsChanged: " + accounts);
+      console.debug("Accounts changed: " + accounts);
 
       if (!accounts[0]) {
         if (AppComponent.instance) {

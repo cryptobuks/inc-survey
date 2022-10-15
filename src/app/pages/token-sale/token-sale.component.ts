@@ -271,15 +271,15 @@ export class TokenSaleComponent extends BasePageComponent {
       await this.web3Service.loadAccountData();
 
       let incAmount = toAmount(tx.events.OnBought.returnValues.tokenAmount);
-      this.showSuccess(this.translateService.instant("have_bought_x", { val1: incAmount + ' INC' }));
+      this.messageHelperService.showSuccess(this.translateService.instant("have_bought_x", { val1: incAmount + ' INC' }));
 
       if(tx.events.OnReward) {
         incAmount = toAmount(tx.events.OnReward.returnValues.amount);
-        this.showInfo(this.translateService.instant("have_received_reward_x", { val1: incAmount + ' INC' }));
+        this.messageHelperService.showInfo(this.translateService.instant("have_received_reward_x", { val1: incAmount + ' INC' }));
       }
 
     } catch (err: any) {
-      this.showTxError(err);
+      this.messageHelperService.showTxError(err);
     } finally {
       removeAppCover();
       this.buying = false;

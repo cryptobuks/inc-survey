@@ -230,16 +230,16 @@ export class SurveyDetailsComponent extends BasePageComponent {
 
       if (tx.events.OnSurveySolved.returnValues.budgetRefund > 0) {
         let budgetRefund = toFormatBigNumber(toAmount(tx.events.OnSurveySolved.returnValues.budgetRefund));
-        this.showSuccess(this.translateService.instant("for_remaining_budget_received_refund_x", { val1: budgetRefund + ' INC' }));
+        this.messageHelperService.showSuccess(this.translateService.instant("for_remaining_budget_received_refund_x", { val1: budgetRefund + ' INC' }));
       }
 
       if (tx.events.OnSurveySolved.returnValues.gasRefund > 0) {
         let gasRefund = toFormatBigNumber(toAmount(tx.events.OnSurveySolved.returnValues.gasRefund));
-        this.showSuccess(this.translateService.instant("for_gas_reserve_received_refund_x", { val1: gasRefund + ' ' + this.currSymbol }));
+        this.messageHelperService.showSuccess(this.translateService.instant("for_gas_reserve_received_refund_x", { val1: gasRefund + ' ' + this.currSymbol }));
       }
 
     } catch (err: any) {
-      this.showTxError(err);
+      this.messageHelperService.showTxError(err);
     } finally {
       removeAppCover();
       this.solving = false;
@@ -278,10 +278,10 @@ export class SurveyDetailsComponent extends BasePageComponent {
       await this.surveyStateInfo.loadData(this.survey, this.checkAlerts.bind(this));
 
       let gasAdded = toFormatBigNumber(toAmount(tx.events.OnGasReserveIncreased.returnValues.gasAdded));
-      this.showSuccess(this.translateService.instant("added_x_for_gas_reserve", { val1: gasAdded + ' ' + this.currSymbol }));
+      this.messageHelperService.showSuccess(this.translateService.instant("added_x_for_gas_reserve", { val1: gasAdded + ' ' + this.currSymbol }));
 
     } catch (err: any) {
-      this.showTxError(err);
+      this.messageHelperService.showTxError(err);
     } finally {
       removeAppCover();
       this.increasing = false;

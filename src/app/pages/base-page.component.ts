@@ -9,18 +9,14 @@ import { Router } from '@angular/router';
 import { IncProps, OfferProps } from '../models/inc-model';
 import { SurveyService } from '../services/survey.service';
 import { UtilService } from '../services/util.service';
-import { ConfirmationService, Message, MessageService } from 'primeng/api';
+import { ConfirmationService, Message } from 'primeng/api';
 import { EngineProps, SurveyProps } from '../models/survey-model';
 import { StateService } from '../services/state.service';
 import { CURRENT_CHAIN, NATIVE_CURRENCY, WRAPPED_CURRENCY } from '../shared/constants';
 import { IpfsService } from '../services/ipfs.service';
-import { isEmpty } from '../shared/helper';
+import { MessageHelperService } from '../services/message-helper.service';
 declare var components: any;
 declare var $: any;
-
-const blockchainErrorRegex = /"message": "(?:execution reverted: )?([^"]+)"/g;
-const serverErrorRegex = /Relayer:\s*(.+)/g;
-const toastDefaultLive = 10000;
 
 // Ciclo de vida de los componentes: https://angular.io/guide/lifecycle-hooks
 @Component({
@@ -38,7 +34,7 @@ export abstract class BasePageComponent implements OnInit, OnDestroy {
   protected web3Service: Web3Service;
   protected surveyService: SurveyService;
   protected ipfsService: IpfsService;
-  protected messageService: MessageService;
+  protected messageHelperService: MessageHelperService;
   protected confirmationService: ConfirmationService;
   protected navState: any;
 
@@ -75,7 +71,7 @@ export abstract class BasePageComponent implements OnInit, OnDestroy {
     this.web3Service = AppModule.injector.get(Web3Service);
     this.surveyService = AppModule.injector.get(SurveyService);
     this.ipfsService = AppModule.injector.get(IpfsService);
-    this.messageService = AppModule.injector.get(MessageService);
+    this.messageHelperService = AppModule.injector.get(MessageHelperService);
     this.confirmationService = AppModule.injector.get(ConfirmationService);
 
     // It has to be done in constructor, in onInit () it is too late (navigation has finished).
@@ -96,11 +92,11 @@ export abstract class BasePageComponent implements OnInit, OnDestroy {
   ngAfterViewInit() {
     this.onViewLoaded();
 
-    if (this.constructor.name == "TakeSurveyComponent") {
+    /*if (this.constructor.name == "TakeSurveyComponent") {
       $('.grecaptcha-badge').css({ opacity: 1 }).show();
     } else {
       $('.grecaptcha-badge').hide();
-    }
+    }*/
   }
 
   ngOnDestroy() {
@@ -140,72 +136,5 @@ export abstract class BasePageComponent implements OnInit, OnDestroy {
 
   pushError(detail: string) {
     this.pushMessage('error', detail);
-  }
-
-  showMessage(severity: string, detail: string, life: number) {
-    this.messageService.add({
-      sticky: true,
-      severity,
-      summary: this.translateService.instant(severity),
-      detail,
-      life
-    });
-  }
-
-  showSuccess(detail: string, life = toastDefaultLive) {
-    this.showMessage('success', detail, life);
-  }
-
-  showInfo(detail: string, life = toastDefaultLive) {
-    this.showMessage('info', detail, life);
-  }
-
-  showWarn(detail: string, life = toastDefaultLive) {
-    this.showMessage('warn', detail, life);
-  }
-
-  showError(detail: string, life = toastDefaultLive) {
-    this.showMessage('error', detail, life);
-  }
-
-  getTxError(error: any) {
-    if (error.code === 4001) {
-      // User rejected request
-      return undefined;
-    }
-
-    if (error.status === 0 || error.status === 503) {
-      // The server does not respond
-      return this.translateService.instant("server_in_maintenance");
-    }
-
-    let details = error.message || error.error?.message;
-
-    if(details) {
-      let match = blockchainErrorRegex.exec(details);
-
-      if(!match || !match[1]) {
-        match = serverErrorRegex.exec(details);
-      }
-
-      if(match && match[1]) {
-        details = match[1];
-      }
-    }
-
-    if(!isEmpty(details)) {
-      return this.translateService.instant("transaction_has_failed") + ':\n' + details;
-    }
-
-    return this.translateService.instant("transaction_failed_try_again_later");
-  }
-
-  showTxError(error: any) {
-    //console.error(error);
-    let errorMsg = this.getTxError(error);
-
-    if(errorMsg) {
-      this.showError(errorMsg);
-    }
   }
 }

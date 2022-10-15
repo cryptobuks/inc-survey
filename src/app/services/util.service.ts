@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { retry } from "rxjs/operators";
 import { FwdRequest } from "../models/fwd-request";
 import { FwdResponse } from "../models/fwd-response";
-import { NotificationType } from "../models/notification-type";
+import { NotifType } from "../models/notif-type";
 import { RELAYER_API_URL, COINGECKO_PRICE_URL, HTTP_OPTIONS, RECAPTCHA_RENDER } from "../shared/constants";
 declare var grecaptcha: any;
 
@@ -76,7 +76,15 @@ export class UtilService {
         }, HTTP_OPTIONS).toPromise();
     }
 
-    async triggerNotification(type: NotificationType, data: any) {
+    async getNotificationPrefs(endpoint: string) {
+        const recaptcha = await grecaptcha.execute(RECAPTCHA_RENDER, { action: 'submit' });
+        return this.http.post<FwdResponse>(RELAYER_API_URL + '/notif-prefs', {
+            endpoint,
+            recaptcha
+        }, HTTP_OPTIONS).toPromise();
+    }
+
+    async triggerNotification(type: NotifType, data: any) {
         const recaptcha = await grecaptcha.execute(RECAPTCHA_RENDER, { action: 'submit' });
         return this.http.post<FwdResponse>(RELAYER_API_URL + '/trigger-notif', {
             type,

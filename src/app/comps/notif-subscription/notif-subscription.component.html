@@ -1,0 +1,67 @@
+<div *ngIf="swEnabled" class="notif-subscription">
+
+    <button *ngIf="permissionGranted === false" class="icon-text-button" color="accent" mat-stroked-button (click)="subscribe()">
+        <mat-icon>notifications</mat-icon>
+        <span>{{ 'subscribe_new_surveys' | translate }}</span>
+    </button>
+
+    <button *ngIf="permissionGranted && subscription" class="icon-text-button" mat-stroked-button (click)="editPrefs()">
+        <mat-icon>notifications_active</mat-icon>
+        <span>{{ 'edit_preferences' | translate }}</span>
+    </button>
+    
+    <p-dialog header="{{ 'notification_preferences' | translate }}" [(visible)]="displayPrefsDialog" [breakpoints]="{'960px': '75vw'}" [style]="{width: '50vw'}"
+        [modal]="true" [draggable]="false" [resizable]="false" [dismissableMask]="true">
+
+        <h4>{{ 'parameters_to_filter_survey_notifications' | translate }}</h4>
+    
+        <div class="prefs-dialog-body">
+    
+            <div class="field-checkbox">
+                <p-checkbox [(ngModel)]="prefs.withoutKey" [binary]="true" inputId="withoutKey"></p-checkbox>
+                <label for="withoutKey">{{ 'without_coupon' | translate }}</label>
+            </div>
+    
+            <div>
+                <label for="minReward">{{ 'minimum_reward' | translate }}</label>
+                <div class="p-inputgroup">
+                    <p-inputNumber inputId="minReward" [(ngModel)]="prefs.minReward" placeholder="0.0">
+                    </p-inputNumber>
+                    <span class="p-inputgroup-addon">INC</span>      
+                </div>
+            </div>
+    
+            <div>
+                <label for="fromOwners">{{ 'creator_addresses' | translate }}</label>
+                <p-chips inputId="fromOwners" [addOnTab]="true" [addOnBlur]="true" separator="," 
+                [ngModel]="prefs.fromOwners" (ngModelChange)="onChangeOwners($event)"
+                (keydown)="onInputOwners($event)" placeholder="0xa149...68Bc, 0x3dCF...d095">
+                    <ng-template let-item pTemplate="item">
+                        <i class="pi pi-user ml-2"></i>&nbsp;{{ shortAddress(item) }}
+                    </ng-template>
+                </p-chips>
+            </div>
+    
+            <div>
+                <label for="keywords">{{ 'keywords' | translate }}</label>
+                <p-chips inputId="keywords" [addOnTab]="true" [addOnBlur]="true" separator="," 
+                [ngModel]="prefs.keywords" (ngModelChange)="onChangeKeywords($event)"
+                (keydown)="onInputKeywords($event)" placeholder="blockchain, token, services, society, technology">
+                    <ng-template let-item pTemplate="item">
+                        <i class="pi pi-tag ml-2"></i>&nbsp;{{ item }}
+                    </ng-template>
+                </p-chips>
+            </div>
+    
+        </div>
+    
+        <ng-template pTemplate="footer">
+            <button class="icon-text-button" mat-flat-button color="primary" [disabled]="!isPrefsChanged()" (click)="saveSubscription()">
+                <mat-icon>save</mat-icon>
+                <span>{{ 'save' | translate }}</span>
+            </button>
+        </ng-template>
+    
+    </p-dialog>
+
+</div>

@@ -28,9 +28,4 @@
     
     <span *ngIf="!loading && results.length == 0" class="no-results">{{ 'no_results_found' | translate }}</span>
 
-    <button *ngIf="subscribeEnabled && subscribedUser === false" class="icon-text-button" mat-stroked-button (click)="subscribe()">
-        <mat-icon>notifications_active</mat-icon>
-        <span>{{ 'subscribe_new_surveys' | translate }}</span>
-    </button>
-
 </div>

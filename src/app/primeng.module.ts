@@ -32,6 +32,7 @@ import { TabViewModule } from 'primeng/tabview';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
+import { ChipsModule } from 'primeng/chips';
 
 const AllPrimeNGModules = [
     TimelineModule,
@@ -64,7 +65,8 @@ const AllPrimeNGModules = [
     TabViewModule,
     ConfirmDialogModule,
     MessagesModule,
-    MessageModule
+    MessageModule,
+    ChipsModule
 ];
 
 @NgModule({

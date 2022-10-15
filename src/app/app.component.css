@@ -14,7 +14,12 @@
 }
 
 .head-secondary {
+  display: flex;
+  flex-wrap: wrap-reverse;
+  align-items: flex-start;
+  justify-content: flex-end;
   margin-top: 10px;
+  gap: 10px;
 }
 
 .header .logo {

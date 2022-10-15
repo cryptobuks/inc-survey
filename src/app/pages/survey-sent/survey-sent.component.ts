@@ -1,5 +1,5 @@
 import { Component, ElementRef } from '@angular/core';
-import { NotificationType } from 'src/app/models/notification-type';
+import { NotifType } from 'src/app/models/notif-type';
 import { SurveyEditState } from 'src/app/models/survey-edit-state';
 import { TxValue } from 'src/app/models/tx-value';
 import { CURRENT_CHAIN } from 'src/app/shared/constants';
@@ -65,7 +65,7 @@ export class SurveySentComponent extends BasePageComponent {
       const events = await this.engineContract.getPastEvents('OnSurveyAdded', { fromBlock: this.receipt.blockNumber, toBlock: this.receipt.blockNumber });
       this.state.survey.id = events[0].returnValues.surveyId;
       // Send notification to subscribers
-      this.utilService.triggerNotification(NotificationType.NEW_SURVEY, {
+      await this.utilService.triggerNotification(NotifType.NEW_SURVEY, {
         chainId: CURRENT_CHAIN,
         surveyId: this.state.survey.id
       });

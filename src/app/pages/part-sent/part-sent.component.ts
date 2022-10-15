@@ -1,7 +1,6 @@
 import { Component, ElementRef } from '@angular/core';
 import { SurveyTakeState } from 'src/app/models/survey-take-state';
 import { SurveyStateInfoService } from 'src/app/services/survey-state-info.service';
-import { CURRENT_CHAIN } from 'src/app/shared/constants';
 import { printPage } from 'src/app/shared/helper';
 import { setBreadcrumbForDetails } from 'src/app/shared/menu';
 import { BasePageComponent } from '../base-page.component';
@@ -92,13 +91,13 @@ export class PartSentComponent extends BasePageComponent {
 
     if(result.data != 'Relayer: no result') {
       this.gettingHash = false;
-      this.showTxError(new Error(result.data));
+      this.messageHelperService.showTxError(new Error(result.data));
       return;
     }
 
     if(this.attemps >= 24) {
       this.gettingHash = false;
-      this.showWarn(this.translateService.instant('not_possible_obtain_tx_hash'));
+      this.messageHelperService.showWarn(this.translateService.instant('not_possible_obtain_tx_hash'));
       this.pushInfo(this.translateService.instant('if_relayer_processes_your_trade_later'));
       return;
     }

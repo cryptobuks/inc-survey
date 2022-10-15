@@ -261,10 +261,10 @@ input::placeholder, textarea::placeholder {
     white-space: pre-line;
 }
 
-.p-toast .p-toast-message .p-toast-icon-close {
+/*.p-toast .p-toast-message .p-toast-icon-close {
     width: 2.25rem;
     height: 1.5rem;
-}
+}*/
 
 .p-inputnumber-button, .p-selectbutton .p-button, .p-togglebutton {
     border-radius: 2rem;
@@ -630,8 +630,8 @@ div[contenteditable]:empty:not(:focus):before {
 
 .grecaptcha-badge {
     bottom: 90px !important;
-    /* Hide during rendering */
-    opacity: 0;
+    /* Hide during rendering 
+    opacity: 0;*/
 }
 
 .loading-cnt {

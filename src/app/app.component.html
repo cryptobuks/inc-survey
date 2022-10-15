@@ -35,6 +35,10 @@
         </div>
 
         <div class="head-secondary">
+            <notif-subscription *ngIf="selectedOption == 2"></notif-subscription>
+
+            <span class="flex-spacer"></span>
+
             <div class="balance-chips">
                 <balance-chip symbol="INC" symbolIcon="assets/img/inc_logo.png" [balance]="humanFriendlyIncBalance" background="#3a4570"
                     icon="add" iconTooltip="{{ 'import_token' | translate }}" (onIconClick)="importToken()">

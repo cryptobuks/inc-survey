@@ -102,7 +102,7 @@ export class SurveyPreviewComponent extends BasePageComponent {
         return;
       }
   
-      this.showInfo(this.translateService.instant("data_entered_is_correct"));
+      this.messageHelperService.showInfo(this.translateService.instant("data_entered_is_correct"));
     } finally {
       this.loading = false;
       this.testing = false;
@@ -197,7 +197,7 @@ export class SurveyPreviewComponent extends BasePageComponent {
         this.router.navigate(['/create-survey/status']);
       }
     } catch (err: any) {
-      this.showTxError(err);
+      this.messageHelperService.showTxError(err);
     } finally {
       removeAppCover();
       this.loading = false;

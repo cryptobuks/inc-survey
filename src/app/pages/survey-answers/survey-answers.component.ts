@@ -201,7 +201,7 @@ export class SurveyAnswersComponent extends BasePageComponent {
 
       downloadCSV(this.survey.title, headers, values);
     } catch (err: any) {
-      this.showTxError(err);
+      this.messageHelperService.showTxError(err);
     } finally {
       removeAppCover();
       this.exporting = false;
