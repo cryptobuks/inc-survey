@@ -25,7 +25,7 @@
             <div>
                 <label for="minReward">{{ 'minimum_reward' | translate }}</label>
                 <div class="p-inputgroup">
-                    <p-inputNumber inputId="minReward" [(ngModel)]="prefs.minReward" placeholder="0.0">
+                    <p-inputNumber inputId="minReward" [(ngModel)]="prefs.minReward" placeholder="0.0" [min]="0" [max]="9007199254740991">
                     </p-inputNumber>
                     <span class="p-inputgroup-addon">INC</span>      
                 </div>
