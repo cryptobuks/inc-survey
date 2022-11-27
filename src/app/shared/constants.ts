@@ -68,45 +68,45 @@ export const WRAPPED_CURRENCY: { [chainId: number]: TokenData } = {
   [ChainId.MUMBAI]: newToken(ChainId.MUMBAI, "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889", "Wrapped Matic", "WMATIC", 18, WMATIC_LOGO_URL)
 };
 
+export const CONVENIENCE_FEE_ADDRESS: { [chainId: number]: string } = {
+  [ChainId.MATIC]: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  [ChainId.MUMBAI]: "0xd60895f56be15E15fc450bcad08f97937Eb6D31a"
+};
+
 // TODO add addresses
 export const INC_TOKEN: { [chainId: number]: TokenData } = {
     [ChainId.MATIC]: newToken(ChainId.MATIC, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "Incentive", "INC", 18, INC_LOGO_URL),
-    [ChainId.MUMBAI]: newToken(ChainId.MUMBAI, "0x0D19cc1c6dc90a312E80DF76068ff9FB518B8ab2", "Incentive", "INC", 18, INC_LOGO_URL)
+    [ChainId.MUMBAI]: newToken(ChainId.MUMBAI, "0xe3648E06EC94309F97F554E027C7b6AC9aFaD0De", "Incentive", "INC", 18, INC_LOGO_URL)
 };
 
 export const OFFER_ADDRESS: { [chainId: number]: string } = {
   [ChainId.MATIC]: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  [ChainId.MUMBAI]: "0x3005acb6Ca55A62161B2Cc94eFE80bcb1f827D8C"
+  [ChainId.MUMBAI]: "0xBcC772AE71841495FaefD44dc91b342cc74E1441"
 };
 
 export const SURVEY_ADDRESS: { [chainId: number]: string } = {
     [ChainId.MATIC]: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    [ChainId.MUMBAI]: "0x9807BF2C25586e86c14f968785c836d812757496"
+    [ChainId.MUMBAI]: "0x483567B064d82840F155c2356433A84Ca04431eB"
 };
 
 export const VALIDATOR_ADDRESS: { [chainId: number]: string } = {
   [ChainId.MATIC]: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  [ChainId.MUMBAI]: "0x3C058e0792ddAB253f7f624A4C1B6878272d9fBa"
+  [ChainId.MUMBAI]: "0x2EB7c8af6e1DfB64dbd4581f3e7e528cEC95454c"
+};
+
+export const CONFIG_ADDRESS: { [chainId: number]: string } = {
+  [ChainId.MATIC]: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  [ChainId.MUMBAI]: "0x06d63EE6891aCb679FACc87b6A559D4bE9c24820"
 };
 
 export const FORWARDER_ADDRESS: { [chainId: number]: string } = {
   [ChainId.MATIC]: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  [ChainId.MUMBAI]: "0x4ec70b4070563089bAaB0b7d46c595aa16e467D6"
+  [ChainId.MUMBAI]: "0x0c8C2F50f68ad767a653F098017A81484514C77d"
 };
 
 export const ENGINE_ADDRESS: { [chainId: number]: string } = {
     [ChainId.MATIC]: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    [ChainId.MUMBAI]: "0x798a58DDF63D69bc413cbdFD582Fb635B5168F18"
-};
-
-export const WETH_ADDRESS: { [chainId: number]: string } = {
-  [ChainId.MATIC]: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
-  [ChainId.MUMBAI]: "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889"
-};
-
-export const CONVENIENCE_FEE_ADDRESS: { [chainId: number]: string } = {
-  [ChainId.MATIC]: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  [ChainId.MUMBAI]: "0xd60895f56be15E15fc450bcad08f97937Eb6D31a"
+    [ChainId.MUMBAI]: "0x8F529D38f22030E1a298bD727Cf0D6458E395A7e"
 };
 
 export const chartThemeLight: any = {

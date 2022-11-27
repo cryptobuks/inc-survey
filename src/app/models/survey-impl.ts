@@ -1,7 +1,8 @@
 import BigNumber from "bignumber.js";
 import { toAmount, toFormatBigNumber } from "../shared/helper";
 import { QuestionImpl } from "./question-impl";
-import { Survey, SurveyData } from "./survey-model";
+import { Survey } from "./survey-model";
+import { TokenData } from "./token-data";
 
 export interface SurveyFormattedData {
   budgetAmount: string;
@@ -13,7 +14,6 @@ export interface SurveyFormattedData {
 
 export class SurveyImpl {
 
-    id: number;
     entryDate: Date;
     title: string;
     description: string;
@@ -22,19 +22,20 @@ export class SurveyImpl {
     endDate: Date;
     budget: BigNumber;
     reward: BigNumber;
+    tokenData: TokenData;
+    address?: string;
     owner?: string;
-    remainingBudget?: BigNumber;// Avoid, change at any time
-    gasReserve?: BigNumber;// Avoid, change at any time
     keyRequired?: boolean;
-    partKeys?: string[];
+    gasReserve?: BigNumber;
     imageData?: string;
-    formatted?: SurveyFormattedData;
     questions?: QuestionImpl[];
+    partKeys?: string[];
+    formatted?: SurveyFormattedData;
     
     static formatData(impl: SurveyImpl): SurveyFormattedData {
       impl.formatted = {
-        budgetAmount: toFormatBigNumber(toAmount(impl.budget)),
-        rewardAmount: toFormatBigNumber(toAmount(impl.reward)),
+        budgetAmount: toFormatBigNumber(toAmount(impl.budget, impl.tokenData.decimals)),
+        rewardAmount: toFormatBigNumber(toAmount(impl.reward, impl.tokenData.decimals)),
         entryDate: impl.entryDate?.toLocaleString(),
         startDate: impl.startDate.toLocaleString(),
         endDate: impl.endDate.toLocaleString()
@@ -43,9 +44,10 @@ export class SurveyImpl {
       return impl.formatted;
     }
 
-    static toImpl(survey: Survey, surveyData: SurveyData, questions: QuestionImpl[]): SurveyImpl {
+    static toImpl(survey: Survey, tokenData: TokenData, imageData: string, questions: QuestionImpl[]): SurveyImpl {
       let impl: SurveyImpl = {
-        id: survey.id,
+        address: survey.addr,
+        owner: survey.account,
         entryDate: new Date(survey.entryTime * 1000),
         title: survey.title,
         description: survey.description,
@@ -54,11 +56,10 @@ export class SurveyImpl {
         endDate: new Date(survey.endTime * 1000),
         budget: new BigNumber(survey.budget),
         reward: new BigNumber(survey.reward),
-        owner: surveyData.owner,
-        remainingBudget: new BigNumber(surveyData.remainingBudget),
-        gasReserve: new BigNumber(surveyData.gasReserve),
-        keyRequired: surveyData.keyRequired,
-        questions: questions
+        keyRequired: survey.keyRequired,
+        tokenData,
+        imageData,
+        questions
       };
 
       SurveyImpl.formatData(impl);

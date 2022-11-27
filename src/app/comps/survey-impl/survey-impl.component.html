@@ -2,16 +2,21 @@
 
     <div *ngIf="showDetails" class="content-panel survey-main-details">
 
-        <div class="survey-logo">
-            <img *ngIf="imageSrc" class="thumb-circle" alt="Logo" [src]="imageSrc" loading="lazy" onerror="this.src='assets/img/broken_image.png';" />
-            <img *ngIf="!imageSrc" class="thumb-circle" alt="Logo" src="assets/img/empty_image.png" />
-            
-            <div *ngIf="showLogoUrl && survey.logoUrl" class="data-item">
-                <label>{{ 'logo_url' | translate }}</label>
-                <span>{{ survey.logoUrl }}</span>
+        <div class="survey-select">
+            <div class="survey-logo">
+                <img *ngIf="survey.imageData" class="thumb-circle" alt="Logo" [src]="survey.imageData" loading="lazy" onerror="this.src='assets/img/broken_image.png';" />
+                <img *ngIf="!survey.imageData" class="thumb-circle" alt="Logo" src="assets/img/empty_image.png" />
+                
+                <div *ngIf="showLogoUrl && survey.logoUrl" class="data-item">
+                    <!-- <label>{{ 'logo_url' | translate }}</label> -->
+                    <span>{{ survey.logoUrl }}</span>
+                </div>
             </div>
 
-            <div class="survey-logo-error"></div>
+            <div class="survey-token data-item">
+                <!-- <label>{{ 'incentive_token' | translate }}</label> -->
+                <select-token [data]="survey.tokenData"></select-token>
+            </div>
         </div>
 
         <div class="flex-grid survey-info">
@@ -42,17 +47,17 @@
 
             <div class="grid-item survey-budget">
                 <label>{{ 'total_budget' | translate }}</label>
-                <div class="grid-row" title="{{ survey.formatted.budgetAmount }} INC">
+                <div class="grid-row" title="{{ survey.formatted.budgetAmount }} {{ survey.tokenData.symbol }}">
                     <span class="line-limit">{{ survey.formatted.budgetAmount }}</span>
-                    <span class="coin-suffix">INC</span>
+                    <span class="coin-suffix">{{ survey.tokenData.symbol }}</span>
                 </div>
             </div>
 
             <div class="grid-item survey-reward">
                 <label>{{ 'reward_for_participation' | translate }}</label>
-                <div class="grid-row" title="{{ survey.formatted.rewardAmount }} INC">
+                <div class="grid-row" title="{{ survey.formatted.rewardAmount }} {{ survey.tokenData.symbol }}">
                     <span class="line-limit">{{ survey.formatted.rewardAmount }}</span>
-                    <span class="coin-suffix">INC</span>
+                    <span class="coin-suffix">{{ survey.tokenData.symbol }}</span>
                 </div>
             </div>
 

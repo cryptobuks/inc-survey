@@ -37,7 +37,7 @@ export class PartSentComponent extends BasePageComponent {
     }
 
     this.setTitle(this.translateService.instant("participation_status") + " ´" + this.state.survey.title + "´");
-    setBreadcrumbForDetails(this.router, this.state.survey.id, this.state.survey.title);
+    setBreadcrumbForDetails(this.router, this.state.survey.address, this.state.survey.title);
     this.loadSurveyStateInfo();
 
     if (this.state.isMetaTx) {
@@ -61,10 +61,16 @@ export class PartSentComponent extends BasePageComponent {
 
   onReceipt(receipt: any) {
     this.receipt = receipt;
+    if (receipt.status) {
+      this.messageHelperService.showSuccess(this.translateService.instant(
+        "you_have_received_x",
+        { val1: this.state.survey.formatted.rewardAmount + ' ' + this.state.survey.tokenData.symbol }
+      ));
+    }
   }
 
   backToDetails() {
-    this.router.navigate(['/surveys/' + this.state.survey.id]);
+    this.router.navigate(['/surveys/' + this.state.survey.address]);
   }
 
   goDashboard() {

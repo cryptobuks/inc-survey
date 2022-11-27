@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DynamicItem } from 'src/app/models/dynamic-item';
 import { MenuOption } from 'src/app/models/menu-option';
 import { QuestionImpl } from 'src/app/models/question-impl';
-import { ValidationExpression, ValidationOperator, EngineProps } from 'src/app/models/survey-model';
+import { ValidationExpression, ValidationOperator, ConfigProps } from 'src/app/models/survey-model';
 import { QUESTION_CLASS, getExpressionTitle, getValidationExpressions, getValueType, QuestionData, RESPONSE_TYPE, ValidationValueType } from 'src/app/models/survey-support';
 import { SurveyService } from 'src/app/services/survey.service';
 import { isEmpty } from 'src/app/shared/helper';
@@ -39,7 +39,7 @@ export class QuestionImplComponent implements OnInit, OnDestroy, DynamicComponen
 
   data: any;//  preview data
 
-  get engineProps(): EngineProps { return this.surveyService.engineProps; };
+  get configProps(): ConfigProps { return this.surveyService.configProps; };
 
   dynamicItem: DynamicItem;
   validationExpressions: any[] = [];

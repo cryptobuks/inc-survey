@@ -22,42 +22,38 @@ export class ResponsePercentComponent extends BaseResponseComponent {
     let count = 0;
     let total = 0;
 
-    while(this.data.iterator.hasNext()) {
-      let responses = await this.data.iterator.next();
-
-      for(let response of responses) {
-        if(!this.checkResponse(response)) {
-          continue;
-        }
-        
-        let val = parseInt(response);
-        let index: number;
-
-        if(val < 0 || val > 100) {
-          throw new Error("Invalid percent: " + val);
-        }
-
-        if(val <= 20) {
-          index = 0;
-        } else if(val <= 40) {
-          index = 1;
-        } else if(val <= 60) {
-          index = 2;
-        } else if(val <= 80) {
-          index = 3;
-        } else /*if(val <= 100)*/ {
-          index = 4;
-        }
-
-        if(values[index]) {
-          values[index]++;
-        } else {
-          values[index] = 1;
-        }
-
-        count++;
-        total += val;
+    for (let response of this.data.responseCounts) {
+      if(!this.checkResponse(response.value)) {
+        continue;
       }
+      
+      let val = parseInt(response.value);
+      let index: number;
+
+      if(val < 0 || val > 100) {
+        throw new Error("Invalid percent: " + val);
+      }
+
+      if(val <= 20) {
+        index = 0;
+      } else if(val <= 40) {
+        index = 1;
+      } else if(val <= 60) {
+        index = 2;
+      } else if(val <= 80) {
+        index = 3;
+      } else /*if(val <= 100)*/ {
+        index = 4;
+      }
+
+      if(values[index]) {
+        values[index] += response.count;
+      } else {
+        values[index] = response.count;
+      }
+
+      count += response.count
+      total += val;
     }
 
     let totalTxt = this.translateService.instant("total_average");

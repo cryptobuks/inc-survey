@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AppModule } from '../app.module';
 import { MenuOption } from '../models/menu-option';
 import { QuestionData } from '../models/survey-support';
-import { cloneDeep, randomIntFromInterval, shuffle } from '../shared/helper';
+import { cloneDeep, shuffle } from '../shared/helper';
 import { DynamicComponent } from './dynamic-template/dynamic-template.component';
 
 @Component({
@@ -46,7 +46,7 @@ export abstract class BaseQuestionComponent implements OnInit, OnDestroy, Dynami
   }
 
   getOutput(): string {
-    return this.data.response.input?.toString()?? "";
+    return this.data.response.input?.toString().trim()?? "";
   }
 
   abstract onInit(): void;
@@ -65,7 +65,7 @@ export abstract class BaseQuestionComponent implements OnInit, OnDestroy, Dynami
   }
 
   canAddOption() {
-    return this.data.content.options.length <= 100;
+    return this.data.content.options.length < 100;
   }
 
   canRemOption() {
@@ -73,10 +73,10 @@ export abstract class BaseQuestionComponent implements OnInit, OnDestroy, Dynami
   }
 
   addOption() {
-    let value: number;
+    let value = -1;
 
     do {
-      value = randomIntFromInterval(1, 999);// max is 100
+      value++;// max is 100
     } while(this.data.content.options.some( (opt: { value: number; }) => opt.value === value ));
 
     let num = this.data.content.options.length + 1;

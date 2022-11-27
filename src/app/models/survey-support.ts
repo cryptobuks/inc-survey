@@ -21,9 +21,8 @@ import { ResponseRatingComponent } from "../comps/response-rating/response-ratin
 import { ResponseTextComponent } from "../comps/response-text/response-text.component";
 import { ResponseToggleComponent } from "../comps/response-toggle/response-toggle.component";
 import { isNumIn } from "../shared/helper";
-import { ListIterator } from "./list-iterator";
 import { QuestionImpl } from "./question-impl";
-import { ResponseType, ValidationExpression } from "./survey-model";
+import { ResponseCount, ResponseType, ValidationExpression } from "./survey-model";
 
 export enum ComponentType {
     TEXT_SINGLE_LINE, // ResponseType.Text
@@ -78,8 +77,8 @@ export interface ResponseData {
     question: QuestionImpl,
     partsNum: number,
     responses: string[],
+    responseCounts: ResponseCount[],
     cursor: number,
-    iterator: ListIterator<string[]>,
     onLoaded: (count: number) => void;
 }
 
@@ -114,9 +113,9 @@ export const RESPONSE_CLASS: { [type: number]: Type<any> } = {
     [ComponentType.DROPDOWN]: ResponseOptionsComponent,// Using same comp.
     [ComponentType.LINEAR_SCALE]: ResponseLinearScaleComponent,
     [ComponentType.PERCENT]: ResponsePercentComponent,
-    [ComponentType.RANGE]: ResponseRangeComponent,
-    [ComponentType.DATE]: ResponseDateComponent,
-    [ComponentType.DATE_RANGE]: ResponseDateRangeComponent,
+    [ComponentType.RANGE]: ResponseRangeComponent,// ´count´ is not the total number of responses
+    [ComponentType.DATE]: ResponseDateComponent,// ´count´ is not the total number of responses
+    [ComponentType.DATE_RANGE]: ResponseDateRangeComponent,// ´count´ is not the total number of responses
     [ComponentType.RATING]: ResponseRatingComponent,
     //[ComponentType.RATINGS]: TestComponent,
     [ComponentType.TOGGLE]: ResponseToggleComponent,
@@ -138,6 +137,39 @@ export const RESPONSE_TYPE: { [type: number]: ResponseType } = {
     //[ComponentType.RATINGS]: ResponseType.ArrayRating,
     [ComponentType.TOGGLE]: ResponseType.Bool,
     //[ComponentType.TOGGLES]: ResponseType.ArrayBool
+};
+
+export const isLimitedResponse = (type: ResponseType) => {
+    return isNumIn(type, 
+        ResponseType.Bool, 
+        ResponseType.Percent, 
+        ResponseType.Rating, 
+        ResponseType.OneOption, 
+        ResponseType.ManyOptions, 
+        ResponseType.ArrayBool);
+};
+
+export const isArrayResponse = (type: ResponseType) => {
+    return isNumIn(type, 
+        ResponseType.ManyOptions, 
+        ResponseType.Range, 
+        ResponseType.DateRange, 
+        ResponseType.ArrayBool, 
+        ResponseType.ArrayText, 
+        ResponseType.ArrayNumber, 
+        ResponseType.ArrayDate);
+};
+
+export const parseResponse = (type: ResponseType, response: string) => {
+    let values: string[];
+
+    if(isArrayResponse(type)) {
+        values = response.split(";");
+    } else {
+        values = [response];
+    }
+
+    return values;
 };
 
 export const getValidationExpressions = (type: ResponseType) => {

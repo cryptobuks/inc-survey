@@ -1,6 +1,7 @@
 .create-survey-cnt {
     max-width: 1100px;
     margin: 0 auto;
+    padding: 20px;
 }
 
 .survey-params {
@@ -15,27 +16,30 @@
     font-size: 16px;
 }
 
-.survey-logo {
+.survey-select {
     width: 256px;
+}
+
+.survey-logo .thumb-cnt {
     text-align: center;
 }
 
-.survey-logo > img {
+.survey-logo .thumb-cnt > img {
     cursor: pointer;
 }
 
-.survey-logo > span {
+.survey-logo .thumb-cnt > span {
     display: block;
     margin-top: 10px;
     font-size: 14px;
 }
 
-.survey-logo > .mat-spinner {
+.survey-logo .thumb-cnt > .mat-spinner {
     display: inline-block;
     margin: 24px;
 }
 
-.survey-logo > .url-input {
+.survey-logo .url-input {
     border-radius: 4px;
     padding: 12px 10px;
     margin-top: 10px;
@@ -47,13 +51,17 @@
     color: var(--text-color);
 }
 
-.survey-logo > .url-input:focus { 
+.survey-logo .url-input:focus { 
     outline: none !important;
     box-shadow: 0 0 10px #adadad;
 }
 
-.survey-logo-error {
-    text-align: start;
+.survey-token {
+    margin-top: 20px;
+}
+
+.survey-token select-token {
+    display: block;
 }
 
 .survey-info {
@@ -285,10 +293,6 @@
 }
 
 @media screen and (max-width: 1280px) {
-    .create-survey-cnt {
-        margin: 20px;
-    }
-
     .survey-params {
         gap: 40px;
     }
@@ -300,15 +304,12 @@
 }
 
 @media screen and (max-width: 991px) {
-    .create-survey-cnt {
-        margin: 20px;
-    }
-
     .survey-params {
         padding: 20px;
         gap: 20px;
     }
 
+    .survey-select,
     .survey-budget, .survey-reward,
     .survey-start-date, .survey-end-date,
     .survey-gas-reserve-cnt {
@@ -338,10 +339,4 @@
     /*.dest-list {
         min-height: 450px;
     }*/
-}
-
-@media screen and (max-width: 767px) {
-    .survey-logo {
-        width: 100%;
-    }
 }

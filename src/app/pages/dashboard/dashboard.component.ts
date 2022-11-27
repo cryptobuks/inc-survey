@@ -1,5 +1,4 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { IncTimelineComponent } from 'src/app/comps/inc-timeline/inc-timeline.component';
 import { OwnSurveysChartComponent } from 'src/app/comps/own-surveys-chart/own-surveys-chart.component';
 import { SurveyState } from 'src/app/models/survey-support';
 import { ListenerRemover } from 'src/app/shared/simple-listener';
@@ -22,7 +21,6 @@ export class DashboardComponent extends BasePageComponent {
   private onChainLoadedRemover: ListenerRemover;
   private onAccountLoadedRemover: ListenerRemover;
 
-  @ViewChild('incTimeline') incTimeline: IncTimelineComponent;
   @ViewChild('ownOpenedSurveysChart') ownOpenedSurveysChart: OwnSurveysChartComponent;
   @ViewChild('ownClosedSurveysChart') ownClosedSurveysChart: OwnSurveysChartComponent;
 
@@ -45,10 +43,6 @@ export class DashboardComponent extends BasePageComponent {
 
     this.onAccountLoadedRemover = this.web3Service.onAccountLoaded.add(() => {
       this.loadData();
-
-      if(this.incTimeline) {
-        this.incTimeline.loadDefault();
-      }
 
       if(this.ownOpenedSurveysChart) {
         this.ownOpenedSurveysChart.loadData();

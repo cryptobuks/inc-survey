@@ -17,30 +17,7 @@ export class ResponseChecksComponent extends BaseResponseComponent {
   }
 
   async onLoadResponses() {
-    let values = {};
-    let count = 0;
-
-    while(this.data.iterator.hasNext()) {
-      let responses = await this.data.iterator.next();
-
-      for(let response of responses) {
-        if(!this.checkResponse(response)) {
-          continue;
-        }
-
-        let vals = response.split(";");
-
-        for(let val of vals) {
-          if(values[val]) {
-            values[val]++;
-          } else {
-            values[val] = 1;
-          }
-
-          count++;
-        }
-      }
-    }
+    let { values, count } = this.loadValues();
 
     let chartData = {
       theme: this.chartTheme,

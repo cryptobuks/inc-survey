@@ -1,0 +1,91 @@
+::ng-deep .light-theme .select-token,
+::ng-deep .light-theme .select-token .icon {
+    background: rgb(0 0 0 / 5%);
+}
+::ng-deep .light-theme .select-token:hover {
+    background: rgb(0 0 0 / 10%);
+}
+
+::ng-deep .dark-theme .select-token,
+::ng-deep .dark-theme  .select-token .icon {
+    background: rgb(255 255 255 / 10%);
+}
+::ng-deep .dark-theme .select-token:hover {
+    background: rgb(255 255 255 / 20%);
+}
+
+.select-token {
+    flex-direction: row;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 6px;
+    width: 100%;
+}
+
+.select-token.selectable {
+    cursor: pointer;
+}
+
+.select-token:not(.selectable) {
+    cursor: default;
+    pointer-events: none;
+}
+
+.select-token .mat-icon {
+    padding: 0 10px 0 0;
+    width: auto;
+    height: auto;
+    margin-left: auto;
+}
+
+.select-token .icon {
+  display: inline-block;
+  width: 54px;
+  height: 54px;
+  overflow: hidden;
+}
+
+.select-token .icon > img {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    margin: 7px 0 0 7px;
+    border-radius: 50%;
+}
+
+.select-token .text {
+    margin: 0 10px;
+    overflow: hidden;
+    flex: 1;
+    text-align: left;
+}
+
+.select-token .text .tkn-desc {
+    display: block;
+    font-size: 14px;
+    color: var(--text-color-secondary);
+}
+
+.select-token .text .tkn-dets {
+    flex-direction: row;
+    display: flex;
+    place-content: center space-between;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.select-token .text .tkn-dets .tkn-symbol {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.select-token .text .tkn-dets .tkn-balance {
+    font-size: 12px;
+    margin-left: 4px;
+}
+
+.select-token .text .select-btn {
+    font-size: 10px;
+    padding: 4px 10px;
+    margin-top: 4px;
+}

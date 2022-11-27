@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { SurveyImpl } from '../models/survey-impl';
 import { isIpfsUri } from '../shared/helper';
 declare var Ipfs: any;
 
@@ -37,44 +36,33 @@ export class IpfsService {
     let result = url;
 
     if (isIpfsUri(url)) {
-        /*const ipfsUrls = uriToHttp(url);
+      /*const ipfsUrls = uriToHttp(url);
 
-        for (let ipfsUrl of ipfsUrls) {
-            let response: string;
+      for (let ipfsUrl of ipfsUrls) {
+          let response: string;
 
-            try {
-                const xhr = await this.request('GET', ipfsUrl, 3000);
-                response = xhr.responseText;
-            } catch(err) {
-                console.error(err);
-            }
+          try {
+              const xhr = await this.request('GET', ipfsUrl, 3000);
+              response = xhr.responseText;
+          } catch(err) {
+              console.error(err);
+          }
 
-            if (response) {
-                result = response;
-                break;
-            }
-        }  */
+          if (response) {
+              result = response;
+              break;
+          }
+      }  */
 
-        const cid = url.substring(7);
-        result = await this.cat(cid);
+      const cid = url.substring(7);
+      result = await this.cat(cid);
     }
 
     return Promise.resolve<string>(result);
-}
-
-async surveyLogo(survey: SurveyImpl): Promise<string> {
-    let result: string;
-    if(survey.imageData) {
-        result = survey.imageData;
-    } else if(survey.logoUrl) {
-        result = await this.ipfsImage(survey.logoUrl);
-    }
-
-    return Promise.resolve<string>(result);
-}
+  }
 
   private async create() {
-    if(!this.node) {
+    if (!this.node) {
       this.node = await Ipfs.create();
     }
   }

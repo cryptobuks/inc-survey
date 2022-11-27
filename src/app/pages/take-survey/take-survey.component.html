@@ -31,10 +31,10 @@
 
         <div class="control-grid">
 
-            <button mat-flat-button class="template-icon back-button" [disabled]="sending" (click)="backToDetails()">
+            <!--<button mat-flat-button class="template-icon back-button" [disabled]="sending" (click)="backToDetails()">
                 <mat-icon icon="arrow_back"></mat-icon>
                 <span>{{ 'back_to_survey_details' | translate }}</span>
-            </button>
+            </button>-->
 
             <button mat-flat-button class="template-icon send-button" [class.template-spinner]="sending"
                 [disabled]="sending || !surveyStateInfo.canParticipate" color="primary" (click)="participate($event)">

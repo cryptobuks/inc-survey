@@ -1,20 +1,22 @@
 import BigNumber from "bignumber.js";
 
-export interface SurveyProps {
+export interface ConfigProps {
+    // Query
     surveyMaxPerRequest: number;
-    participantMaxPerRequest: number;
-    participationMaxPerRequest: number;
     questionMaxPerRequest: number;
     responseMaxPerRequest: number;
-}
-
-export interface EngineProps {
+    participantMaxPerRequest: number;
+    participationMaxPerRequest: number;
+    txGasMaxPerRequest: number;
+    // Validator
+    tknSymbolMaxLength: number;
+    tknNameMaxLength: number;
     titleMaxLength: number;
     descriptionMaxLength: number;
     urlMaxLength: number;
-    startMaxTime: number;
-    rangeMinTime: number;
-    rangeMaxTime: number;
+    startMaxTime: number;// maximum time to start the survey
+    rangeMinTime: number;// minimum duration time
+    rangeMaxTime: number;// maximum duration time
     questionMaxPerSurvey: number;
     questionMaxLength: number;
     validatorMaxPerQuestion: number;
@@ -36,44 +38,31 @@ export interface Question {
     responseType: ResponseType;
 }
 
-export interface Survey {
-    id: number;
-    entryTime: number;
+export interface SurveyRequest {
     title: string;
     description: string;
     logoUrl: string;
     startTime: number;
     endTime: number;
-    budget: string;// BigNumber: Total budget of INC tokens
+    budget: string;// BigNumber: Total budget of tokens
     reward: string;// BigNumber: Reward amount for participation
+    token: string;// Address: Incentive token
+}
+
+export interface Survey extends SurveyRequest {
+    entryTime: number;
+    account: string;// Address: creator
+    keyRequired: boolean;
+    addr: string;// Address: survey
 }
 
 export interface Participation {
-    surveyId: number;
-    entryTime: number;
+    surveyAddr: string;
     responses: string[];
-}
-
-export interface SurveyData {
-    owner: string;
-    //participants: string[];
-    remainingBudget: string;// BigNumber: Remaining budget
-    gasReserve: string;// BigNumber: Gas reserve to pay participations
-    //hashes: string[];// Participation hashes
-    keyRequired: boolean;
-}
-
-export interface SurveyFilter {
-    search: string;// Search in title or description
-    onlyPublic: boolean;// No coupon required
-    withRmngBudget: boolean;// With budget greater than or equal to the reward
-    minStartTime: number;
-    maxStartTime: number;
-    minEndTime: number;
-    maxEndTime: number;
-    minBudget: string;// BigNumber
-    minReward: string;// BigNumber
-    minGasReserve: string;// BigNumber
+    txGas: string;// BigNumber
+    entryTime: number;
+    gasPrice: string;// BigNumber
+    account: string;// Address
 }
 
 export enum ValidationOperator {
@@ -107,4 +96,15 @@ export interface QuestionValidator {
     operator: ValidationOperator;
     expression: ValidationExpression;
     value: string;
+}
+
+export interface ResponseCount {
+    value: string;
+    count: number;
+}
+
+export interface SurveyAmounts {
+    remainingBudget: BigNumber;
+    remainingGasReserve: BigNumber;
+    participantNumber: number;
 }

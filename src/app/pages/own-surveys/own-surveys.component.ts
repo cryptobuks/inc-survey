@@ -21,7 +21,7 @@ export class OwnSurveysComponent extends BasePageComponent {
   paginatorData: PaginatorData = {
     page: 0,
     first: 0,
-    rows: 10,
+    rows: 12,
     pageCount: 1
   };
 
@@ -60,15 +60,15 @@ export class OwnSurveysComponent extends BasePageComponent {
     this.paginatorData = event;
     let comp = this;
 
-    $('.survey-list').fadeTo(100, 0.01, function () {
+    $('.survey-list-view').fadeTo(100, 0.01, function () {
       comp.nextList();
-      moveScrollTo('.survey-list', 'top', -10);
+      moveScrollTo('.survey-list-view', 'top', -10);
       $(this).fadeTo(1000, 1);
     });
   }
 
-  exploreSurvey(surveyId: number) {
-    this.router.navigate(['/dashboard/my-surveys/' + surveyId]);
+  exploreSurvey(surveyAddr: number) {
+    this.router.navigate(['/dashboard/my-surveys/' + surveyAddr]);
   }
 
   private async loadData() {
@@ -93,8 +93,8 @@ export class OwnSurveysComponent extends BasePageComponent {
     try {
       this.surveys = [];
 
-      if (length > this.surveyProps.surveyMaxPerRequest) {
-        length = this.surveyProps.surveyMaxPerRequest;
+      if (length > this.configProps.surveyMaxPerRequest) {
+        length = this.configProps.surveyMaxPerRequest;
       }
 
       if (cursor + length > this.surveysLength) {

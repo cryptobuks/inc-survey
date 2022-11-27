@@ -81,19 +81,19 @@ export class TakeSurveyComponent extends BasePageComponent {
   }
 
   onInit() {
-    let surveyId = this.navState?.surveyId;
+    let surveyAddr = this.navState?.surveyAddr;
 
-    if (this.state.survey && this.state.survey.id == surveyId) {
+    if (this.state.survey && this.state.survey.address == surveyAddr) {
       this.survey = this.state.survey;
     }
 
-    if (!surveyId && !this.survey) {
+    if (!surveyAddr && !this.survey) {
       this.backToList();
       return;
     }
 
     this.onChainLoadedRemover = this.web3Service.onChainLoaded.addAndFire(() => {
-      this.loadSurveyData(surveyId);
+      this.loadSurveyData(surveyAddr);
     }, () => {
       return this.loadedChainData;
     });
@@ -114,7 +114,7 @@ export class TakeSurveyComponent extends BasePageComponent {
   }
 
   backToDetails() {
-    this.router.navigate(['/surveys/' + this.survey.id]);
+    this.router.navigate(['/surveys/' + this.survey.address]);
   }
 
   participate(event: Event) {
@@ -168,24 +168,18 @@ export class TakeSurveyComponent extends BasePageComponent {
         }
       }
 
-      const validation = this.surveyComp.validateParticipation();
-
-      if (validation) {
-        let elemId = validation[0];
-        let errMsg = validation[1];
-        let qIndex = validation[2];
-
-        this.surveyComp.validationError(elemId, errMsg, qIndex);
+      const isValid = this.surveyComp.validateParticipation();
+      if(!isValid) {
         return;
       }
 
-      const surveyId = this.survey.id;
+      const surveyAddr = this.survey.address;
       const responses = this.surveyComp.getResponses();
 
       setAppCover(this.translateService.instant("waiting_reply"));
 
       if (useMetaTx) {
-        this.request = await this.surveyService.estimatePartFromForwarder(CURRENT_CHAIN, surveyId, responses, this.state.partKey);
+        this.request = await this.surveyService.estimatePartFromForwarder(CURRENT_CHAIN, surveyAddr, responses, this.state.partKey);
 
         const abiDecoder = new AbiDecoder(this.web3.eth.abi);
         abiDecoder.addABI(this.engineContract._jsonInterface);
@@ -194,7 +188,7 @@ export class TakeSurveyComponent extends BasePageComponent {
 
         this.displaySigReqDialog = true;
       } else {
-        const txHash = await this.surveyService.sendParticipation(surveyId, responses, this.state.partKey);
+        const txHash = await this.surveyService.sendParticipation(surveyAddr, responses, this.state.partKey);
 
         setAppCover(this.translateService.instant("please_wait"));
         this.finishPart(txHash, false);
@@ -257,25 +251,25 @@ export class TakeSurveyComponent extends BasePageComponent {
     }
   }
 
-  private async loadSurveyData(surveyId: number) {
+  private async loadSurveyData(surveyAddr: string) {
     this.loading = true;
 
     try {
       if (!this.survey) {
-        this.survey = await this.surveyService.findSurvey(surveyId);
+        this.survey = await this.surveyService.findSurvey(surveyAddr);
 
         // this should not happen with added validation
-        if (!this.survey || this.survey.id == 0) {
+        if (!this.survey?.address) {
           this.backToList();
           return;
         }
 
-        let questionsNum = await this.surveyService.getQuestionsLength(surveyId);
+        let questionsNum = await this.surveyService.getQuestionsLength(surveyAddr);
         // SurveyBase.questionMaxPerRequest = SurveyValidator.questionMaxPerSurvey
-        this.survey.questions = await this.surveyService.getQuestions(surveyId, 0, questionsNum);
+        this.survey.questions = await this.surveyService.getQuestions(surveyAddr, 0, questionsNum);
 
         for (let i = 0; i < this.survey.questions.length; i++) {
-          this.survey.questions[i].validators = await this.surveyService.getValidators(surveyId, i);
+          this.survey.questions[i].validators = await this.surveyService.getValidators(surveyAddr, i);
         }
 
         this.state.survey = this.survey;
@@ -285,7 +279,7 @@ export class TakeSurveyComponent extends BasePageComponent {
       await this.surveyStateInfo.loadData(this.survey, this.checkGasReserve.bind(this));
       
       this.setTitle(this.translateService.instant("take_survey") + ": " + this.survey.title);
-      setBreadcrumbForDetails(this.router, surveyId, this.survey.title);
+      setBreadcrumbForDetails(this.router, surveyAddr, this.survey.title);
 
     } catch (err: any) {
       console.error(err);

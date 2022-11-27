@@ -2,9 +2,10 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { retry } from "rxjs/operators";
 import { FwdRequest } from "../models/fwd-request";
-import { FwdResponse } from "../models/fwd-response";
+import { RelResponse } from "../models/rel-response";
 import { NotifType } from "../models/notif-type";
 import { RELAYER_API_URL, COINGECKO_PRICE_URL, HTTP_OPTIONS, RECAPTCHA_RENDER } from "../shared/constants";
+import { SurveyFilter } from "../models/survey-filter";
 declare var grecaptcha: any;
 
 @Injectable({
@@ -17,9 +18,9 @@ export class UtilService {
 
     async loadJson(url: string): Promise<any> {
         return await this.http.get<any>(url)
-            .pipe(
-                retry(1)
-            ).toPromise();
+        .pipe(
+            retry(1)
+        ).toPromise();
     }
 
     async getCurrencyPrice(symbol: string): Promise<number> {
@@ -38,20 +39,20 @@ export class UtilService {
         return Promise.resolve<number>(data?.current_price);
     }
 
-    async estimatePart(chainId: number, surveyId: number, responses: string[], key: string): Promise<FwdResponse> {
+    async estimatePart(chainId: number, surveyAddr: string, responses: string[], key: string): Promise<RelResponse> {
         const recaptcha = await grecaptcha.execute(RECAPTCHA_RENDER, { action: 'submit' });
-        return this.http.post<FwdResponse>(RELAYER_API_URL + '/estimate-part', {
+        return this.http.post<RelResponse>(RELAYER_API_URL + '/estimate-part', {
             chainId,
-            surveyId,
+            surveyAddr,
             responses,
             key,
             recaptcha
         }, HTTP_OPTIONS).toPromise();
     }
 
-    async sendPart(chainId: number, request: FwdRequest, signature: string): Promise<FwdResponse> {
+    async sendPart(chainId: number, request: FwdRequest, signature: string): Promise<RelResponse> {
         const recaptcha = await grecaptcha.execute(RECAPTCHA_RENDER, { action: 'submit' });
-        return this.http.post<FwdResponse>(RELAYER_API_URL + '/send-part', {
+        return this.http.post<RelResponse>(RELAYER_API_URL + '/send-part', {
             chainId,
             request,
             signature,
@@ -59,9 +60,9 @@ export class UtilService {
         }, HTTP_OPTIONS).toPromise();
     }
 
-    async getHash(messageId: string): Promise<FwdResponse> {
+    async getHash(messageId: string): Promise<RelResponse> {
         const recaptcha = await grecaptcha.execute(RECAPTCHA_RENDER, { action: 'submit' });
-        return this.http.post<FwdResponse>(RELAYER_API_URL + '/part-hash', {
+        return this.http.post<RelResponse>(RELAYER_API_URL + '/part-hash', {
             messageId,
             recaptcha
         }, HTTP_OPTIONS).toPromise();
@@ -69,7 +70,7 @@ export class UtilService {
 
     async subscribeToNotifications(subscription: PushSubscription, prefs: any) {
         const recaptcha = await grecaptcha.execute(RECAPTCHA_RENDER, { action: 'submit' });
-        return this.http.post<FwdResponse>(RELAYER_API_URL + '/subscribe-notif', {
+        return this.http.post<RelResponse>(RELAYER_API_URL + '/subscribe-notif', {
             subscription,
             prefs,
             recaptcha
@@ -78,7 +79,7 @@ export class UtilService {
 
     async getNotificationPrefs(endpoint: string) {
         const recaptcha = await grecaptcha.execute(RECAPTCHA_RENDER, { action: 'submit' });
-        return this.http.post<FwdResponse>(RELAYER_API_URL + '/notif-prefs', {
+        return this.http.post<RelResponse>(RELAYER_API_URL + '/notif-prefs', {
             endpoint,
             recaptcha
         }, HTTP_OPTIONS).toPromise();
@@ -86,12 +87,21 @@ export class UtilService {
 
     async triggerNotification(type: NotifType, data: any) {
         const recaptcha = await grecaptcha.execute(RECAPTCHA_RENDER, { action: 'submit' });
-        return this.http.post<FwdResponse>(RELAYER_API_URL + '/trigger-notif', {
+        return this.http.post<RelResponse>(RELAYER_API_URL + '/trigger-notif', {
             type,
             data,
             recaptcha
         }, HTTP_OPTIONS).toPromise();
-    } 
+    }
+
+    async findSurveys(chainId: number, filter: SurveyFilter): Promise<RelResponse> {
+        const recaptcha = await grecaptcha.execute(RECAPTCHA_RENDER, { action: 'submit' });
+        return this.http.post<RelResponse>(RELAYER_API_URL + '/find-surveys', {
+            chainId,
+            filter,
+            recaptcha
+        }, HTTP_OPTIONS).toPromise();
+    }
 
     async request(method: string, url: string, timeout?: number): Promise<XMLHttpRequest> {
         return new Promise(function (resolve, reject) {

@@ -17,31 +17,7 @@ export class ResponseRatingComponent extends BaseResponseComponent {
   }
 
   async onLoadResponses() {
-    let values = {};
-    let count = 0;
-
-    while(this.data.iterator.hasNext()) {
-      let responses = await this.data.iterator.next();
-
-      for(let response of responses) {
-        if(!this.checkResponse(response)) {
-          continue;
-        }
-
-        /*if(parseInt(response) == 0) {
-          continue;
-        }*/
-
-        if(values[response]) {
-          values[response]++;
-        } else {
-          values[response] = 1;
-        }
-
-        count++;
-      }
-    }
-
+    let { values, count } = this.loadValues();
     let starTxt = this.translateService.instant("star");
     let starsTxt = this.translateService.instant("stars");
 

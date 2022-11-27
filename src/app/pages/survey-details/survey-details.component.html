@@ -26,9 +26,9 @@
         
             <div class="grid-item">
                 <label>{{ 'remaining_budget' | translate }}</label>
-                <div class="grid-row" title="{{ surveyStateInfo.rmngBudgetAmount }} INC">
+                <div class="grid-row" title="{{ surveyStateInfo.rmngBudgetAmount }} {{ survey.tokenData.symbol }}">
                     <span class="line-limit">{{ surveyStateInfo.rmngBudgetAmount }}</span>
-                    <span class="coin-suffix">INC</span>
+                    <span class="coin-suffix">{{ survey.tokenData.symbol }}</span>
                 </div>
             </div>
         
@@ -44,10 +44,10 @@
     
         <div class="control-grid">
     
-            <button mat-flat-button class="template-icon back-button" (click)="backToList()">
+            <!--<button mat-flat-button class="template-icon back-button" (click)="backToList()">
                 <mat-icon icon="arrow_back"></mat-icon>
                 <span>{{ backLabel }}</span>
-            </button>
+            </button>-->
 
             <button mat-flat-button class="template-icon answers-button" color="accent" [disabled]="surveyStateInfo.partsNum == 0" (click)="seeAnswers()">
                 <mat-icon icon="fact_check"></mat-icon>

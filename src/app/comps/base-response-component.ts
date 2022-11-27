@@ -60,6 +60,22 @@ export abstract class BaseResponseComponent implements OnInit, OnDestroy, Dynami
     return { chart: undefined, count: 0 };
   }
 
+  loadValues() {
+    let values = {};
+    let count = 0;
+
+    for (let response of this.data.responseCounts) {
+      if(!this.checkResponse(response.value)) {
+        continue;
+      }
+
+      values[response.value] = response.count;
+      count += response.count;
+    }
+
+    return { values, count };
+  }
+
   private async loadResponses() {
     if(this.chart) destroyChart(this.chart);
 

@@ -6,11 +6,11 @@ import { Lang } from '../models/lang';
 import { Web3Service } from '../services/web3.service';
 import { AccountData } from '../models/account-data';
 import { Router } from '@angular/router';
-import { IncProps, OfferProps } from '../models/inc-model';
+import { OfferProps } from '../models/inc-model';
 import { SurveyService } from '../services/survey.service';
 import { UtilService } from '../services/util.service';
 import { ConfirmationService, Message } from 'primeng/api';
-import { EngineProps, SurveyProps } from '../models/survey-model';
+import { ConfigProps } from '../models/survey-model';
 import { StateService } from '../services/state.service';
 import { CURRENT_CHAIN, NATIVE_CURRENCY, WRAPPED_CURRENCY } from '../shared/constants';
 import { IpfsService } from '../services/ipfs.service';
@@ -53,10 +53,8 @@ export abstract class BasePageComponent implements OnInit, OnDestroy {
   get forwarderContract(): any { return this.web3Service.forwarderContract; };
 
   get accountData(): AccountData { return this.web3Service.accountData; };
-  get incProps(): IncProps { return this.web3Service.incProps; };
   get offerProps(): OfferProps { return this.web3Service.offerProps; };
-  get surveyProps(): SurveyProps { return this.surveyService.surveyProps; };
-  get engineProps(): EngineProps { return this.surveyService.engineProps; };
+  get configProps(): ConfigProps { return this.surveyService.configProps; };
 
   get lang(): Lang { return AppComponent.instance.selectedLang; };
 

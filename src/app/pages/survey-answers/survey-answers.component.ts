@@ -68,9 +68,9 @@ export class SurveyAnswersComponent extends BasePageComponent {
   }
 
   onInit() {
-    let surveyId = parseInt(this.route.snapshot.paramMap.get('id'));
+    let surveyAddr = this.route.snapshot.paramMap.get('address');
 
-    if (!surveyId) {
+    if (!surveyAddr) {
       this.backToList();
       return;
     }
@@ -79,7 +79,7 @@ export class SurveyAnswersComponent extends BasePageComponent {
     this.isFromMyParts = isRouteFromDashboardMyParts(this.router.url);
 
     this.onChainLoadedRemover = this.web3Service.onChainLoaded.addAndFire(() => {
-      this.loadSurveyData(surveyId);
+      this.loadSurveyData(surveyAddr);
     }, () => {
       return this.loadedChainData;
     });
@@ -143,11 +143,11 @@ export class SurveyAnswersComponent extends BasePageComponent {
 
   backToDetails() {
     if (this.isFromMySurveys) {
-      this.router.navigate(['/dashboard/my-surveys/' + this.survey.id]);
+      this.router.navigate(['/dashboard/my-surveys/' + this.survey.address]);
     } else if (this.isFromMyParts) {
-      this.router.navigate(['/dashboard/my-parts/' + this.survey.id]);
+      this.router.navigate(['/dashboard/my-parts/' + this.survey.address]);
     } else {
-      this.router.navigate(['/surveys/' + this.survey.id]);
+      this.router.navigate(['/surveys/' + this.survey.address]);
     }
   }
 
@@ -168,7 +168,7 @@ export class SurveyAnswersComponent extends BasePageComponent {
         let question = this.survey.questions[i];
         headers.push(question.content.title.replace("\"", "\"\""));
 
-        let iterator: ListIterator<string[]> = this.surveyService.getResponseIterator(this.survey.id, i, this.partsNum);
+        let iterator: ListIterator<string[]> = this.surveyService.getResponseIterator(this.survey.address, i, this.partsNum);
         let j = 0;
 
         while (iterator.hasNext()) {
@@ -208,19 +208,19 @@ export class SurveyAnswersComponent extends BasePageComponent {
     }
   }
 
-  private async loadSurveyData(surveyId: number) {
+  private async loadSurveyData(surveyAddr: string) {
     this.loading = true;
 
     try {
-      this.survey = await this.surveyService.findSurvey(surveyId);
+      this.survey = await this.surveyService.findSurvey(surveyAddr);
 
       // this should not happen with added validation
-      if (!this.survey || this.survey.id == 0) {
+      if (!this.survey?.address) {
         this.backToList();
         return;
       }
 
-      this.partsNum = await this.surveyService.getParticipantsLength(surveyId);
+      this.partsNum = await this.surveyService.getParticipantsLength(surveyAddr);
 
       if (this.partsNum == 0) {
         this.backToList();
@@ -233,15 +233,15 @@ export class SurveyAnswersComponent extends BasePageComponent {
         return;
       }
 
-      let questionsNum = await this.surveyService.getQuestionsLength(surveyId);
+      let questionsNum = await this.surveyService.getQuestionsLength(surveyAddr);
       // SurveyBase.questionMaxPerRequest = SurveyValidator.questionMaxPerSurvey
-      this.survey.questions = await this.surveyService.getQuestions(surveyId, 0, questionsNum);
+      this.survey.questions = await this.surveyService.getQuestions(surveyAddr, 0, questionsNum);
       
       await this.surveyStateInfo.loadData(this.survey);
       await this.loadPartData();
 
       this.loadQuestionIndexes();
-      setBreadcrumbForDetails(this.router, surveyId, this.survey.title);
+      setBreadcrumbForDetails(this.router, surveyAddr, this.survey.title);
 
     } catch (err: any) {
       console.error(err);
@@ -269,15 +269,15 @@ export class SurveyAnswersComponent extends BasePageComponent {
     this.loading = true;
 
     try {
-      let part = await this.surveyService.getParticipation(this.survey.id, this.paginatorDataForIndividual.first);
+      let part = await this.surveyService.getParticipation(this.survey.address, this.paginatorDataForIndividual.first);
 
       // this should not happen with added validation
-      if (!part || part.surveyId == 0) {
+      if (!part?.surveyAddr) {
         this.backToDetails();
         return;
       }
 
-      this.partAddress = await this.surveyService.getParticipant(this.survey.id, this.paginatorDataForIndividual.first);
+      this.partAddress = part.account;
       this.partEntryTime = new Date(part.entryTime * 1000).toLocaleString();
 
       for(let i = 0; i < this.survey.questions.length; i++) {

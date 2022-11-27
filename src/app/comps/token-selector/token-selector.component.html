@@ -1,0 +1,219 @@
+<div class="token-selector">
+
+    <div *ngIf="viewIndex == 0">
+        <div mat-dialog-title class="dialog-title">
+            <span>{{ 'select_a_token' | translate }}</span>
+            <button mat-icon-button (click)="close()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+        <mat-dialog-content class="dialog-content">
+            <div class="top-content">
+                <input class="token-filter p-input-secondary" type="text" pInputText placeholder="{{ 'token_filter_placeholder' | translate }}"
+                    [(ngModel)]="tokenFilter" [disabled]="loadingTokens" (input)="searchToken($event.target.value)" />
+
+                <div class="bases-title">
+                    <span>{{ 'common_bases' | translate }}</span>
+                    <i class="pi pi-question-circle" pTooltip="{{ 'common_bases_description' | translate }}" tooltipPosition="right"></i>
+                    <!--<i class="pi pi-question-circle" (mouseenter)="basesHelpOverlay.toggle($event)"></i>-->
+                </div>
+
+                <div class="bases-cnt">
+                    <button *ngFor="let token of bases; let i = index" mat-stroked-button class="token-item"
+                        [class.disabled]="isSelectedToken(token)" (click)="selectToken(token)">
+                        <img class="token-icon" [alt]="token.symbol" [src]="token.logoURI" loading="lazy" (error)="onTokenIconError($event)" />
+                        <span class="token-symbol">{{ token.symbol }}</span>
+                    </button>
+                </div>
+
+                <!--<p-overlayPanel #basesHelpOverlay [showCloseIcon]="false">
+                    <span class="tip">{{ 'common_bases_description' | translate }}</span>
+                </p-overlayPanel>-->
+            </div>
+
+            <p-divider class="list-divider"></p-divider>
+
+            <div *ngIf="!hasTokens()" class="no-result-cnt">
+                <p-progressSpinner *ngIf="loadingTokens" styleClass="custom-spinner" strokeWidth="8"
+                    animationDuration=".5s"></p-progressSpinner>
+                <span *ngIf="!loadingTokens">{{ 'no_results_found' | translate }}</span>
+            </div>
+
+            <div *ngIf="hasTokens()" class="tokens-cnt">
+                <div class="tokens-head">
+                    <span>{{ tokensToShow.length }} {{ 'tokens' | translate | lowercase }}</span>
+                </div>
+                
+                <div *ngFor="let token of tokensToShow; let i = index" matRipple class="token-row"
+                    [class.disabled]="isSelectedToken(token)" (click)="selectToken(token)">
+                    <img class="token-icon" [alt]="token.symbol" [src]="token.logoURI" loading="lazy" (error)="onTokenIconError($event)" />
+                    <div class="token-info">
+                        <span class="token-symbol">{{ token.symbol }}</span>
+                        <span class="token-name">{{ token.name }} {{ (token.added? ' • ': '') }} {{ (token.added? 'added_by_user': '') | translate }}</span>
+                    </div>
+                    <span *ngIf="!isSelectedToken(token)" class="token-balance">{{ getBalance(token) }}</span>
+                    <mat-icon *ngIf="isSelectedToken(token)">done</mat-icon>
+                </div>
+            </div>
+
+            <div *ngIf="hasSuggestedTokens()" class="tokens-cnt suggested-tokens-cnt">
+                <div class="suggested-tokens-head">
+                    <mat-icon class="small-icon action-icon">generating_tokens</mat-icon>
+                    <span>{{ 'expanded_results_from_inactive_lists' | translate }}</span>
+                    <i class="pi pi-question-circle" pTooltip="{{ 'tokens_from_inactive_lists_description' | translate }}" tooltipPosition="left"></i>
+                </div>
+
+                <div *ngFor="let token of suggestedTokens; let i = index" class="input-tag">
+                    <img class="tag-icon rounded" [alt]="token.symbol" [src]="token.logoURI" loading="lazy" (error)="onTokenIconError($event)" />
+                    <div class="tag-info">
+                        <span class="tag-title">{{ token.symbol }}</span>
+                        <span class="tag-desc">{{ token.name }}</span>
+                    </div>
+                    <button mat-stroked-button (click)="importSuggestedToken(token)">{{ 'import' | translate }}</button>
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions class="dialog-actions" #dialActions>
+            <button class="icon-text-button" mat-button (click)="goManageLists()">
+                <mat-icon>open_in_new</mat-icon>
+                <span>{{ 'manage_tokens' | translate }}</span>
+            </button>
+        </mat-dialog-actions>
+    </div>
+
+    <div *ngIf="viewIndex > 0">
+        <div mat-dialog-title class="dialog-title">
+            <button mat-icon-button (click)="backToSelector()">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <span>{{ 'manage' | translate }}</span>
+            <button mat-icon-button (click)="close()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+        <mat-dialog-content class="dialog-content">
+            <div class="top-content">
+                <div class="manage-button-row">
+                    <span class="manage-button" [class.selected]="viewIndex == 1" (click)="goManageLists()">
+                        {{ 'lists' | translate }}
+                    </span>
+                    <span class="manage-button" [class.selected]="viewIndex == 2" (click)="goManageTokens()">
+                        {{ 'tokens' | translate }}
+                    </span>
+                </div>
+
+                <div *ngIf="viewIndex == 1" class="manage-filter-cnt">
+                    <input class="token-filter p-input-secondary" type="text" pInputText placeholder="{{ 'list_filter_placeholder' | translate }}"
+                        [(ngModel)]="listFilter" [disabled]="loadingLists" (input)="searchList($event.target.value)" />
+
+                    <div *ngIf="listTag" class="input-tag">
+                        <img class="tag-icon" [alt]="listTag.name" [src]="listTag.logoURI" loading="lazy" (error)="onListIconError($event)" />
+                        <div class="tag-info">
+                            <span class="tag-title">{{ listTag.name }}</span>
+                            <span class="tag-desc">{{ listTag.count }} {{ 'tokens' | translate | lowercase }}</span>
+                        </div>
+                        <button *ngIf="!listTag.exists" mat-stroked-button (click)="importList()">{{ 'import' | translate }}</button>
+                        <div *ngIf="listTag.exists" class="icon-text">
+                            <mat-icon>check_circle</mat-icon>
+                            <span>{{ (listTag.active? 'active': 'loaded') | translate }}</span>
+                        </div>
+                    </div>
+    
+                    <div *ngIf="listError" class="alert-error input-error">
+                        {{ listError }}
+                    </div>
+                </div>
+
+                <div *ngIf="viewIndex == 2" class="manage-filter-cnt">
+                    <input class="token-filter p-input-secondary" type="text" pInputText placeholder="{{ 'custom_token_filter_placeholder' | translate }}"
+                        [(ngModel)]="customTokenFilter" [disabled]="loadingCustomTokens" (input)="searchCustomToken($event.target.value)" />
+
+                    <div *ngIf="customTokenTag" class="input-tag">
+                        <img class="tag-icon rounded" [alt]="customTokenTag.symbol" [src]="customTokenTag.logoURI" loading="lazy" (error)="onTokenIconError($event)" />
+                        <div class="tag-info">
+                            <span class="tag-title">{{ customTokenTag.symbol }}</span>
+                            <span class="tag-desc">{{ customTokenTag.name }}</span>
+                        </div>
+                        <button *ngIf="!customTokenTag.exists" mat-stroked-button (click)="importCustomToken()">{{ 'import' | translate }}</button>
+                        <div *ngIf="customTokenTag.exists" class="icon-text">
+                            <mat-icon>check_circle</mat-icon>
+                            <span>{{ (customTokenTag.active? 'active': 'loaded') | translate }}</span>
+                        </div>
+                    </div>
+    
+                    <div *ngIf="customTokenError" class="alert-error input-error">
+                        {{ customTokenError }}
+                    </div>
+                </div>
+            </div>
+
+            <p-divider class="list-divider"></p-divider>
+
+            <div *ngIf="viewIndex == 1 && !hasLists()" class="no-result-cnt">
+                <p-progressSpinner *ngIf="loadingLists" styleClass="custom-spinner" strokeWidth="8"
+                    animationDuration=".5s"></p-progressSpinner>
+                <span *ngIf="!loadingLists">{{ 'no_results_found' | translate }}</span>
+            </div>
+
+            <div *ngIf="viewIndex == 2 && !hasCustomTokens()" class="no-result-cnt">
+                <p-progressSpinner *ngIf="loadingCustomTokens" styleClass="custom-spinner" strokeWidth="8"
+                    animationDuration=".5s"></p-progressSpinner>
+                <span *ngIf="!loadingCustomTokens">{{ 'no_results_found' | translate }}</span>
+            </div>
+
+            <div *ngIf="viewIndex == 1 && hasLists()" class="lists-cnt">
+                <div *ngFor="let list of lists; let i = index" class="list-item" 
+                   [style.color]="list.active? 'white': 'black'"
+                   [style.background-color]="list.active? list.color: '#edeef2'"
+                   [style.opacity]="(list.count > 0)? 1: .5">
+                    <img class="list-icon" [alt]="list.name" [src]="list.logoURI" loading="lazy" (error)="onListIconError($event)" />
+                    <div class="list-info">
+                        <span class="list-name">{{ list.name }}</span>
+                        <div class="list-count" [style.color]="list.active? '#EEEEEE': '#9E9E9E'">
+                            <span>{{ list.count }} {{ 'tokens' | translate | lowercase }}</span>
+                            <mat-icon class="small-icon action-icon" (click)="listOverlay.toggle($event)">settings</mat-icon>
+                        </div>
+                    </div>
+                    <toggle-switch [(checked)]="list.active" [color]="list.color" (checkedChange)="onListChanged(list.url, $event)"></toggle-switch>
+
+                    <p-overlayPanel #listOverlay [showCloseIcon]="false">
+                        <span class="title">{{ list.version }}</span>
+                        <p-divider></p-divider>
+                        <a class="action-icon" (click)="listOverlay.hide();viewList(list.url);">
+                            {{ 'view_list' | translate }}
+                        </a>
+                        <a *ngIf="isCutomList(list.url)" class="action-icon" (click)="listOverlay.hide();removeList(list.url);">
+                            {{ 'remove_list' | translate }}
+                        </a>
+                    </p-overlayPanel>
+                </div>
+            </div>
+
+            <div *ngIf="viewIndex == 2 && hasCustomTokens()" class="custom-tokens-cnt">
+                <div class="custom-tokens-head">
+                    <span>{{ customTokens.length }} {{ 'custom_tokens' | translate | lowercase }}</span>
+                    <a class="action-icon" (click)="removeCustomTokens()">
+                        {{ 'remove_all' | translate }}
+                    </a>
+                </div>
+
+                <div *ngFor="let token of customTokens; let i = index" class="custom-token-row">
+                    <img class="token-icon" [alt]="token.symbol" [src]="token.logoURI" loading="lazy" (error)="onTokenIconError($event)" />
+                    <div class="token-info">
+                        <span class="token-symbol">{{ token.symbol }}</span>
+                        <span class="token-name">{{ token.name }}</span>
+                    </div>
+                    <div class="token-actions">
+                        <mat-icon class="medium-icon action-icon" (click)="removeCustomToken(token.address)" title="{{ 'remove_custom_token' | translate }}">delete_outline</mat-icon>
+                        <mat-icon class="medium-icon action-icon" (click)="viewCustomToken(token.address)" title="{{ 'view_custom_token' | translate }}">open_in_new</mat-icon>
+                        <mat-icon class="medium-icon action-icon" (click)="selectToken(token)" title="{{ 'select_custom_token' | translate }}">task_alt</mat-icon>
+                    </div>
+                </div>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-actions *ngIf="viewIndex == 2" class="dialog-actions" #dialActions>
+            <span class="tip">{{ 'custom_tokens_are_stored_locally' | translate }}</span>
+        </mat-dialog-actions>
+    </div>
+
+</div>

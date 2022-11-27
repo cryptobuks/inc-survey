@@ -76,7 +76,7 @@ export class OwnPartsComponent extends BasePageComponent {
   }
 
   showSurveyDetails() {
-    this.router.navigate(['/dashboard/my-parts/' + this.survey.id]);
+    this.router.navigate(['/dashboard/my-parts/' + this.survey.address]);
   }
 
   printPage() {
@@ -101,15 +101,15 @@ export class OwnPartsComponent extends BasePageComponent {
       let part = await this.surveyService.getOwnParticipation(this.paginatorData.first);
 
       // this should not happen with added validation
-      if (!part || part.surveyId == 0) {
+      if (!part?.surveyAddr) {
         this.backToDashboard();
         return;
       }
 
-      this.survey = await this.surveyService.findSurvey(part.surveyId);
-      let questionsNum = await this.surveyService.getQuestionsLength(part.surveyId);
+      this.survey = await this.surveyService.findSurvey(part.surveyAddr);
+      let questionsNum = await this.surveyService.getQuestionsLength(part.surveyAddr);
       // SurveyBase.questionMaxPerRequest = SurveyValidator.questionMaxPerSurvey
-      this.survey.questions = await this.surveyService.getQuestions(part.surveyId, 0, questionsNum);
+      this.survey.questions = await this.surveyService.getQuestions(part.surveyAddr, 0, questionsNum);
       this.partEntryTime = new Date(part.entryTime * 1000).toLocaleString();
 
       for(let i = 0; i < this.survey.questions.length; i++) {

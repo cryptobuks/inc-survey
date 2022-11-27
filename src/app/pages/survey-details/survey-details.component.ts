@@ -129,9 +129,9 @@ export class SurveyDetailsComponent extends BasePageComponent {
   }
 
   onInit() {
-    let surveyId = parseInt(this.route.snapshot.paramMap.get('id'));
+    let surveyAddr = this.route.snapshot.paramMap.get('address');
 
-    if (!surveyId) {
+    if (!surveyAddr) {
       this.backToList();
       return;
     }
@@ -140,7 +140,7 @@ export class SurveyDetailsComponent extends BasePageComponent {
     this.isFromMyParts = isRouteFromDashboardMyParts(this.router.url);
 
     this.onChainLoadedRemover = this.web3Service.onChainLoaded.addAndFire(() => {
-      this.loadSurveyData(surveyId);
+      this.loadSurveyData(surveyAddr);
     }, () => {
       return this.loadedChainData;
     });
@@ -185,18 +185,18 @@ export class SurveyDetailsComponent extends BasePageComponent {
 
   seeAnswers() {
     if (this.isFromMySurveys) {
-      this.router.navigate(['/dashboard/my-surveys/' + this.survey.id + '/answers']);
+      this.router.navigate(['/dashboard/my-surveys/' + this.survey.address + '/answers']);
     } else if (this.isFromMyParts) {
-      this.router.navigate(['/dashboard/my-parts/' + this.survey.id + '/answers']);
+      this.router.navigate(['/dashboard/my-parts/' + this.survey.address + '/answers']);
     } else {
-      this.router.navigate(['/surveys/' + this.survey.id + '/answers']);
+      this.router.navigate(['/surveys/' + this.survey.address + '/answers']);
     }
   }
 
   takeSurvey() {
     this.router.navigate(['/take-survey'], {
       state: {
-        surveyId: this.survey.id
+        surveyAddr: this.survey.address
       }
     });
   }
@@ -220,7 +220,7 @@ export class SurveyDetailsComponent extends BasePageComponent {
     try {
       setAppCover(this.translateService.instant("waiting_reply"));
 
-      let tx = await this.surveyService.solveSurvey(this.survey.id);
+      let tx = await this.surveyService.solveSurvey(this.survey.address);
       //console.log('tx:: ' + JSON.stringify(tx));
 
       setAppCover(this.translateService.instant("please_wait"));
@@ -229,8 +229,8 @@ export class SurveyDetailsComponent extends BasePageComponent {
       await this.surveyStateInfo.loadData(this.survey, this.checkAlerts.bind(this));
 
       if (tx.events.OnSurveySolved.returnValues.budgetRefund > 0) {
-        let budgetRefund = toFormatBigNumber(toAmount(tx.events.OnSurveySolved.returnValues.budgetRefund));
-        this.messageHelperService.showSuccess(this.translateService.instant("for_remaining_budget_received_refund_x", { val1: budgetRefund + ' INC' }));
+        let budgetRefund = toFormatBigNumber(toAmount(tx.events.OnSurveySolved.returnValues.budgetRefund, this.survey.tokenData.decimals));
+        this.messageHelperService.showSuccess(this.translateService.instant("for_remaining_budget_received_refund_x", { val1: budgetRefund + ' ' + this.survey.tokenData.symbol }));
       }
 
       if (tx.events.OnSurveySolved.returnValues.gasRefund > 0) {
@@ -269,7 +269,7 @@ export class SurveyDetailsComponent extends BasePageComponent {
     try {
       setAppCover(this.translateService.instant("waiting_reply"));
 
-      let tx = await this.surveyService.increaseGasReserve(this.survey.id, weiAmount);
+      let tx = await this.surveyService.increaseGasReserve(this.survey.address, weiAmount);
       //console.log('tx:: ' + JSON.stringify(tx));
 
       setAppCover(this.translateService.instant("please_wait"));
@@ -288,14 +288,14 @@ export class SurveyDetailsComponent extends BasePageComponent {
     }
   }
 
-  private async loadSurveyData(surveyId: number) {
+  private async loadSurveyData(surveyAddr: string) {
     this.loading = true;
 
     try {
-      this.survey = await this.surveyService.findSurvey(surveyId);
+      this.survey = await this.surveyService.findSurvey(surveyAddr);
 
       // this should not happen with added validation
-      if (!this.survey || this.survey.id == 0) {
+      if (!this.survey?.address) {
         this.backToList();
         return;
       }
@@ -307,10 +307,10 @@ export class SurveyDetailsComponent extends BasePageComponent {
       }
 
       this.partPrice = await this.surveyService.calcPartPrice();
-      this.questionsNum = await this.surveyService.getQuestionsLength(surveyId);
+      this.questionsNum = await this.surveyService.getQuestionsLength(surveyAddr);
       await this.surveyStateInfo.loadData(this.survey, this.checkAlerts.bind(this));
 
-      setBreadcrumbForDetails(this.router, surveyId, this.survey.title);
+      setBreadcrumbForDetails(this.router, surveyAddr, this.survey.title);
 
     } catch (err: any) {
       console.error(err);

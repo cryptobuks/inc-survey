@@ -3,6 +3,8 @@ import { GenericDialogComponent } from "../comps/generic-dialog/generic-dialog.c
 import { AbstractType, ElementRef, InjectFlags, InjectionToken, Type } from "@angular/core";
 import BigNumber from "bignumber.js";
 import { PaginatorData } from "../models/paginator-data";
+import { ChainId } from "../models/chains";
+import { INC_LOGO_URL, INC_TOKEN } from "./constants";
 declare var $: any;
 declare const XLSX: any;
 declare var charts: any;
@@ -202,30 +204,13 @@ export function degreesToRadians(degrees: number): number {
   return degrees * (pi / 180);
 }
 
-export function humanFriendlyAmount(amount: number | string) {
-  if (!amount) return '0';
-
-  let str = amount.toString();
-  let pointIndex = str.indexOf(".");
-  if(pointIndex != -1) {
-    let decimals = str.length - pointIndex - 1;
-    let disposables = decimals - 4;
-
-    if(disposables > 0) {
-      str = str.substring(0, str.length - disposables);
-    }
-  }
-
-  return str;
-}
-
 // unsafe:ipfs://QmWzL3TSmkMhbqGBEwyeFyWVvLmEo3F44HBMFnmTUiTfp1
 // ipfs://QmWzL3TSmkMhbqGBEwyeFyWVvLmEo3F44HBMFnmTUiTfp1
 // To
 // https://ipfs.io/ipfs/QmWzL3TSmkMhbqGBEwyeFyWVvLmEo3F44HBMFnmTUiTfp1
-/*export function ipfsToURL(ipfs: string) {
+export function ipfsToURL(ipfs: string) {
   return ipfs.replace(/(unsafe:)?ipfs:\/\//gi, "https://ipfs.io/ipfs/");
-}*/
+}
 
 export function isIpfsUri(uri: string): boolean {
   return uri && /^ipfs:\/\/[0-9a-zA-Z]{46,59}$/.test(uri);
@@ -254,6 +239,32 @@ export function parseENSAddress(ensAddress: string): { ensName: string; ensPath:
   const match = ensAddress.match(ENS_NAME_REGEX);
   if (!match) return undefined;
   return { ensName: `${match[1].toLowerCase()}eth`, ensPath: match[4] }
+}
+
+function chainIdToNetworkName(networkId: ChainId): string {
+  switch (networkId) {
+    case ChainId.MAINNET:
+    case ChainId.MATIC:
+      return 'ethereum'
+    default:
+      return 'ethereum'
+  }
+}
+
+export const getTokenLogoURL = (
+  address: string,
+  chainId: ChainId
+): string | undefined => {
+  if(INC_TOKEN[chainId].address.toLowerCase() == address.toLowerCase()) {
+    return INC_LOGO_URL;
+  }
+
+  const networkName = chainIdToNetworkName(chainId);
+  if (networkName) {
+    return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${networkName}/assets/${address.toLowerCase()}/logo.png`;
+  }
+
+  return undefined;
 }
 
 /*export const toUnits = (value: string | number | bigint, decimals: number) => {
@@ -396,7 +407,7 @@ export function isValidHttpUrl(spec: string) {
 }
 
 // using HEAD
-export function existsUrl(url: string) {
+/*export function existsUrl(url: string) {
   if(!url) {
     return false;
   }
@@ -408,16 +419,21 @@ export function existsUrl(url: string) {
 }
 
 export function isImageUrl(url: string) {
-  if(!url) {
+  if (!url) {
     return false;
   }
 
-  const http = new XMLHttpRequest();
-  http.open('HEAD', url, false);
-  http.send();
-  let contentType = http.getResponseHeader('Content-Type');
-  return contentType && contentType.indexOf("image") != -1;
-}
+  try {
+    const http = new XMLHttpRequest();
+    http.open('HEAD', url, false);
+    http.send();
+    let contentType = http.getResponseHeader('Content-Type');
+    return contentType && contentType.indexOf("image") != -1;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+}*/
 
 export function isImageData(data: string) {
   return data && data.startsWith('data:image/png;base64,');
@@ -551,6 +567,10 @@ export function loadPageList<T>(list: T[], paginatorData: PaginatorData, nextPag
   return pageList;
 }
 
+export function cleanValidationError() {
+  $('.validation-error').stop().remove();
+}
+
 export function insertValidationError(elemId: string, errMsg: string, scrollPos: ScrollPosition = 'center') {
   $('.validation-error').stop().remove();
   const elem = $(elemId);
@@ -606,7 +626,10 @@ export function addCover(cnt: string, waitText: string): boolean {
   const cover = $("<div />").attr("id", id).addClass("cover-z1001");
 
   if(waitText) {
-    cover.append($("<span />").addClass("wait-text").text(waitText));
+    const frame = $("<div />").addClass("wait-frame");
+    const image = $('<img alt="Spinner" src="assets/svg/spinner.svg" />').addClass("wait-image");
+    const span = $("<span />").addClass("wait-text").text(waitText);
+    cover.append(frame.append(image).append(span));
   }
   
   cover.appendTo($(cnt).css({ "position": "relative"/*, "opacity": ".5"*/ }));
@@ -615,7 +638,7 @@ export function addCover(cnt: string, waitText: string): boolean {
 
 export function updateCover(cnt: string, waitText: string) {
   let id = cnt.substring(1) + "-cover-z1001";
-  $("#" + id + " > .wait-text").text(waitText);
+  $("#" + id + " > .wait-frame > .wait-text").text(waitText);
 }
 
 export function removeCover(cnt: string) {

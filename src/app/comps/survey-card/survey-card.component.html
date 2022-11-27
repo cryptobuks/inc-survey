@@ -1,0 +1,49 @@
+<div *ngIf="survey" class="content-panel survey-card light-shadow" matRipple (click)="onClick.emit($event)">
+    <div class="survey-card-head">
+        <div class="survey-logo">
+            <img *ngIf="survey.imageData" class="thumb-circle" alt="Logo" [src]="survey.imageData" loading="lazy" onerror="this.src='assets/img/broken_image.png';" />
+            <img *ngIf="!survey.imageData" class="thumb-circle" alt="Logo" src="assets/img/empty_image.png" />
+        </div>
+
+        <span class="text-limit survey-title" title="{{ survey.title }}">{{ survey.title }}</span>
+    </div>
+
+    <div class="survey-card-body">
+        <span *ngIf="survey.description" class="text-limit survey-desc" title="{{ survey.description }}">{{ survey.description }}</span>
+        <span *ngIf="!survey.description" class="survey-desc">--</span>
+
+        <div class="survey-amounts">
+            <div class="survey-amount" title="{{ rmngBudget }} {{ survey.tokenData.symbol }}">
+                <label>{{ 'remaining_budget' | translate }}</label>
+                <span class="line-limit">{{ rmngBudget }}</span>
+                <span class="coin-suffix">{{ survey.tokenData.symbol }}</span>
+            </div>
+
+            <div class="survey-amount" title="{{ survey.formatted.rewardAmount }} {{ survey.tokenData.symbol }}">
+                <label>{{ 'reward' | translate }}</label>
+                <span class="line-limit">{{ survey.formatted.rewardAmount }}</span>
+                <span class="coin-suffix">{{ survey.tokenData.symbol }}</span>
+            </div>
+
+            <div class="survey-amount" title="{{ rmngGasReserve }} {{ currSymbol }}">
+                <label>{{ 'gas_reserve' | translate }}</label>
+                <span class="line-limit">{{ rmngGasReserve }}</span>
+                <span class="coin-suffix">{{ currSymbol }}</span>
+            </div>
+
+            <div *ngIf="forOwner" class="survey-amount" title="{{ partsNum }}">
+                <label>{{ 'participations' | translate }}</label>
+                <span class="line-limit">{{ partsNum }}</span>
+            </div>
+        </div>
+
+        <select-token [data]="survey.tokenData"></select-token>
+    </div>
+
+    <div class="survey-state">
+        <p-tag *ngIf="getState(survey) == SurveyState.OPENED" styleClass="p-mr-2" severity="info" value="{{ 'opened' | translate }}"></p-tag>
+        <p-tag *ngIf="getState(survey) == SurveyState.CLOSED" styleClass="p-mr-2" severity="success" value="{{ 'closed' | translate }}"></p-tag>
+        <p-tag *ngIf="getState(survey) == SurveyState.PENDING" styleClass="p-mr-2" severity="warning" value="{{ 'pending' | translate }}"></p-tag>
+        <!--<p-tag *ngIf="getState(survey) == SurveyState.NO_BUDGET" styleClass="p-mr-2" severity="danger" value="{{ 'no_budget' | translate }}"></p-tag>-->
+    </div>
+</div>

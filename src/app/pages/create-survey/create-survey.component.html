@@ -4,16 +4,28 @@
 
     <div class="content-panel survey-params">
 
-        <div class="survey-logo">
-            <input type="file" accept="image/jpeg, image/png" class="hidden-input" (change)="onSelectImage($event)" #imageInput>
-            <img *ngIf="!imageLoading && hasImage()" class="thumb-circle" alt="Logo" [src]="imageSrc" (click)="imageInput.click()" loading="lazy" onerror="this.src='assets/img/broken_image.png';" />
-            <img *ngIf="!imageLoading && !hasImage()" class="thumb-circle" alt="Logo" src="assets/img/empty_image.png" (click)="imageInput.click()" />
-            <mat-spinner *ngIf="imageLoading" diameter="48"></mat-spinner>
-            <span>{{ 'maximum_x' | translate:{val1 : '1MB' } }} ({{ 'image_reduced_automatically' | translate }})</span>
-            <span>{{ 'image_uploaded_to_server_link_saved_on_blockchain' | translate }}</span>
-            <span>{{ 'can_indicate_your_link' | translate }}</span>
-            <input class="url-input" type="url" placeholder="{{ 'logo_placeholder' | translate }}" maxlength="2048" [(ngModel)]="survey.logoUrl" (ngModelChange)="onChangeLogoUrl($event)" />
-            <div class="survey-logo-error"></div>
+        <div class="survey-select">
+            <div class="survey-logo">
+                <div class="data-item">
+                    <label>{{ 'survey_logo' | translate }}</label>
+                    <div class="data-field thumb-cnt">
+                        <input type="file" accept="image/jpeg, image/png" class="hidden-input" (change)="onSelectImage($event)" #imageInput>
+                        <img *ngIf="!imageLoading && survey.imageData" class="thumb-circle" alt="Logo" [src]="survey.imageData" (click)="imageInput.click()" loading="lazy" (error)="onImageError($event)" />
+                        <img *ngIf="!imageLoading && !survey.imageData" class="thumb-circle" alt="Logo" src="assets/img/empty_image.png" (click)="imageInput.click()" />
+                        <mat-spinner *ngIf="imageLoading" diameter="48"></mat-spinner>
+                        <span>{{ 'maximum_x' | translate:{val1 : '1MB' } }} ({{ 'image_reduced_automatically' | translate }})</span>
+                        <span>{{ 'image_uploaded_to_server_link_saved_on_blockchain' | translate }}</span>
+                        <span>{{ 'can_indicate_your_link' | translate }}</span>
+                    </div>
+                </div>
+                
+                <input class="url-input" type="url" placeholder="{{ 'logo_placeholder' | translate }}" maxlength="2048" [(ngModel)]="survey.logoUrl" (ngModelChange)="onChangeLogoUrl($event)" />
+            </div>
+
+            <div class="survey-token data-item">
+                <label>{{ 'incentive_token' | translate }}</label>
+                <select-token class="data-field" [data]="survey.tokenData" (onSelect)="openTokenSelector()"></select-token>
+            </div>
         </div>
 
         <div class="survey-info">
@@ -54,7 +66,7 @@
                 <mat-label>{{ 'total_budget' | translate }}</mat-label>
                 <input matInput placeholder="0.0" [(ngModel)]="state.budgetAmount" (input)="onChangeBudget()" maxlength="100">
                 <div class="input-coin-suffix" matSuffix>
-                    <span>INC</span>
+                    <span>{{ survey.tokenData.symbol }}</span>
                 </div>
             </mat-form-field>
 
@@ -62,7 +74,7 @@
                 <mat-label>{{ 'reward_for_participation' | translate }}</mat-label>
                 <input matInput placeholder="0.0" [(ngModel)]="state.rewardAmount" (input)="onChangeReward()" maxlength="100">
                 <div class="input-coin-suffix" matSuffix>
-                    <span>INC</span>
+                    <span>{{ survey.tokenData.symbol }}</span>
                 </div>
             </mat-form-field>
 
@@ -109,7 +121,7 @@
                     </button>
                 </mat-form-field>
 
-                <span class="field-info">{{ 'maximum_x_coupons' | translate:{val1 : keysMax } }} {{ 'have_send_coupons_to_users' | translate }}</span>
+                <span class="field-info">{{ 'maximum_x_coupons' | translate:{val1 : keysMaxFormatted} }} {{ 'have_send_coupons_to_users' | translate }}</span>
             </div>
         </div>
 

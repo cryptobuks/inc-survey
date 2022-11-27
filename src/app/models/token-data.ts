@@ -9,6 +9,7 @@ export interface TokenData {
   logoURI?: string;
   balance?: BigNumber;
   amount?: BigNumber;// user input
+  hfBalance?: string;
   price?: string;
 }
 

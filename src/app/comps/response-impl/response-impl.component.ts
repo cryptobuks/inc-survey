@@ -1,14 +1,13 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, Type } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DynamicItem } from 'src/app/models/dynamic-item';
-import { ListIterator } from 'src/app/models/list-iterator';
 import { PaginatorData } from 'src/app/models/paginator-data';
 import { QuestionImpl } from 'src/app/models/question-impl';
-import { ResponseType, SurveyProps } from 'src/app/models/survey-model';
-import { ResponseData, RESPONSE_CLASS, RESPONSE_TYPE } from 'src/app/models/survey-support';
+import { ConfigProps } from 'src/app/models/survey-model';
+import { isLimitedResponse, ResponseData, RESPONSE_CLASS, RESPONSE_TYPE } from 'src/app/models/survey-support';
 import { SurveyService } from 'src/app/services/survey.service';
 import { Web3Service } from 'src/app/services/web3.service';
-import { isNumIn, moveScrollTo } from 'src/app/shared/helper';
+import { moveScrollTo } from 'src/app/shared/helper';
 import { ListenerRemover } from 'src/app/shared/simple-listener';
 declare var $: any;
 
@@ -20,12 +19,12 @@ declare var $: any;
 export class ResponseImplComponent implements OnInit, OnDestroy {
 
   @Input()
-  surveyId: number;
+  surveyAddr: string;
 
   @Input()
   questionIndex: number;
 
-  get surveyProps(): SurveyProps { return this.surveyService.surveyProps; };
+  get configProps(): ConfigProps { return this.surveyService.configProps; };
 
   paginatorData: PaginatorData;
 
@@ -97,15 +96,15 @@ export class ResponseImplComponent implements OnInit, OnDestroy {
     }
 
     if (length > 0) {
-      responses = await this.surveyService.getResponses(this.surveyId, this.questionIndex, cursor, length);
+      responses = await this.surveyService.getResponses(this.surveyAddr, this.questionIndex, cursor, length);
     }
 
     if(!this.dynamicItem) {
       this.dynamicItem = new DynamicItem(this.component, {
         question: this.question,
         partsNum: this.partsNum,
-        responses: responses,
-        cursor: cursor
+        responses,
+        cursor
       } as ResponseData);
     } else {
       this.dynamicItem.data.responses = responses;
@@ -116,14 +115,14 @@ export class ResponseImplComponent implements OnInit, OnDestroy {
     //this.answersNum = this.partsNum;
   }
 
-  private async loadResponseIterator() {
+  private async loadResponseCounts() {
     this.loadResponses = true;
-    const iterator: ListIterator<string[]> = this.surveyService.getResponseIterator(this.surveyId, this.questionIndex, this.partsNum);
+    let responseCounts = await this.surveyService.getResponseCounts(this.surveyAddr, this.questionIndex);
 
     this.dynamicItem = new DynamicItem(this.component, {
       question: this.question,
       partsNum: this.partsNum,
-      iterator: iterator,
+      responseCounts,
       onLoaded: (count: number) => {
         setTimeout(() => {
           this.answersNum = count;
@@ -137,18 +136,19 @@ export class ResponseImplComponent implements OnInit, OnDestroy {
     this.loading = true;
 
     try {
-      this.question = await this.surveyService.getQuestion(this.surveyId, this.questionIndex);
-      this.partsNum = await this.surveyService.getParticipantsLength(this.surveyId);
+      this.question = await this.surveyService.getQuestion(this.surveyAddr, this.questionIndex);
+      this.partsNum = await this.surveyService.getParticipantsLength(this.surveyAddr);
 
       let responseType = RESPONSE_TYPE[this.question.content.componentType];
       this.component = RESPONSE_CLASS[this.question.content.componentType];
 
-      if (isNumIn(responseType, ResponseType.Text, ResponseType.Range, ResponseType.DateRange)) {
+      // Bool, Percent, Rating, OneOption, ManyOptions, ArrayBool
+      if(isLimitedResponse(responseType)) {
+        await this.loadResponseCounts();
+      } 
+      // Text, Number, Date, Range, DateRange, ArrayText, ArrayNumber, ArrayDate
+      else {
         await this.firstResponseList();
-      } else if (isNumIn(responseType, ResponseType.Date)) {
-        await this.loadResponseList(0, this.surveyProps.responseMaxPerRequest);
-      } else {
-        await this.loadResponseIterator();
       }
 
     } catch (err: any) {

@@ -13,7 +13,7 @@ import { Web3Service } from './web3.service';
 export class SurveyStateInfoService implements OnDestroy {
 
   survey: SurveyImpl;
-  onBudgetInterval: () => void;
+  onAmountsLoaded: () => void;
 
   get isOpened(): boolean {
     return this.getState() == SurveyState.OPENED;
@@ -31,11 +31,11 @@ export class SurveyStateInfoService implements OnDestroy {
     return !this.alreadyParticipated && this.enoughBudget && this.isOpened;
   }
 
-  rmngTimeInterval: any;
+  timeInterval: any;
   rmngTimeValue: number;
   rmngDuration: string;
 
-  rmngBudgetInterval: any;
+  amountsInterval: any;
   partsNum: number;
   rmngBudget: BigNumber;
   rmngGasReserve: BigNumber;
@@ -53,27 +53,27 @@ export class SurveyStateInfoService implements OnDestroy {
   ) { 
     this.onAccountLoadedRemover = this.web3Service.onAccountLoaded.add(() => {
       if(this.survey) {
-        this.setRemainingBudget();
+        this.loadAmounts();
       }
     });
   }
 
   ngOnDestroy() {
     this.onAccountLoadedRemover();
-    clearInterval(this.rmngTimeInterval);
-    clearInterval(this.rmngBudgetInterval);
+    clearInterval(this.timeInterval);
+    clearInterval(this.amountsInterval);
   }
 
-  async loadData(survey: SurveyImpl, onBudgetInterval: () => void = undefined) {
+  async loadData(survey: SurveyImpl, onAmountsLoaded: () => void = undefined) {
     this.survey = survey;
-    this.onBudgetInterval = onBudgetInterval;
+    this.onAmountsLoaded = onAmountsLoaded;
 
-    await this.setRemainingBudget();
+    await this.loadAmounts();
 
     if (this.isOpened) {
       this.setRemainingTime();
-      this.setRemainingTimeInterval();
-      this.setRemainingBudgetInterval();
+      this.setTimeInterval();
+      this.setAmountsInterval();
     } else {
       this.rmngDuration = '-';
     }
@@ -83,9 +83,9 @@ export class SurveyStateInfoService implements OnDestroy {
     return this.surveyService.getState(this.survey);
   }
 
-  private setRemainingTimeInterval() {
-    clearInterval(this.rmngTimeInterval);
-    this.rmngTimeInterval = setInterval(() => {
+  private setTimeInterval() {
+    clearInterval(this.timeInterval);
+    this.timeInterval = setInterval(() => {
       this.setRemainingTime();
     }, 1000);
   }
@@ -104,32 +104,33 @@ export class SurveyStateInfoService implements OnDestroy {
     this.rmngDuration = formatDuration(this.rmngTimeValue);
 
     if (this.rmngTimeValue == 0) {
-      clearInterval(this.rmngTimeInterval);
+      clearInterval(this.timeInterval);
     }
   }
 
-  private setRemainingBudgetInterval() {
-    clearInterval(this.rmngBudgetInterval);
-    this.rmngBudgetInterval = setInterval(() => {
-      this.setRemainingBudget();
+  private setAmountsInterval() {
+    clearInterval(this.amountsInterval);
+    this.amountsInterval = setInterval(() => {
+      this.loadAmounts();
     }, 30000);
   }
 
-  private async setRemainingBudget() {
-    this.partsNum = await this.surveyService.getParticipantsLength(this.survey.id);
-    this.rmngBudget = await this.surveyService.remainingBudgetOf(this.survey.id);
-    this.rmngGasReserve = await this.surveyService.gasReserveOf(this.survey.id);
-    this.alreadyParticipated = await this.surveyService.isUserParticipant(this.survey.id);
+  private async loadAmounts() {
+    const amounts = await this.surveyService.amountsOf(this.survey.address);
+    this.rmngBudget = amounts.remainingBudget;
+    this.rmngGasReserve = amounts.remainingGasReserve;
+    this.partsNum = amounts.participantNumber;
+    this.alreadyParticipated = await this.surveyService.isUserParticipant(this.survey.address);
 
-    this.rmngBudgetAmount = toFormatBigNumber(toAmount(this.rmngBudget));
+    this.rmngBudgetAmount = toFormatBigNumber(toAmount(this.rmngBudget, this.survey.tokenData.decimals));
     this.rmngGasReserveAmount = toFormatBigNumber(toAmount(this.rmngGasReserve));
     this.enoughBudget = !this.rmngBudget.isLessThan(this.survey.reward);
 
     if (!this.enoughBudget) {
-      clearInterval(this.rmngBudgetInterval);
+      clearInterval(this.amountsInterval);
     }
 
-    if (this.onBudgetInterval)
-      this.onBudgetInterval();
+    if (this.onAmountsLoaded)
+      this.onAmountsLoaded();
   }
 }

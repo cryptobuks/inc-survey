@@ -91,7 +91,8 @@ place-content: center flex-end;
 }
 
 .grid-item > label, .data-item > label {
-    font-weight: 500;
+    font-size: 14px;
+    color: var(--text-color-secondary);
 }
 
 .grid-item > label:after, .data-item > label:after {
@@ -99,7 +100,7 @@ place-content: center flex-end;
 }
 
 .grid-item > .grid-value, .data-item > .data-field,
-.grid-item > span:not(.grid-row), .data-item > span,
+.grid-item > span:not(.grid-row), .data-item > span:not(.validation-error),
 .grid-item > div:not(.grid-row), .data-item > div {
     display: block;
     margin-top: 10px;

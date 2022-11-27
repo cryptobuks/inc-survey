@@ -63,10 +63,8 @@ import { ResponseToggleComponent } from './comps/response-toggle/response-toggle
 import { ResponseRangeComponent } from './comps/response-range/response-range.component';
 import { SurveyBannerComponent } from './comps/survey-banner/survey-banner.component';
 import { BreadcrumbsComponent } from './comps/breadcrumbs/breadcrumbs.component';
-import { IncTimelineComponent } from './comps/inc-timeline/inc-timeline.component';
 import { OwnSurveysChartComponent } from './comps/own-surveys-chart/own-surveys-chart.component';
 import { OwnSurveysComponent } from './pages/own-surveys/own-surveys.component';
-import { SurveyListItemComponent } from './comps/survey-list-item/survey-list-item.component';
 import { OwnPartsComponent } from './pages/own-parts/own-parts.component';
 import { UniswapComponent } from './pages/uniswap/uniswap.component';
 import { UniswapWidgetWrapper } from 'src/extensions/UniswapWidgetWrapper';
@@ -76,6 +74,9 @@ import { FlipdownComponent } from './comps/flipdown/flipdown.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { NotifSubscriptionComponent } from './comps/notif-subscription/notif-subscription.component';
+import { TokenSelectorComponent } from './comps/token-selector/token-selector.component';
+import { SelectTokenComponent } from './comps/select-token/select-token.component';
+import { SurveyCardComponent } from './comps/survey-card/survey-card.component';
 
 @NgModule({
   declarations: [
@@ -124,17 +125,18 @@ import { NotifSubscriptionComponent } from './comps/notif-subscription/notif-sub
     ResponseRangeComponent,
     SurveyBannerComponent,
     BreadcrumbsComponent,
-    IncTimelineComponent,
     OwnSurveysChartComponent,
     OwnSurveysComponent,
-    SurveyListItemComponent,
     OwnPartsComponent,
     UniswapComponent,
     UniswapWidgetWrapper,
     TxStatusComponent,
     TokenSaleComponent,
     FlipdownComponent,
-    NotifSubscriptionComponent
+    NotifSubscriptionComponent,
+    TokenSelectorComponent,
+    SelectTokenComponent,
+    SurveyCardComponent
   ],
   imports: [
     BrowserModule,

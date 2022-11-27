@@ -24,11 +24,11 @@ export const menuItems: MenuItem[] = [
                 children: [
                     {
                         label: '..',
-                        url: '/dashboard/my-surveys/:id',
+                        url: '/dashboard/my-surveys/:address',
                         children: [
                             {
                                 label: 'answers',
-                                url: '/dashboard/my-surveys/:id/answers'
+                                url: '/dashboard/my-surveys/:address/answers'
                             }
                         ]
                     }
@@ -40,11 +40,11 @@ export const menuItems: MenuItem[] = [
                 children: [
                     {
                         label: '..',
-                        url: '/dashboard/my-parts/:id',
+                        url: '/dashboard/my-parts/:address',
                         children: [
                             {
                                 label: 'answers',
-                                url: '/dashboard/my-parts/:id/answers'
+                                url: '/dashboard/my-parts/:address/answers'
                             }
                         ]
                     }
@@ -58,7 +58,7 @@ export const menuItems: MenuItem[] = [
         children: [
             {
                 label: '..',
-                url: '/surveys/:id',
+                url: '/surveys/:address',
                 children: [
                     {
                         label: 'take_survey',
@@ -70,7 +70,7 @@ export const menuItems: MenuItem[] = [
                     },
                     {
                         label: 'answers',
-                        url: '/surveys/:id/answers'
+                        url: '/surveys/:address/answers'
                     }
                 ]
             }
@@ -118,10 +118,10 @@ function findItem(url: string, items: MenuItem[] = menuItems, parent: MenuItem =
 
 export function getBreadcrumbs(url: string): Breadcrumb[] {
     let breadcrumbs: Breadcrumb[] = [];
-    let match = url.match(/.+\/([0-9]+)\/?.*$/);
+    let match = url.match(/.+\/(0x[a-zA-Z0-9]+)\/?.*$/);
 
     if (match) {
-        url = url.replace(match[1], ':id');
+        url = url.replace(match[1], ':address');
     }
 
     let item = findItem(url);
@@ -171,12 +171,12 @@ export function isRouteFromDashboardMyParts(route: string) {
     return route.startsWith('/dashboard/my-parts');
 }
 
-export function setBreadcrumbForDetails(router: Router, surveyId: number, surveyTitle: string) {
+export function setBreadcrumbForDetails(router: Router, surveyAddr: string, surveyTitle: string) {
     if(isRouteFromDashboardMySurveys(router.url)) {
-        setBreadcrumb('/dashboard/my-surveys/:id', { url: '/dashboard/my-surveys/' + surveyId, label: surveyTitle });
+        setBreadcrumb('/dashboard/my-surveys/:address', { url: '/dashboard/my-surveys/' + surveyAddr, label: surveyTitle });
     } else if(isRouteFromDashboardMyParts(router.url)) {
-        setBreadcrumb('/dashboard/my-parts/:id', { url: '/dashboard/my-parts/' + surveyId, label: surveyTitle });
+        setBreadcrumb('/dashboard/my-parts/:address', { url: '/dashboard/my-parts/' + surveyAddr, label: surveyTitle });
     } else {
-        setBreadcrumb('/surveys/:id', { url: '/surveys/' + surveyId, label: surveyTitle });
+        setBreadcrumb('/surveys/:address', { url: '/surveys/' + surveyAddr, label: surveyTitle });
     }
 }

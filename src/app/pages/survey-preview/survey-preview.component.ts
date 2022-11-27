@@ -49,7 +49,7 @@ export class SurveyPreviewComponent extends BasePageComponent {
 
     this.state.validated = false;
     this.onChainLoadedRemover = this.web3Service.onChainLoaded.addAndFire(() => {
-      let totalFee = calcFeeTotal(this.state.survey.budget, this.state.survey.reward, this.engineProps.feeWei);
+      let totalFee = calcFeeTotal(this.state.survey.budget, this.state.survey.reward, this.configProps.feeWei);
 
       let gasReserveAmount = toAmount(this.state.survey.gasReserve);
       let rateAmount = toAmount(totalFee);
@@ -91,14 +91,8 @@ export class SurveyPreviewComponent extends BasePageComponent {
     this.testing = true;
 
     try {
-      const validation = this.surveyComp.validateParticipation();
-
-      if(validation) {
-        let elemId = validation[0];
-        let errMsg = validation[1];
-        let qIndex = validation[2];
-
-        this.surveyComp.validationError(elemId, errMsg, qIndex);
+      const isValid = this.surveyComp.validateParticipation();
+      if(!isValid) {
         return;
       }
   
@@ -117,7 +111,7 @@ export class SurveyPreviewComponent extends BasePageComponent {
 
     this.confirmationService.confirm({
         target: event.target,
-        message: this.translateService.instant('first_time_two_transactions_x_executed', { val1: 'INC' }),
+        message: this.translateService.instant('first_time_two_transactions_x_executed', { val1: this.state.survey.tokenData.symbol }),
         icon: 'pi pi-exclamation-circle',
         accept: () => {
           this.sendSurvey();
@@ -138,13 +132,8 @@ export class SurveyPreviewComponent extends BasePageComponent {
     try {
       setAppCover(this.translateService.instant("please_wait"));
       
-      const validation = this.surveyComp.validateSurvey();
-
-      if(validation) {
-        let elemId = validation[0];
-        let errMsg = validation[1];
-
-        insertValidationError(elemId, errMsg);
+      const isValid = this.surveyComp.validateSurvey();
+      if(!isValid) {
         return;
       }
 
@@ -160,10 +149,9 @@ export class SurveyPreviewComponent extends BasePageComponent {
           }
 
           this.state.survey.logoUrl = "ipfs://" + cid;
-          this.state.survey.imageData = undefined;
-          await this.surveyComp.loadImageSrc();
+          this.state.survey.imageData = await this.ipfsService.ipfsImage(this.state.survey.logoUrl);
         } catch(err) {
-          insertValidationError('.survey-logo-error', this.translateService.instant('image_not_loaded_try_again_later'));
+          insertValidationError('.survey-logo', this.translateService.instant('image_not_loaded_try_again_later'));
           throw err;
         }
       }

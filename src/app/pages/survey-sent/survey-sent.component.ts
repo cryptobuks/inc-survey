@@ -42,7 +42,7 @@ export class SurveySentComponent extends BasePageComponent {
       },
       {
         title: this.translateService.instant("engine_rate"),
-        value: calcFeeTotal(this.state.survey.budget, this.state.survey.reward, this.engineProps.feeWei)
+        value: calcFeeTotal(this.state.survey.budget, this.state.survey.reward, this.configProps.feeWei)
       }
     ];
   }
@@ -63,11 +63,11 @@ export class SurveySentComponent extends BasePageComponent {
 
     if (this.receipt.status) {
       const events = await this.engineContract.getPastEvents('OnSurveyAdded', { fromBlock: this.receipt.blockNumber, toBlock: this.receipt.blockNumber });
-      this.state.survey.id = events[0].returnValues.surveyId;
+      this.state.survey.address = events[0].returnValues.surveyAddr;
       // Send notification to subscribers
       await this.utilService.triggerNotification(NotifType.NEW_SURVEY, {
         chainId: CURRENT_CHAIN,
-        surveyId: this.state.survey.id
+        surveyAddr: this.state.survey.address
       });
     }
   }

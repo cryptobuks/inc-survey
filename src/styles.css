@@ -323,6 +323,34 @@ p-selectbutton
     border-color: #607D8B;
 }
 
+.light-theme .mat-dialog-content .p-inputtext {
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: black;
+}
+
+.dark-theme .mat-dialog-content .p-inputtext {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    color: white;
+}
+
+.light-theme .p-tooltip .p-tooltip-text {
+    background: #eee6e6;
+    color: #000000;
+}
+.light-theme .p-tooltip.p-tooltip-right .p-tooltip-arrow {
+    border-right-color: #eee6e6;
+}
+
+.dark-theme .p-tooltip .p-tooltip-text {
+    background: #2f2f2f;
+    color: #ffffff;
+}
+.dark-theme .p-tooltip.p-tooltip-right .p-tooltip-arrow {
+    border-right-color: #2f2f2f;
+}
+
 .custom-spinner {
     width: 48px !important;
     height: 48px !important;
@@ -563,6 +591,7 @@ div[contenteditable]:empty:not(:focus):before {
 .thumb-circle {
     width: 100px;
     height: 100px;
+    min-width: 100px;
     border-radius: 50%;
     object-fit: cover;
     overflow: hidden;
@@ -701,7 +730,7 @@ div[contenteditable]:empty:not(:focus):before {
     font-size: 16px;
     font-weight: 500;
     /*font-style: oblique;*/
-    color: var(--text-color-secondary);
+    color: var(--primary-color);
 }
 .input-coin-suffix > span {
     margin-left: 10px;
@@ -717,7 +746,7 @@ div[contenteditable]:empty:not(:focus):before {
     background: rgba(0, 0, 0, 0.25);
 }
 
-.cover-z1001 .wait-text {
+.cover-z1001 .wait-frame {
     position: fixed;
     left: 50%;
     top: 50%;
@@ -726,10 +755,24 @@ div[contenteditable]:empty:not(:focus):before {
     -o-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
     text-align: center;
+    background: rgb(0 0 0 / 75%);
+    border-radius: 54px;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cover-z1001 .wait-frame .wait-image {
+    width: 32px;
+    height: 32px;
+}
+
+.cover-z1001 .wait-frame .wait-text {
     color: white;
     font-size: 24px;
     font-weight: 500;
-    text-shadow: 2px 2px var(--surface-500);
+    /*text-shadow: 2px 2px var(--surface-500);*/
 }
 
 .dot-pulse {

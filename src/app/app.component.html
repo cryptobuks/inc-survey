@@ -62,20 +62,20 @@
         </div>
 
         <div *ngIf="!connecting && (!hasConnection || !loadedChainData)" class="no-connection">
-            <a *ngIf="!hasConnection" class="icon-text-button" mat-stroked-button href="https://metamask.io/download" target="_blank">
-                <mat-icon svgIcon="metamask"></mat-icon>
-                <span>{{ 'install_metamask' | translate }}</span>
-            </a>
-
-            <button *ngIf="!hasConnection" class="icon-text-button" mat-stroked-button (click)="connect()">
-                <mat-icon>account_balance_wallet</mat-icon>
-                <span>{{ 'connect_wallet' | translate }}</span>
-            </button>
-            
             <button *ngIf="hasConnection && !loadedChainData" class="icon-text-button" mat-stroked-button (click)="importNetwork()">
                 <img alt="logo" [src]="ccy.logoURI" style="width: 1.5rem; "/>
                 <span>{{ 'select_x' | translate:{ val1 : net.chainName } }}</span>
             </button>
+            
+            <button *ngIf="!hasConnection" class="icon-text-button" mat-stroked-button (click)="connect()">
+                <mat-icon>account_balance_wallet</mat-icon>
+                <span>{{ 'connect_wallet' | translate }}</span>
+            </button>
+
+            <a *ngIf="!hasConnection" class="icon-text-button" mat-stroked-button href="https://metamask.io/download" target="_blank">
+                <mat-icon svgIcon="metamask"></mat-icon>
+                <span>{{ 'install_metamask' | translate }}</span>
+            </a>
         </div>
 
         <!--<breadcrumbs *ngIf="!connecting && hasConnection && loadedChainData"></breadcrumbs>-->

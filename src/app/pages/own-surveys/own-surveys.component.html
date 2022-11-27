@@ -6,12 +6,14 @@
         <mat-spinner></mat-spinner>
     </div>
 
-    <div *ngIf="!loading && surveys.length > 0" class="survey-list">
+    <div *ngIf="!loading && surveys.length > 0" class="survey-list-view">
 
-        <survey-list-item *ngFor="let survey of surveys; let i = index" [survey]="survey" [forOwner]="true" (onClick)="exploreSurvey(survey.id)"></survey-list-item>
+        <div class="survey-list">
+            <survey-card *ngFor="let survey of surveys" [survey]="survey" [forOwner]="true" (onClick)="exploreSurvey(survey.address)"></survey-card>
+        </div>
 
         <p-paginator class="paginator-cnt" [first]="paginatorData.first" [rows]="paginatorData.rows" [totalRecords]="surveysLength" (onPageChange)="onPageChange($event)"
-            [showJumpToPageDropdown]="true" [showPageLinks]="false" [rowsPerPageOptions]="[5,10,15,20]"></p-paginator>
+            [showJumpToPageDropdown]="true" [showPageLinks]="false" [rowsPerPageOptions]="[6,12,18,24]"></p-paginator>
 
     </div>
     

@@ -5,13 +5,12 @@ import { DynamicItem } from 'src/app/models/dynamic-item';
 import { PaginatorData, PaginatorRows } from 'src/app/models/paginator-data';
 import { QuestionImpl } from 'src/app/models/question-impl';
 import { SurveyImpl } from 'src/app/models/survey-impl';
-import { QuestionValidator, ResponseType, ValidationExpression, ValidationOperator, EngineProps } from 'src/app/models/survey-model';
-import { QUESTION_CLASS, QuestionData, RESPONSE_TYPE } from 'src/app/models/survey-support';
-import { IpfsService } from 'src/app/services/ipfs.service';
+import { QuestionValidator, ResponseType, ValidationExpression, ValidationOperator, ConfigProps } from 'src/app/models/survey-model';
+import { QUESTION_CLASS, QuestionData, RESPONSE_TYPE, parseResponse } from 'src/app/models/survey-support';
 import { SurveyService } from 'src/app/services/survey.service';
 import { Web3Service } from 'src/app/services/web3.service';
 import { CURRENT_CHAIN, NATIVE_CURRENCY, DOMAIN_URL, HOUR_MILLIS } from 'src/app/shared/constants';
-import { calcFeeTotal, containsDigits, exportCoupons, insertValidationError, isDigit, isUDigit, loadPageList, moveScrollTo, ScrollPosition, truncateSeconds } from 'src/app/shared/helper';
+import { calcFeeTotal, cleanValidationError, containsDigits, exportCoupons, insertValidationError, isDigit, isUDigit, loadPageList, moveScrollTo, ScrollPosition, truncateSeconds } from 'src/app/shared/helper';
 declare var $: any;
 
 @Component({
@@ -70,9 +69,9 @@ export class SurveyImplComponent implements OnInit, OnDestroy {
 
   get currSymbol(): string { return NATIVE_CURRENCY[CURRENT_CHAIN].symbol; }
   get accountData(): AccountData { return this.web3Service.accountData; };
-  get engineProps(): EngineProps { return this.surveyService.engineProps; };
+  get configProps(): ConfigProps { return this.surveyService.configProps; };
   get surveyLocation(): string {
-      return DOMAIN_URL + '/surveys/' + this.survey.id;
+      return DOMAIN_URL + '/surveys/' + this.survey.address;
   }
   get maxParts(): number {
     return this.survey.budget.dividedBy(this.survey.reward).toNumber();
@@ -81,7 +80,6 @@ export class SurveyImplComponent implements OnInit, OnDestroy {
     return this.gasReserve != undefined || this.engineRate != undefined || this.totalToPay != undefined;
   }
 
-  imageSrc: string;
   questionItems: DynamicItem[] = [];
   pageQuestions: QuestionImpl[] = [];
 
@@ -97,15 +95,13 @@ export class SurveyImplComponent implements OnInit, OnDestroy {
   constructor(
     private translateService: TranslateService,
     private web3Service: Web3Service,
-    private surveyService: SurveyService,
-    private ipfsService: IpfsService
+    private surveyService: SurveyService
   ) {
   }
 
   ngOnInit() {
     this.paginatorData.rows = this.paginatorRows.value;
     SurveyImpl.formatData(this.survey);
-    this.loadImageSrc();
     this.loadPage();
   }
 
@@ -136,47 +132,6 @@ export class SurveyImplComponent implements OnInit, OnDestroy {
     return this.questionItems[index];
   }
 
-  async loadImageSrc() {
-    this.imageSrc = await this.ipfsService.surveyLogo(this.survey);
-  }
-
-  validateSurvey(): [string, string] {
-    let currTime = truncateSeconds(new Date(this.web3Service.currenTime)).getTime();
-
-    if(this.survey.startDate.getTime() < currTime + HOUR_MILLIS) {
-      return [".survey-start-date", this.translateService.instant("start_date_must_after_current_date_at_least_1_hour")];
-    }
-
-    if(this.survey.startDate.getTime() - currTime > this.engineProps.startMaxTime * 1000) {
-      return [".survey-start-date", this.translateService.instant("invalid_start_date_max_x_days", { val1: Math.round(this.engineProps.startMaxTime / 60 / 60 / 24) })];
-    }
-
-    if(this.survey.endDate.getTime() < this.survey.startDate.getTime() + this.engineProps.rangeMinTime * 1000) {
-      return [".survey-end-date", this.translateService.instant("invalid_date_range_min_x_hours", { val1: Math.round(this.engineProps.rangeMinTime / 60 / 60 ) })];
-    }
-
-    if(this.survey.endDate.getTime() - this.survey.startDate.getTime() > this.engineProps.rangeMaxTime * 1000) {
-      return [".survey-end-date", this.translateService.instant("invalid_date_range_max_x_days", { val1: Math.round(this.engineProps.rangeMaxTime / 60 / 60 / 24) })];
-    }
-
-    if(this.survey.budget.isGreaterThan(this.accountData.incBalance)) {
-        return [".survey-budget", this.translateService.instant("budget_exceeds_your_x_balance", { val1: 'INC' })];
-    }
-
-    let totalFee = calcFeeTotal(this.survey.budget, this.survey.reward, this.engineProps.feeWei);
-    let weiAmount = this.survey.gasReserve.plus(totalFee);
-
-    if (weiAmount.isGreaterThan(this.accountData.ccyBalance)) {
-        return [".survey-total-pay", this.translateService.instant("insufficient_x_balance", { val1: this.currSymbol })];
-    }
-
-    if(this.survey.partKeys && this.survey.partKeys.length > 0 && !this.savedKeys) {
-        return [".survey-keys-error", this.translateService.instant("export_your_coupons")];
-    }
-
-    return null;
-  }
-
   getResponses(): string[] {
     let responses = [];
 
@@ -190,7 +145,44 @@ export class SurveyImplComponent implements OnInit, OnDestroy {
     return responses;
   }
 
-  validateParticipation(): [string, string, number] {
+  checkSurvey(): [string, string] {
+    let currTime = truncateSeconds(new Date(this.web3Service.currenTime)).getTime();
+
+    if(this.survey.startDate.getTime() < currTime + HOUR_MILLIS) {
+      return [".survey-start-date", this.translateService.instant("start_date_must_after_current_date_at_least_1_hour")];
+    }
+
+    if(this.survey.startDate.getTime() - currTime > this.configProps.startMaxTime * 1000) {
+      return [".survey-start-date", this.translateService.instant("invalid_start_date_max_x_days", { val1: Math.round(this.configProps.startMaxTime / 60 / 60 / 24) })];
+    }
+
+    if(this.survey.endDate.getTime() < this.survey.startDate.getTime() + this.configProps.rangeMinTime * 1000) {
+      return [".survey-end-date", this.translateService.instant("invalid_date_range_min_x_hours", { val1: Math.round(this.configProps.rangeMinTime / 60 / 60 ) })];
+    }
+
+    if(this.survey.endDate.getTime() - this.survey.startDate.getTime() > this.configProps.rangeMaxTime * 1000) {
+      return [".survey-end-date", this.translateService.instant("invalid_date_range_max_x_days", { val1: Math.round(this.configProps.rangeMaxTime / 60 / 60 / 24) })];
+    }
+
+    if(this.survey.budget.isGreaterThan(this.survey.tokenData.balance)) {
+        return [".survey-budget", this.translateService.instant("budget_exceeds_your_x_balance", { val1: this.survey.tokenData.symbol })];
+    }
+
+    let totalFee = calcFeeTotal(this.survey.budget, this.survey.reward, this.configProps.feeWei);
+    let weiAmount = this.survey.gasReserve.plus(totalFee);
+
+    if (weiAmount.isGreaterThan(this.accountData.ccyBalance)) {
+        return [".survey-total-pay", this.translateService.instant("insufficient_x_balance", { val1: this.currSymbol })];
+    }
+
+    if(this.survey.partKeys && this.survey.partKeys.length > 0 && !this.savedKeys) {
+        return [".survey-keys-error", this.translateService.instant("export_your_coupons")];
+    }
+
+    return null;
+  }
+
+  checkParticipation(): [string, string, number] {
     for(let i = 0; i < this.survey.questions.length; i++) {
       let question = this.survey.questions[i];
       // There will be no method output() if the user has not visited the component.
@@ -207,7 +199,7 @@ export class SurveyImplComponent implements OnInit, OnDestroy {
         continue;
       }
 
-      if(response.length > this.engineProps.responseMaxLength) {
+      if(response.length > this.configProps.responseMaxLength) {
         return [elemId, this.translateService.instant("very_long_response_reduce_text"), i];
       }
 
@@ -218,7 +210,7 @@ export class SurveyImplComponent implements OnInit, OnDestroy {
       }
       
       // Apply validators, there can be multiple values, each value must pass the validators.
-      let values = this._parseResponse(responseType, response);
+      let values = parseResponse(responseType, response);
 
       for(let i = 0; i < values.length; i++) {
           let value = values[i];
@@ -243,6 +235,37 @@ export class SurveyImplComponent implements OnInit, OnDestroy {
     }
 
     return null;
+  }
+
+  validateSurvey(): boolean {
+    cleanValidationError();
+    const validation = this.checkSurvey();
+
+    if(validation) {
+      let elemId = validation[0];
+      let errMsg = validation[1];
+
+      insertValidationError(elemId, errMsg);
+      return false;
+    }
+
+    return true;
+  }
+
+  validateParticipation(): boolean {
+    cleanValidationError();
+    const validation = this.checkParticipation();
+
+    if(validation) {
+      let elemId = validation[0];
+      let errMsg = validation[1];
+      let qIndex = validation[2];
+
+      this.validationError(elemId, errMsg, qIndex);
+      return false;
+    }
+
+    return true;
   }
 
   validationError(elemId: string, errMsg: string, qIndex: number = undefined, scrollPos: ScrollPosition = 'center') {
@@ -278,29 +301,6 @@ export class SurveyImplComponent implements OnInit, OnDestroy {
     }
   }
 
-  private _parseResponse(responseType: ResponseType, response: string) {
-    let values = [];
-
-    if(this._isArray(responseType)) {
-        values = response.split(";");
-    } else {
-        values = [];
-        values[0] = response;
-    }
-
-    return values;
-  }
-
-  private _isArray(responseType: ResponseType) {
-    return responseType == ResponseType.ManyOptions || 
-    responseType == ResponseType.Range || 
-    responseType == ResponseType.DateRange || 
-    responseType == ResponseType.ArrayBool || 
-    responseType == ResponseType.ArrayText || 
-    responseType == ResponseType.ArrayNumber || 
-    responseType == ResponseType.ArrayDate;
-  }
-
   private _checkResponseType(responseType: ResponseType, value: string) {
     if(responseType == ResponseType.Bool) {
         return value == "true" || value == "false";
@@ -325,13 +325,17 @@ export class SurveyImplComponent implements OnInit, OnDestroy {
         let num = parseInt(value);
         return num > 0 && num <= 5;
     } else if(responseType == ResponseType.OneOption) {
-        return isUDigit(value);
+        if(!isUDigit(value)) {
+          return false;
+      }
+
+      return parseInt(value) <= 100;
     } else if(responseType == ResponseType.ManyOptions) {
         let array = value.split(";");
         for(let i = 0; i < array.length; i++) {
-            if(!isUDigit(array[i])) {
-                return false;
-            }
+          if(!this._checkResponseType(ResponseType.OneOption, array[i])) {
+            return false;
+          }
         }
 
         return true;

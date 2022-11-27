@@ -8,13 +8,16 @@ import TokenOffer from "../contracts/TokenOffer";
 import SurveyEngine from '../contracts/SurveyEngine';
 import SurveyStorage from '../contracts/SurveyStorage';
 import SurveyValidator from '../contracts/SurveyValidator';
+import SurveyConfig from '../contracts/SurveyConfig';
 import { AccountData } from '../models/account-data';
-import { IncProps, OfferProps } from '../models/inc-model';
-import { EngineProps, SurveyProps } from '../models/survey-model';
+import { OfferProps } from '../models/inc-model';
+import { ConfigProps } from '../models/survey-model';
 import { CURRENT_CHAIN, WRAPPED_CURRENCY, Theme } from '../shared/constants';
 import { providerOptions } from '../shared/provider-options';
 import { SimpleListener } from '../shared/simple-listener';
 import { Web3Error } from '../models/web3-error';
+import { TokenData } from '../models/token-data';
+import { getTokenLogoURL, toAmount, toFormatBigNumber } from '../shared/helper';
 declare var window: any;
 declare var Web3: any;
 
@@ -34,13 +37,12 @@ export class Web3Service implements OnDestroy {
   get offerContract(): any { return this._offerContract; }
   get surveyContract(): any { return this._surveyContract; }
   get validatorContract(): any { return this._validatorContract; }
+  get configContract(): any { return this._configContract; }
   get engineContract(): any { return this._engineContract; }
   get forwarderContract(): any { return this._forwarderContract; }
   get accountData(): AccountData { return this._accountData; }
-  get incProps(): IncProps { return this._incProps; }
   get offerProps(): OfferProps { return this._offerProps; }
-  get surveyProps(): SurveyProps { return this._surveyProps; }
-  get engineProps(): EngineProps { return this._engineProps; }
+  get configProps(): ConfigProps { return this._configProps; }
   get timeDiff(): any { return this._timeDiff; }
   get currenTime(): any { return new Date().getTime() + (this.timeDiff ?? 0); }
 
@@ -49,14 +51,13 @@ export class Web3Service implements OnDestroy {
   private _offerContract: any;
   private _surveyContract: any;
   private _validatorContract: any;
+  private _configContract: any;
   private _engineContract: any;
   private _forwarderContract: any;
 
   private _accountData: AccountData;
-  private _incProps: IncProps;
   private _offerProps: OfferProps;
-  private _surveyProps: SurveyProps;
-  private _engineProps: EngineProps;
+  private _configProps: ConfigProps;
   private _timeDiff: number;
 
   private web3Modal: any;
@@ -245,16 +246,6 @@ export class Web3Service implements OnDestroy {
     return Promise.resolve<AccountData>(data);
   }
 
-  async getIncProps(): Promise<IncProps> {
-    this.checkContracts();
-    let data: any = {};
-
-    data.timelineMaxPerRequest = parseInt(await this.incContract.methods.timelineMaxPerRequest().call());
-    data.holderMaxPerRequest = parseInt(await this.incContract.methods.holderMaxPerRequest().call());
-
-    return Promise.resolve<IncProps>(data);
-  }
-
   async getOfferProps(): Promise<OfferProps> {
     this.checkContracts();
     let data: any = {};
@@ -269,23 +260,20 @@ export class Web3Service implements OnDestroy {
     return Promise.resolve<OfferProps>(data);
   }
 
-  async getSurveyProps(): Promise<SurveyProps> {
+  async getConfigProps(): Promise<ConfigProps> {
     this.checkContracts();
     let data: any = {};
 
-    data.surveyMaxPerRequest = parseInt(await this.surveyContract.methods.surveyMaxPerRequest().call());
-    data.participantMaxPerRequest = parseInt(await this.surveyContract.methods.participantMaxPerRequest().call());
-    data.participationMaxPerRequest = parseInt(await this.surveyContract.methods.participationMaxPerRequest().call());
-    data.questionMaxPerRequest = parseInt(await this.surveyContract.methods.questionMaxPerRequest().call());
-    data.responseMaxPerRequest = parseInt(await this.surveyContract.methods.responseMaxPerRequest().call());
+    data.surveyMaxPerRequest = parseInt(await this.configContract.methods.surveyMaxPerRequest().call());
+    data.questionMaxPerRequest = parseInt(await this.configContract.methods.questionMaxPerRequest().call());
+    data.responseMaxPerRequest = parseInt(await this.configContract.methods.responseMaxPerRequest().call());
+    data.participantMaxPerRequest = parseInt(await this.configContract.methods.participantMaxPerRequest().call());
+    data.participationMaxPerRequest = parseInt(await this.configContract.methods.participationMaxPerRequest().call());
+    data.txGasMaxPerRequest = parseInt(await this.configContract.methods.txGasMaxPerRequest().call());
+    data.feeWei = new BigNumber(await this.configContract.methods.fee().call());
 
-    return Promise.resolve<SurveyProps>(data);
-  }
-
-  async getEngineProps(): Promise<EngineProps> {
-    this.checkContracts();
-    let data: any = {};
-
+    data.tknSymbolMaxLength = parseInt(await this.validatorContract.methods.tknSymbolMaxLength().call());
+    data.tknNameMaxLength = parseInt(await this.validatorContract.methods.tknNameMaxLength().call());
     data.titleMaxLength = parseInt(await this.validatorContract.methods.titleMaxLength().call());
     data.descriptionMaxLength = parseInt(await this.validatorContract.methods.descriptionMaxLength().call());
     data.urlMaxLength = parseInt(await this.validatorContract.methods.urlMaxLength().call());
@@ -298,9 +286,8 @@ export class Web3Service implements OnDestroy {
     data.validatorValueMaxLength = parseInt(await this.validatorContract.methods.validatorValueMaxLength().call());
     data.hashMaxPerSurvey = parseInt(await this.validatorContract.methods.hashMaxPerSurvey().call());
     data.responseMaxLength = parseInt(await this.validatorContract.methods.responseMaxLength().call());
-    data.feeWei = new BigNumber(await this.engineContract.methods.fee().call());
 
-    return Promise.resolve<EngineProps>(data);
+    return Promise.resolve<ConfigProps>(data);
   }
 
   async importNetwork(params: any): Promise<boolean> {
@@ -343,6 +330,47 @@ export class Web3Service implements OnDestroy {
     }
 
     return Promise.resolve(wasAdded);
+  }
+
+  async loadToken(address: string): Promise<TokenData> {
+    let chainId: number;
+
+    try {
+      chainId = await this.getChainId();
+    } catch (error) {
+      throw new Web3Error(Web3Error.CODE_FAILED_CONNECTION, error);
+    }
+
+    let contract: any;
+
+    try {
+      contract = await this.getERC20Contract(address);
+    } catch (error) {
+      throw new Web3Error(Web3Error.CODE_NOT_FOUNT_CONTRACT, error);
+    }
+
+    let name: string, symbol: string, decimals: number, balance: number;
+
+    try {
+      name = await contract.methods.name().call();
+      symbol = await contract.methods.symbol().call();
+      decimals = await contract.methods.decimals().call();
+      balance = await contract.methods.balanceOf(this.accountData.address).call();
+    } catch (error) {
+      throw new Web3Error(Web3Error.CODE_INVALID_TOKEN, error);
+    }
+
+    let token: TokenData = {
+      chainId: chainId,
+      address: address,
+      name: name,
+      symbol: symbol,
+      decimals: decimals,
+      balance: new BigNumber(balance),
+      logoURI: getTokenLogoURL(address, chainId),
+      hfBalance: toFormatBigNumber(toAmount(balance, decimals))
+    };
+    return Promise.resolve<any>(token);
   }
 
   async connect() {
@@ -415,10 +443,8 @@ export class Web3Service implements OnDestroy {
   private async loadChainData() {
     await this.loadTimeDiff();
     await this.loadContracts();
-    await this.loadIncProps();
     await this.loadOfferProps();
-    await this.loadSurveyProps();
-    await this.loadEngineProps();
+    await this.loadConfigProps();
     // ..
     await this.loadAccountData(false);
     this.onChainLoaded.fire();
@@ -440,13 +466,9 @@ export class Web3Service implements OnDestroy {
     this._offerContract = await TokenOffer(this.web3);
     this._surveyContract = await SurveyStorage(this.web3);
     this._validatorContract = await SurveyValidator(this.web3);
+    this._configContract = await SurveyConfig(this.web3);
     this._engineContract = await SurveyEngine(this.web3);
     this._forwarderContract = await INCForwarder(this.web3);
-  }
-
-  private async loadIncProps() {
-    this._incProps = await this.getIncProps();
-    //console.debug("incProps:: " + JSON.stringify(this.incProps));
   }
 
   private async loadOfferProps() {
@@ -454,14 +476,9 @@ export class Web3Service implements OnDestroy {
     //console.debug("offerProps:: " + JSON.stringify(this.offerProps));
   }
 
-  private async loadSurveyProps() {
-    this._surveyProps = await this.getSurveyProps();
-    //console.debug("surveyProps:: " + JSON.stringify(this.surveyProps));
-  }
-
-  private async loadEngineProps() {
-    this._engineProps = await this.getEngineProps();
-    //console.debug("engineProps:: " + JSON.stringify(this.engineProps));
+  private async loadConfigProps() {
+    this._configProps = await this.getConfigProps();
+    //console.debug("configProps:: " + JSON.stringify(this.configProps));
   }
 
   private configProvider(provider: any) {
@@ -504,13 +521,12 @@ export class Web3Service implements OnDestroy {
     this._offerContract = undefined;
     this._surveyContract = undefined;
     this._validatorContract = undefined;
+    this._configContract = undefined;
     this._engineContract = undefined;
     this._forwarderContract = undefined;
     this._accountData = undefined;
-    this._incProps = undefined;
     this._offerProps = undefined;
-    this._surveyProps = undefined;
-    this._engineProps = undefined;
+    this._configProps = undefined;
     this._timeDiff = undefined;
   }
 

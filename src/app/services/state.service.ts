@@ -3,8 +3,8 @@ import BigNumber from 'bignumber.js';
 import { SurveyEditState } from '../models/survey-edit-state';
 import { SurveyListState } from '../models/survey-list-state';
 import { SurveyTakeState } from '../models/survey-take-state';
-import { DAY_MILLIS } from '../shared/constants';
-import { truncateSeconds } from '../shared/helper';
+import { CURRENT_CHAIN, DAY_MILLIS, INC_TOKEN } from '../shared/constants';
+import { cloneDeep, truncateSeconds } from '../shared/helper';
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +34,6 @@ export class StateService implements OnDestroy {
     let rewardAmount = 1000 * 10 ** 18;
 
     return {
-      id: undefined,
       entryDate: undefined,
       title: undefined,
       description: undefined,
@@ -44,7 +43,8 @@ export class StateService implements OnDestroy {
       budget: new BigNumber(budgetAmount),
       reward: new BigNumber(rewardAmount),
       questions: [],
-      partKeys: []
+      partKeys: [],
+      tokenData: cloneDeep(INC_TOKEN[CURRENT_CHAIN])
     };
   }
 

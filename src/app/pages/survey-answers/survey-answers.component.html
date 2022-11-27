@@ -14,7 +14,7 @@
             <p-tabPanel header="{{ 'resumen' | translate }}">
 
                 <div *ngIf="selectedTab == 0" class="resumen-cnt">
-                    <response-impl *ngFor="let qIndex of questionIndexes" [surveyId]="survey.id" [questionIndex]="qIndex"></response-impl>
+                    <response-impl *ngFor="let qIndex of questionIndexes" [surveyAddr]="survey.address" [questionIndex]="qIndex"></response-impl>
 
                     <p-paginator class="paginator-cnt" [first]="paginatorDataForResumen.first" [rows]="paginatorDataForResumen.rows" 
                             [totalRecords]="survey.questions.length" (onPageChange)="onPageChangeForResumen($event)"
@@ -55,10 +55,10 @@
     
         <div class="control-grid">
     
-            <button mat-flat-button class="template-icon back-button" [disabled]="exporting" (click)="backToDetails()">
+            <!--<button mat-flat-button class="template-icon back-button" [disabled]="exporting" (click)="backToDetails()">
                 <mat-icon icon="arrow_back"></mat-icon>
                 <span>{{ 'back_to_survey_details' | translate }}</span>
-            </button>
+            </button>-->
 
             <button mat-flat-button class="template-icon print-button" color="primary" [disabled]="exporting" (click)="printPage()">
                 <mat-icon icon="print"></mat-icon>

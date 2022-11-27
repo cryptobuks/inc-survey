@@ -10,16 +10,26 @@
     gap: 40px;
 }
 
-.survey-logo {
-    text-align: center;
+.survey-select {
     flex: 1;
     max-width: 256px;
     margin: 0 auto;
 }
 
+.survey-logo {
+    text-align: center;
+}
+
 .survey-logo .data-item {
-    display: block;
     margin-top: 20px;
+}
+
+.survey-token {
+    margin-top: 20px;
+}
+
+.survey-token select-token {
+    display: block;
 }
 
 .survey-info {
@@ -113,7 +123,7 @@
         gap: 30px;
     }
 
-    .survey-logo {
+    .survey-select {
         width: 100%;
         max-width: 100%;
         flex: none;

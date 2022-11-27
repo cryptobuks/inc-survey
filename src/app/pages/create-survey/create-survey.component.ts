@@ -1,15 +1,17 @@
 import { CdkDragDrop, CdkDragEnter, CdkDragExit, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import BigNumber from 'bignumber.js';
+import { AppModule } from 'src/app/app.module';
 import { QuestionImplComponent } from 'src/app/comps/question-impl/question-impl.component';
+import { TokenSelectorComponent } from 'src/app/comps/token-selector/token-selector.component';
 import { DynamicItem } from 'src/app/models/dynamic-item';
 import { QuestionImpl } from 'src/app/models/question-impl';
 import { SurveyEditState } from 'src/app/models/survey-edit-state';
 import { SurveyImpl } from 'src/app/models/survey-impl';
 import { ValidationOperator, ValidationExpression, ResponseType } from 'src/app/models/survey-model';
 import { ComponentType, RESPONSE_TYPE } from 'src/app/models/survey-support';
-import { HOUR_MILLIS } from 'src/app/shared/constants';
-import { cloneDeep, isEmpty, isValidHttpUrl, lengthBase64, resizeBase64Image, truncateSeconds, isDigit, isUDigit, ScrollPosition, loadPageList, uniqueId, moveScrollTo, insertValidationError, toFixedBigNumber, isImageUrl, isIpfsUri, isImageData, formatDuration, toAmount, toUnits, calcGasReserve } from 'src/app/shared/helper';
+import { CURRENT_CHAIN, HOUR_MILLIS, INC_TOKEN } from 'src/app/shared/constants';
+import { cloneDeep, isEmpty, isValidHttpUrl, lengthBase64, resizeBase64Image, truncateSeconds, isDigit, isUDigit, ScrollPosition, loadPageList, uniqueId, moveScrollTo, insertValidationError, toFixedBigNumber, isIpfsUri, formatDuration, toAmount, toUnits, calcGasReserve } from 'src/app/shared/helper';
 import { ListenerRemover } from 'src/app/shared/simple-listener';
 import { BasePageComponent } from '../base-page.component';
 declare var $: any;
@@ -156,8 +158,8 @@ export class CreateSurveyComponent extends BasePageComponent {
   pageQuestions: QuestionImpl[] = [];
   currIndex: number;
 
-  imageSrc: string;
   imageLoading = false;
+  imageError = false;
 
   partPrice: BigNumber;
   keysNum: number;
@@ -168,13 +170,13 @@ export class CreateSurveyComponent extends BasePageComponent {
     return new Date(currTime + HOUR_MILLIS);
   };
   get maxStartDate(): Date {
-    return new Date(this.minStartDate.getTime() + this.engineProps.startMaxTime * 1000);
+    return new Date(this.minStartDate.getTime() + this.configProps.startMaxTime * 1000);
   };
   get minEndDate(): Date {
-    return new Date(this.survey.startDate.getTime() + this.engineProps.rangeMinTime * 1000);
+    return new Date(this.survey.startDate.getTime() + this.configProps.rangeMinTime * 1000);
   };
   get maxEndDate(): Date {
-    return new Date(this.minEndDate.getTime() + this.engineProps.rangeMaxTime * 1000);
+    return new Date(this.minEndDate.getTime() + this.configProps.rangeMaxTime * 1000);
   };
 
   get maxParts(): string {
@@ -212,8 +214,8 @@ export class CreateSurveyComponent extends BasePageComponent {
   }
 
   get newGasReserve(): BigNumber {
-    let budget = toUnits(this.state.budgetAmount);
-    let reward = toUnits(this.state.rewardAmount);
+    let budget = toUnits(this.state.budgetAmount, this.survey.tokenData.decimals);
+    let reward = toUnits(this.state.rewardAmount, this.survey.tokenData.decimals);
     return calcGasReserve(budget, reward, this.partPrice);
   }
 
@@ -223,7 +225,11 @@ export class CreateSurveyComponent extends BasePageComponent {
   }
 
   get keysMax(): number {
-    return this.engineProps.hashMaxPerSurvey;
+    return this.configProps.hashMaxPerSurvey;
+  }
+
+  get keysMaxFormatted(): string {
+    return new BigNumber(this.keysMax).toFormat();
   }
 
   @ViewChild('destCnt')
@@ -245,8 +251,8 @@ export class CreateSurveyComponent extends BasePageComponent {
       let question = this.createQuestion(this.availableQuestions[2]);
       this.survey.questions.push(question);
 
-      this.state.budgetAmount = toFixedBigNumber(toAmount(this.survey.budget));
-      this.state.rewardAmount = toFixedBigNumber(toAmount(this.survey.reward));
+      this.state.budgetAmount = toFixedBigNumber(toAmount(this.survey.budget, this.survey.tokenData.decimals));
+      this.state.rewardAmount = toFixedBigNumber(toAmount(this.survey.reward, this.survey.tokenData.decimals));
       this.state.gasReserveAmount = '0';
     } else {
       this.survey = this.state.survey;
@@ -264,7 +270,7 @@ export class CreateSurveyComponent extends BasePageComponent {
       return this.loadedChainData;
     });
     
-    this.loadImageSrc();
+    this.loadImageData();
     this.loadPage();
   }
 
@@ -272,27 +278,26 @@ export class CreateSurveyComponent extends BasePageComponent {
   }
 
   onDestroy() {
-    if(this.onChainLoadedRemover)
-    this.onChainLoadedRemover();
+    this.onChainLoadedRemover && this.onChainLoadedRemover();
   }
 
-  hasImage() {
-    return this.survey.logoUrl || this.survey.imageData;
+  onImageError(event: Event) {
+    this.survey.imageData = "assets/img/broken_image.png";
+    this.imageError = true;
   }
 
   onChangeLogoUrl(url: string) {
     this.survey.imageData = undefined;
-    this.imageSrc = undefined;
+    this.imageError = false;
 
-    if(isIpfsUri(url)) {
-      this.loadImageSrc();
+    if(isIpfsUri(url) || isValidHttpUrl(url)) {
+      this.loadImageData();
     }
   }
 
   onSelectImage(event: any) { // called each time file input changes
     this.survey.imageData = undefined;
     this.survey.logoUrl = undefined;
-    this.imageSrc = undefined;
 
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
@@ -312,21 +317,43 @@ export class CreateSurveyComponent extends BasePageComponent {
             sizeMB = lengthBase64(result) / 1024 / 1024;
 
             if (sizeMB > 1) {
-              insertValidationError(".survey-logo-error", this.translateService.instant("logo_size_exceeds_limit"));
+              insertValidationError(".survey-logo", this.translateService.instant("logo_size_exceeds_limit"));
             } else {
               this.survey.imageData = result;
             }
             
             this.imageLoading = false;
-            this.loadImageSrc();
           });
         } else {
           this.survey.imageData = image;
           this.imageLoading = false;
-          this.loadImageSrc();
         }
       };
     }
+  }
+
+  openTokenSelector(): void {
+    const data = {
+      chainId: this.accountData.chainId ?? CURRENT_CHAIN,
+      address: this.survey.tokenData.address,
+      symbol: this.survey.tokenData.symbol
+    };
+    const dialogRef = AppModule.dialog.open(TokenSelectorComponent, {
+      data: data
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.survey.tokenData.chainId = result.chainId;
+        this.survey.tokenData.address = result.address;
+        this.survey.tokenData.name = result.name;
+        this.survey.tokenData.symbol = result.symbol;
+        this.survey.tokenData.decimals = parseInt(result.decimals);
+        this.survey.tokenData.logoURI = result.logoURI;
+        this.survey.tokenData.balance = result.balance;
+        this.survey.tokenData.hfBalance = result.hfBalance;
+      }
+    });
   }
 
   onChangeBudget() {
@@ -419,7 +446,7 @@ export class CreateSurveyComponent extends BasePageComponent {
   }
 
   canAddQuestion() {
-    return this.survey.questions.length < this.engineProps.questionMaxPerSurvey;
+    return this.survey.questions.length < this.configProps.questionMaxPerSurvey;
   }
 
   addQuestion(questionType: QuestionType) {
@@ -486,9 +513,9 @@ export class CreateSurveyComponent extends BasePageComponent {
     }
 
     let gasReserve = toUnits(this.state.gasReserveAmount);
-    let budget = toUnits(this.state.budgetAmount);
-    let reward = toUnits(this.state.rewardAmount);
-    /*let totalFee = calcFeeTotal(budget, reward, this.engineProps.feeWei);
+    let budget = toUnits(this.state.budgetAmount, this.survey.tokenData.decimals);
+    let reward = toUnits(this.state.rewardAmount, this.survey.tokenData.decimals);
+    /*let totalFee = calcFeeTotal(budget, reward, this.configProps.feeWei);
     let weiAmount = gasReserve.plus(totalFee);
 
     if(weiAmount.isGreaterThan(this.accountData.ccyBalance)) {
@@ -506,8 +533,10 @@ export class CreateSurveyComponent extends BasePageComponent {
     this.loading = false;
   }
 
-  private async loadImageSrc() {
-    this.imageSrc = await this.ipfsService.surveyLogo(this.survey);
+  private async loadImageData() {
+    if(!this.survey.imageData) {
+      this.survey.imageData = await this.ipfsService.ipfsImage(this.survey.logoUrl);
+    }
   }
 
   private async loadPartPrice() {
@@ -538,37 +567,51 @@ export class CreateSurveyComponent extends BasePageComponent {
 
   private validateSurvey(): [string, string] | [string, string, number] | [string, string, number, ScrollPosition] {
 
-     this.survey.title = this.survey.title.trim();
-     this.survey.description = this.survey.description?.trim();
+    this.survey.title = this.survey.title.trim();
+    this.survey.description = this.survey.description?.trim();
 
      // logo is optional
-    if(this.survey.logoUrl) {
-      if(this.survey.logoUrl.length > this.engineProps.urlMaxLength) {
-        return [".survey-logo-error", this.translateService.instant("url_too_long_max_x_chars", { val1: this.engineProps.urlMaxLength })];
+    /*if(this.survey.logoUrl) {
+      if(this.survey.logoUrl.length > this.configProps.urlMaxLength) {
+        return [".survey-logo", this.translateService.instant("url_too_long_max_x_chars", { val1: this.configProps.urlMaxLength })];
       }
 
       let isIpfs = isIpfsUri(this.survey.logoUrl);
 
       if(!isIpfs && !isValidHttpUrl(this.survey.logoUrl)) {
-        return [".survey-logo-error", this.translateService.instant("invalid_url")];
+        return [".survey-logo", this.translateService.instant("invalid_url")];
       }
 
       if((!isIpfs && !isImageUrl(this.survey.logoUrl)) || (isIpfs && !isImageData(this.imageSrc))) {
-        return [".survey-logo-error", this.translateService.instant("url_is_not_image")];
+        return [".survey-logo", this.translateService.instant("url_is_not_image")];
       }
+    }*/
+
+    if(this.survey.logoUrl && this.survey.logoUrl.length > this.configProps.urlMaxLength) {
+      return [".survey-logo", this.translateService.instant("url_too_long_max_x_chars", { val1: this.configProps.urlMaxLength })];
+    }
+
+    if((this.survey.logoUrl || this.survey.imageData) && this.imageError) {
+      return [".survey-logo", this.translateService.instant("invalid_image")];
+    }
+
+    if(!this.survey.tokenData || isEmpty(this.survey.tokenData.symbol) || isEmpty(this.survey.tokenData.name) ||
+    this.survey.tokenData.symbol.length > this.configProps.tknSymbolMaxLength || 
+    this.survey.tokenData.name.length > this.configProps.tknNameMaxLength) {
+      return [".survey-token", this.translateService.instant("invalid_token")];
     }
 
     if(isEmpty(this.survey.title)) {
       return [".survey-title", this.translateService.instant("please_enter_title")];
     }
 
-    if(this.survey.title.length > this.engineProps.titleMaxLength) {
-      return [".survey-title", this.translateService.instant("invalid_title_max_x_chars", { val1: this.engineProps.titleMaxLength })];
+    if(this.survey.title.length > this.configProps.titleMaxLength) {
+      return [".survey-title", this.translateService.instant("invalid_title_max_x_chars", { val1: this.configProps.titleMaxLength })];
     }
 
     // description is optional
-    if(this.survey.description && this.survey.description.length > this.engineProps.descriptionMaxLength) {
-      return [".survey-description", this.translateService.instant("invalid_description_max_x_chars", { val1: this.engineProps.descriptionMaxLength })];
+    if(this.survey.description && this.survey.description.length > this.configProps.descriptionMaxLength) {
+      return [".survey-description", this.translateService.instant("invalid_description_max_x_chars", { val1: this.configProps.descriptionMaxLength })];
     }
 
     let currTime = truncateSeconds(new Date(this.web3Service.currenTime)).getTime();
@@ -581,33 +624,33 @@ export class CreateSurveyComponent extends BasePageComponent {
       return [".survey-start-date", this.translateService.instant("start_date_must_after_current_date_at_least_1_hour")];
     }
 
-    if(this.survey.startDate.getTime() - currTime > this.engineProps.startMaxTime * 1000) {
-      return [".survey-start-date", this.translateService.instant("invalid_start_date_max_x_days", { val1: Math.round(this.engineProps.startMaxTime / 60 / 60 / 24) })];
+    if(this.survey.startDate.getTime() - currTime > this.configProps.startMaxTime * 1000) {
+      return [".survey-start-date", this.translateService.instant("invalid_start_date_max_x_days", { val1: Math.round(this.configProps.startMaxTime / 60 / 60 / 24) })];
     }
 
     if(!this.survey.endDate) {
       return [".survey-end-date", this.translateService.instant("please_enter_end_date")];
     }
 
-    if(this.survey.endDate.getTime() < this.survey.startDate.getTime() + this.engineProps.rangeMinTime * 1000) {
-      return [".survey-end-date", this.translateService.instant("invalid_date_range_min_x_hours", { val1: Math.round(this.engineProps.rangeMinTime / 60 / 60 ) })];
+    if(this.survey.endDate.getTime() < this.survey.startDate.getTime() + this.configProps.rangeMinTime * 1000) {
+      return [".survey-end-date", this.translateService.instant("invalid_date_range_min_x_hours", { val1: Math.round(this.configProps.rangeMinTime / 60 / 60 ) })];
     }
 
-    if(this.survey.endDate.getTime() - this.survey.startDate.getTime() > this.engineProps.rangeMaxTime * 1000) {
-      return [".survey-end-date", this.translateService.instant("invalid_date_range_max_x_days", { val1: Math.round(this.engineProps.rangeMaxTime / 60 / 60 / 24) })];
+    if(this.survey.endDate.getTime() - this.survey.startDate.getTime() > this.configProps.rangeMaxTime * 1000) {
+      return [".survey-end-date", this.translateService.instant("invalid_date_range_max_x_days", { val1: Math.round(this.configProps.rangeMaxTime / 60 / 60 / 24) })];
     }
 
-    let budget = toUnits(this.state.budgetAmount);
+    let budget = toUnits(this.state.budgetAmount, this.survey.tokenData.decimals);
 
     if(budget.isNaN() || !budget.isGreaterThan(0)) {
       return [".survey-budget", this.translateService.instant("please_enter_valid_budget")];
     }
 
-    if(budget.isGreaterThan(this.accountData.incBalance)) {
-      return [".survey-budget", this.translateService.instant("budget_exceeds_your_x_balance", { val1: 'INC' })];
+    if(budget.isGreaterThan(this.survey.tokenData.balance)) {
+      return [".survey-budget", this.translateService.instant("budget_exceeds_your_x_balance", { val1: this.survey.tokenData.symbol })];
     }
 
-    let reward = toUnits(this.state.rewardAmount);
+    let reward = toUnits(this.state.rewardAmount, this.survey.tokenData.decimals);
 
     if(reward.isNaN() || !reward.isGreaterThan(0)) {
       return [".survey-reward", this.translateService.instant("please_enter_valid_reward")];
@@ -641,8 +684,8 @@ export class CreateSurveyComponent extends BasePageComponent {
       return [".dest-cnt-error", this.translateService.instant("please_enter_questions")];
     }
 
-    if(this.survey.questions.length > this.engineProps.questionMaxPerSurvey) {
-      return [".dest-cnt-error", this.translateService.instant("number_questions_exceeds_limit_x", { val1: this.engineProps.questionMaxPerSurvey })];
+    if(this.survey.questions.length > this.configProps.questionMaxPerSurvey) {
+      return [".dest-cnt-error", this.translateService.instant("number_questions_exceeds_limit_x", { val1: this.configProps.questionMaxPerSurvey })];
     }
 
     for(let i = 0; i < this.survey.questions.length; i++) {
@@ -650,6 +693,8 @@ export class CreateSurveyComponent extends BasePageComponent {
       let elemId = "#question-error-" + question.viewId;
 
       question.content.title = question.content.title.trim();
+      question.content.description = question.content.description?.trim();
+      question.content.errorMessage = question.content.errorMessage?.trim();
 
       if(isEmpty(question.content.title)) {
         return [elemId, this.translateService.instant("please_ask_the_question"), i];
@@ -658,18 +703,19 @@ export class CreateSurveyComponent extends BasePageComponent {
       let json = JSON.stringify(question.content);
       //console.log("question.content: " + json);
 
-      if(json.length > this.engineProps.questionMaxLength) {
+      if(json.length > this.configProps.questionMaxLength) {
         return [elemId, this.translateService.instant("very_long_question_reduce"), i];
       }
 
-      if(question.validators.length > this.engineProps.validatorMaxPerQuestion) {
-        return [elemId, this.translateService.instant("number_validators_exceeds_limit_x", { val1: this.engineProps.validatorMaxPerQuestion }), i];
+      if(question.validators.length > this.configProps.validatorMaxPerQuestion) {
+        return [elemId, this.translateService.instant("number_validators_exceeds_limit_x", { val1: this.configProps.validatorMaxPerQuestion }), i];
       }
 
       let responseType = RESPONSE_TYPE[question.content.componentType];
 
       for(let j = 0; j < question.validators.length; j++) {
         let validator = question.validators[j];
+        //validator.value = validator.value.trim();
 
         if(validator.expression == ValidationExpression.None) {
           return [elemId, this.translateService.instant("validator_error_select_expression"), i];
@@ -685,8 +731,12 @@ export class CreateSurveyComponent extends BasePageComponent {
               return [elemId, this.translateService.instant("validator_error_indicates_value"), i];
             }
 
-            if(validator.value.length > this.engineProps.validatorValueMaxLength) {
-              return [elemId, this.translateService.instant("invalid_validator_value_max_x_chars", { val1: this.engineProps.validatorValueMaxLength }), i];
+            if(validator.value != validator.value.trim()) {
+              return [elemId, this.translateService.instant("validator_must_not_spaces"), i];
+            }
+
+            if(validator.value.length > this.configProps.validatorValueMaxLength) {
+              return [elemId, this.translateService.instant("invalid_validator_value_max_x_chars", { val1: this.configProps.validatorValueMaxLength }), i];
             }
 
             if(validator.expression == ValidationExpression.Greater || validator.expression == ValidationExpression.GreaterEquals || 

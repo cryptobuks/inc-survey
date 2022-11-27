@@ -1,0 +1,76 @@
+.survey-card {
+    padding: 20px;
+    width: 320px;
+    position: relative;
+    cursor: pointer;
+}
+
+.survey-card .survey-card-head {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}
+
+.survey-card .survey-logo > .thumb-circle {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+}
+
+.survey-card .survey-title {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.survey-card .survey-card-body {
+    margin-top: 10px;
+}
+
+.survey-card .survey-desc {
+    height: 40px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.survey-card .survey-amounts {
+    margin-top: 14px;
+}
+
+.survey-card .survey-amount {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}
+
+.survey-card .survey-amount > label {
+    width: 120px;
+    font-size: 14px;
+    color: var(--text-color-secondary);
+}
+
+.survey-card .survey-amount > label:after {
+    content: ':';
+}
+
+.survey-card .survey-amount > .line-limit {
+    flex: 1;
+}
+
+.survey-card select-token {
+    display: block;
+    margin-top: 14px;
+}
+
+.survey-card .survey-state {
+    position: absolute;
+    top: 0;
+    right: 0;
+}

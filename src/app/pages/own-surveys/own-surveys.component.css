@@ -3,21 +3,29 @@
     margin: 0 auto;
 }
 
-.survey-list {
+.survey-list-view {
     margin-top: 20px;
 }
 
-.survey-list survey-list-item:not(:first-child) {
-    display: block;
-    margin-top: 20px;
+.survey-list-view .survey-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
 }
 
-.survey-list-cnt .paginator-cnt {
+.survey-list-view .paginator-cnt {
     margin-top: 20px;
 }
 
 @media screen and (max-width: 1040px) {
     .survey-list-cnt {
         margin: 20px;
+    }
+
+    .survey-list-view  .survey-list {
+        justify-content: space-around;
     }
 }

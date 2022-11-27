@@ -50,7 +50,7 @@
             <mat-icon>cancel</mat-icon>
         </button>
 
-        <button class="quest-comp-button" *ngIf="i == (question.validators.length - 1) && question.validators.length < engineProps.validatorMaxPerQuestion" 
+        <button class="quest-comp-button" *ngIf="i == (question.validators.length - 1) && question.validators.length < configProps.validatorMaxPerQuestion" 
         mat-icon-button type="button" (click)="addValidator()" title="{{ 'add_validator' | translate }}">
             <mat-icon>add_circle</mat-icon>
         </button>
