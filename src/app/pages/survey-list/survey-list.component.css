@@ -13,22 +13,6 @@
     gap: 10px
 }
 
-/*.survey-filter .p-input-icon-left {
-    max-width: 50%;
-}
-
-.survey-filter .p-input-icon-left > i {
-    /*allow focus input* /
-    width: 16px;
-}
-
-.survey-filter .p-input-icon-right > .pi-times {
-    cursor: pointer;
-}
-
-.survey-filter .p-inputtext {
-    width: 100%;
-}*/
 .survey-filter .p-inputtext {
     width: 50%;
 }

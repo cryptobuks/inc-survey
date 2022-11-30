@@ -168,8 +168,8 @@ export class AppComponent implements OnInit, OnDestroy {
         { name: this.translateService.instant("dashboard"), value: 1, icon: 'dashboard' },
         { name: this.translateService.instant("surveys"), value: 2, icon: 'view_list' },
         { name: this.translateService.instant("create_survey"), value: 3, icon: 'edit_note' },
-        { name: this.translateService.instant("token_sale"), value: 4, icon: 'stars' }
-        //{ name: this.translateService.instant("swap"), value: 5, icon: 'swap_horiz' }
+        { name: this.translateService.instant("inc_sale"), value: 4, icon: 'stars' },
+        { name: this.translateService.instant("swap"), value: 5, icon: 'swap_horiz' }
       ];
     });
 
@@ -196,9 +196,9 @@ export class AppComponent implements OnInit, OnDestroy {
       this.selectedOption = 3;
     } else if (this.isCurrentView('/token-sale')) {
       this.selectedOption = 4;
-    } /*else if (this.isCurrentView('/swap')) {
+    } else if (this.isCurrentView('/swap')) {
       this.selectedOption = 5;
-    }*/ else {
+    } else {
       //throw new Error("Unk. view: " + this.currentView);
       console.error("Unk. view: " + this.currentView);
     }
@@ -215,9 +215,9 @@ export class AppComponent implements OnInit, OnDestroy {
       this.changeRoute('/create-survey');
     } else if (this.selectedOption == 4) {
       this.changeRoute('/token-sale');
-    } /*else if (this.selectedOption == 5) {
+    } else if (this.selectedOption == 5) {
       this.changeRoute('/swap');
-    }*/ else {
+    } else {
       throw new Error("Unk. option: " + this.selectedOption);
     }
   }
@@ -278,11 +278,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
     try {
       await this.web3Service.connect();
-
-      let networkId = await this.web3Service.getNetworkId();
-      let networkType = await this.web3Service.getNetworkType();
-      let chainId = await this.web3Service.getChainId();
-      console.log("networkId: " + networkId + ", networkType: " + networkType + ", chainId: " + chainId);
     } catch (err) {
       console.error("Could not get a wallet connection", err);
 

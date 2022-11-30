@@ -11,7 +11,6 @@ import {
 } from '@angular/core';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { CURRENT_CHAIN, INC_TOKEN } from 'src/app/shared/constants';
 import { UniswapWidget } from './UniswapWidget';
 
 const containerElementName = 'uniswapWidgetContainer';
@@ -55,7 +54,7 @@ export class UniswapWidgetWrapper implements OnChanges, OnDestroy, AfterViewInit
         const data = await fetch(`https://tokens.uniswap.org/`);
         const tokenData = await data.json();
         this.tokenList = tokenData.tokens;
-        this.tokenList.push(INC_TOKEN[CURRENT_CHAIN]);
+        // TODO this.tokenList.push(INC_TOKEN[CURRENT_CHAIN]);
         this.render();
     };
 
@@ -74,7 +73,8 @@ export class UniswapWidgetWrapper implements OnChanges, OnDestroy, AfterViewInit
                     defaultInputTokenAddress={defaultInputTokenAddress} 
                     defaultOutputTokenAddress={defaultOutputTokenAddress}
                     convenienceFeeRecipient={convenienceFeeRecipient}
-                    darkMode={darkMode} tokenList={this.tokenList} />
+                    darkMode={darkMode}
+                    tokenList={this.tokenList} />
                 </div>
             </React.StrictMode>, 
             this.containerRef.nativeElement

@@ -14,12 +14,14 @@ const SUGGESTED_MATIC = new BigNumber(1);
 
 const MIN_AMOUNT: { [chainId: number]: BigNumber } = {
   [ChainId.MATIC]: MIN_MATIC,
-  [ChainId.MUMBAI]: MIN_MATIC
+  [ChainId.MUMBAI]: MIN_MATIC,
+  [ChainId.LOCAL]: MIN_MATIC
 };
 
 const SUGGESTED_AMOUNT: { [chainId: number]: BigNumber } = {
   [ChainId.MATIC]: SUGGESTED_MATIC,
-  [ChainId.MUMBAI]: SUGGESTED_MATIC
+  [ChainId.MUMBAI]: SUGGESTED_MATIC,
+  [ChainId.LOCAL]: SUGGESTED_MATIC
 };
 
 enum SaleState {
@@ -42,7 +44,7 @@ export interface TxData {
 })
 export class TokenSaleComponent extends BasePageComponent {
 
-  readonly titleKey = "token_sale";
+  readonly titleKey = "inc_sale";
 
   txConfig: TxData = {
     tolerance: undefined,

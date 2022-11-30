@@ -7,7 +7,7 @@ import { ConfigProps } from 'src/app/models/survey-model';
 import { SurveyState } from 'src/app/models/survey-support';
 import { SurveyService } from 'src/app/services/survey.service';
 import { Web3Service } from 'src/app/services/web3.service';
-import { ADDRESS_ZERO, CURRENT_CHAIN } from 'src/app/shared/constants';
+import { CURRENT_CHAIN } from 'src/app/shared/constants';
 import { destroyChart, renderChart } from 'src/app/shared/helper';
 declare var $: any;
 declare var ApexCharts: any;
@@ -46,7 +46,7 @@ export class OwnSurveysChartComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if(this.chart) destroyChart(this.chart);
+    if (this.chart) destroyChart(this.chart);
   }
 
   async loadData() {
@@ -59,42 +59,22 @@ export class OwnSurveysChartComponent implements OnInit, OnDestroy {
       }
 
       let data = [];
-
-      /*let surveysLength = await this.surveyService.getOwnSurveysLength();
-      let index = surveysLength - 1;
-
-      while (index >= 0 && data.length < this.count) {
-        let survey = await this.surveyService.getOwnSurvey(index);
-        let state = this.surveyService.getState(survey);
-
-        if (state == this.surveyState) {
-          //let rmngBudget = await this.surveyService.remainingBudgetOf(survey.address);
-          let partsNum = await this.surveyService.getParticipantsLength(survey.address);
-
-          data.push({
-            title: survey.title,
-            partsNum: partsNum
-          });
-        }
-
-        index--;
-      }*/
-
       let total = await this.surveyService.getOwnSurveysLength();
 
-      if(total > 0) {
-        let length = (total < this.count)? total: this.count;
-        let cursor = (total > this.count)? total - this.count: 0;
+      //if (total > 100) {
+      if (total > 0) {
+        let length = (total < this.count) ? total : this.count;
+        let cursor = (total > this.count) ? total - this.count : 0;
         let currTime = Math.round(this.web3Service.currenTime / 1000);
-      
+
         let filter: SurveyFilter = {
           cursor,
           length,
           account: this.accountData.address,
           order: 'desc'
         };
-  
-        if(this.surveyState == SurveyState.OPENED) {
+
+        if (this.surveyState == SurveyState.OPENED) {
           filter.maxStartTime = currTime;
           filter.minEndTime = currTime;
         } else {// CLOSED
@@ -102,16 +82,35 @@ export class OwnSurveysChartComponent implements OnInit, OnDestroy {
         }
 
         const searchResult = await this.surveyService.findSurveys(CURRENT_CHAIN, filter);
-  
-        for(let survey of searchResult.surveys) {
+
+        for (let survey of searchResult.surveys) {
           let partsNum = await this.surveyService.getParticipantsLength(survey.address);
-  
+
           data.push({
             title: survey.title,
             partsNum: partsNum
           });
         }
-      }
+      }/* else {
+        let index = total - 1;
+
+        while (index >= 0 && data.length < this.count) {
+          let survey = await this.surveyService.getOwnSurvey(index);
+          let state = this.surveyService.getState(survey);
+
+          if (state == this.surveyState) {
+            //let rmngBudget = await this.surveyService.remainingBudgetOf(survey.address);
+            let partsNum = await this.surveyService.getParticipantsLength(survey.address);
+
+            data.push({
+              title: survey.title,
+              partsNum: partsNum
+            });
+          }
+
+          index--;
+        }
+      }*/
 
       let tooltipTitle = this.translateService.instant("participations");
       let titleText = (this.surveyState == SurveyState.OPENED) ?
@@ -143,7 +142,7 @@ export class OwnSurveysChartComponent implements OnInit, OnDestroy {
           }
         },
         colors: [
-          '#33b2df', '#546E7A', '#d4526e', '#13d8aa', '#A5978B', 
+          '#33b2df', '#546E7A', '#d4526e', '#13d8aa', '#A5978B',
           '#2b908f', '#f9a3a4', '#90ee7e', '#f48024', '#69d2e7'
         ],
         dataLabels: {

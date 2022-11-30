@@ -391,6 +391,8 @@ export class Web3Service implements OnDestroy {
         throw new Web3Error(Web3Error.CODE_INVALID_NETWORK, "Invalid network: " + chainId);
       }
 
+      console.log("chainId: " + chainId);
+
       await this.loadChainData();
     } catch (e: any) {
       if (e.code == Web3Error.CODE_INVALID_NETWORK) {

@@ -2,6 +2,8 @@
     
     <breadcrumbs></breadcrumbs>
 
+    <p-messages [(value)]="messages" [enableService]="false"></p-messages>
+
     <tx-status class="survey-tx" [txHash]="state.txHash" [txValues]="txValues" (onReceipt)="onReceipt($event)"></tx-status>
     
     <survey-impl class="survey-details" [survey]="state.survey" [showLogoUrl]="true" [showLocation]="state.survey.address" [showQuestions]="false" [showQuestionsNum]="true" 

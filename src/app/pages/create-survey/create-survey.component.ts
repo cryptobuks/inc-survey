@@ -216,7 +216,7 @@ export class CreateSurveyComponent extends BasePageComponent {
   get newGasReserve(): BigNumber {
     let budget = toUnits(this.state.budgetAmount, this.survey.tokenData.decimals);
     let reward = toUnits(this.state.rewardAmount, this.survey.tokenData.decimals);
-    return calcGasReserve(budget, reward, this.partPrice);
+    return calcGasReserve(budget, reward, this.partPrice, 50);
   }
 
   get isLowGasReserve(): boolean {

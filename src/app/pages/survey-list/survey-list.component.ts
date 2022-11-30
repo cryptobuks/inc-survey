@@ -25,8 +25,6 @@ export class SurveyListComponent extends BasePageComponent {
   state: SurveyListState;
   filters = [];
   surveys: SurveyImpl[] = [];
-
-  searching = false;
   loading = true;// waiting onDataLoaded
 
   @ViewChild('searchInput') searchInput: ElementRef;
@@ -117,7 +115,6 @@ export class SurveyListComponent extends BasePageComponent {
 
   private async loadList() {
     this.loading = true;
-    this.searching = true;
 
     try {
       this.surveys = [];
@@ -148,7 +145,6 @@ export class SurveyListComponent extends BasePageComponent {
       console.error(err);
     } finally {
       this.loading = false;
-      this.searching = false;
     }
   }
 }

@@ -328,7 +328,7 @@ export function calcFeeTotal(budget: BigNumber, reward: BigNumber, feeWei: BigNu
   return partsNum.multipliedBy(feeWei);
 }
 
-export function calcGasReserve(budget: BigNumber, reward: BigNumber, partPrice: BigNumber) {
+export function calcGasReserve(budget: BigNumber, reward: BigNumber, partPrice: BigNumber, margin?: number) {
   if(!budget || budget.isNaN() || !reward || reward.isNaN() || !partPrice || partPrice.isNaN()) {
     return new BigNumber(0);
   }
@@ -339,7 +339,7 @@ export function calcGasReserve(budget: BigNumber, reward: BigNumber, partPrice: 
 
   let partsNum = budget.dividedBy(reward).integerValue(BigNumber.ROUND_CEIL);
   let minReserve = partPrice.multipliedBy(partsNum);
-  return new BigNumber(calcGasMargin(minReserve));
+  return new BigNumber(calcGasMargin(minReserve, margin));
 }
 
 export const truncateSeconds = (date: Date) => {

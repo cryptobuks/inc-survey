@@ -10,6 +10,9 @@ export class IpfsService {
   private node: any;
 
   constructor() {
+    if (!localStorage.ipfsRepoName) {
+      this.setRepoName();
+    }
   }
 
   async add(content: string) {
@@ -36,34 +39,26 @@ export class IpfsService {
     let result = url;
 
     if (isIpfsUri(url)) {
-      /*const ipfsUrls = uriToHttp(url);
-
-      for (let ipfsUrl of ipfsUrls) {
-          let response: string;
-
-          try {
-              const xhr = await this.request('GET', ipfsUrl, 3000);
-              response = xhr.responseText;
-          } catch(err) {
-              console.error(err);
-          }
-
-          if (response) {
-              result = response;
-              break;
-          }
-      }  */
-
-      const cid = url.substring(7);
-      result = await this.cat(cid);
+      try {
+        const cid = url.substring(7);
+        result = await this.cat(cid);
+      } catch (err) {
+        console.error(err);
+        // Reset repository name
+        this.setRepoName();
+      }
     }
 
     return Promise.resolve<string>(result);
   }
 
+  private setRepoName() {
+    localStorage.ipfsRepoName = "repo-" + Math.random();
+  }
+
   private async create() {
     if (!this.node) {
-      this.node = await Ipfs.create();
+      this.node = await Ipfs.create({ repo: localStorage.ipfsRepoName });
     }
   }
 }

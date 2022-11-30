@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FunctionComponent, useState } from 'react';
-import { darkTheme, lightTheme, SwapWidget } from '@uniswap/widgets'
-import '@uniswap/widgets/fonts.css'
+import { darkTheme, lightTheme, SwapWidget } from '@uniswap/widgets';
+import '@uniswap/widgets/fonts.css';
 
 export interface IUniswapWidgetProps {
   provider: any;

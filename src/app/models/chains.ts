@@ -7,5 +7,6 @@ export enum ChainId {
     AVAX = 43114,
     FUJI = 43113,
     MATIC = 137,
-    MUMBAI = 80001
+    MUMBAI = 80001,
+    LOCAL = 1337
 }

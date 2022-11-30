@@ -3,12 +3,6 @@
     <breadcrumbs></breadcrumbs>
 
     <div class="content-panel survey-filter">
-        <!--<span class="p-input-icon-left p-input-icon-right">
-            <i class="pi pi-search" tabindex="-1" (click)="searchInput.focus()"></i>
-            <i *ngIf="searching" class="pi pi-spin pi-spinner" tabindex="-1"></i>
-            <i *ngIf="!searching && state.search" class="pi pi-times" (click)="cleanSearch()"></i>
-            <input type="text" pInputText placeholder="{{ 'search' | translate }}" [(ngModel)]="state.search" (ngModelChange)="onChangeSearch($event)" #searchInput />
-        </span>-->
         <div class="p-inputgroup p-input-icon-right">
             <button type="button" pButton pRipple icon="pi pi-times" styleClass="p-button-danger" (click)="cleanSearch()" [disabled]="state.search.trim().length == 0"></button>
             <input type="text" pInputText placeholder="{{ 'keywords' | translate }}" [(ngModel)]="state.search" (keyup.enter)="onChangeSearch($event)" #searchInput />

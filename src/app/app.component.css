@@ -11,6 +11,7 @@
 .head-primary {
   display: flex;
   align-items: flex-start;
+  gap: 20px;
 }
 
 .head-secondary {
@@ -164,10 +165,13 @@
 
 /* Responsive Styles */
 
-@media screen and (max-width: 991px) {
+@media screen and (max-width: 1120px) {
   .header {
     padding: 1.25rem 1.5rem;
   }
+}
+
+@media screen and (max-width: 991px) {
   .footer {
     padding: 4rem 1.5rem 1.25rem 1.5rem;
   }

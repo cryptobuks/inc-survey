@@ -63,7 +63,7 @@ export class PartSentComponent extends BasePageComponent {
     this.receipt = receipt;
     if (receipt.status) {
       this.messageHelperService.showSuccess(this.translateService.instant(
-        "you_have_received_x",
+        "check_balance_should_received_x",
         { val1: this.state.survey.formatted.rewardAmount + ' ' + this.state.survey.tokenData.symbol }
       ));
     }

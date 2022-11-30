@@ -36,7 +36,7 @@ const routes: Routes = [
   { path: "create-survey/status", component: SurveySentComponent },
 
   { path: "token-sale", component: TokenSaleComponent },
-  //{ path: "swap", component: UniswapComponent },
+  { path: "swap", component: UniswapComponent },
   { path: '**', component: NotFoundComponent },
 ];
 
