@@ -77,6 +77,7 @@ import { NotifSubscriptionComponent } from './comps/notif-subscription/notif-sub
 import { TokenSelectorComponent } from './comps/token-selector/token-selector.component';
 import { SelectTokenComponent } from './comps/select-token/select-token.component';
 import { SurveyCardComponent } from './comps/survey-card/survey-card.component';
+import { OwnPartsChartComponent } from './comps/own-parts-chart/own-parts-chart.component';
 
 @NgModule({
   declarations: [
@@ -136,7 +137,8 @@ import { SurveyCardComponent } from './comps/survey-card/survey-card.component';
     NotifSubscriptionComponent,
     TokenSelectorComponent,
     SelectTokenComponent,
-    SurveyCardComponent
+    SurveyCardComponent,
+    OwnPartsChartComponent
   ],
   imports: [
     BrowserModule,

@@ -20,6 +20,11 @@
         </div>
 
         <div class="flex-grid survey-info">
+            <div *ngIf="survey.address" class="grid-item survey-address">
+                <label>{{ 'address' | translate }}</label>
+                <span>{{ survey.address }}</span>
+            </div>
+
             <div *ngIf="survey.owner" class="grid-item survey-owner">
                 <label>{{ 'owner' | translate }}</label>
                 <span>{{ survey.owner }}</span>

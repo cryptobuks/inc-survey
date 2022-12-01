@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { OwnPartsChartComponent } from 'src/app/comps/own-parts-chart/own-parts-chart.component';
 import { OwnSurveysChartComponent } from 'src/app/comps/own-surveys-chart/own-surveys-chart.component';
 import { SurveyState } from 'src/app/models/survey-support';
 import { ListenerRemover } from 'src/app/shared/simple-listener';
@@ -23,6 +24,7 @@ export class DashboardComponent extends BasePageComponent {
 
   @ViewChild('ownOpenedSurveysChart') ownOpenedSurveysChart: OwnSurveysChartComponent;
   @ViewChild('ownClosedSurveysChart') ownClosedSurveysChart: OwnSurveysChartComponent;
+  @ViewChild('ownPartsChart') ownPartsChart: OwnPartsChartComponent;
 
   get SurveyState() {
     return SurveyState;
@@ -50,6 +52,10 @@ export class DashboardComponent extends BasePageComponent {
 
       if(this.ownClosedSurveysChart) {
         this.ownClosedSurveysChart.loadData();
+      }
+
+      if(this.ownPartsChart) {
+        this.ownPartsChart.loadData();
       }
     });
   }

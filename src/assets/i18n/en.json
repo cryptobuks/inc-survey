@@ -427,10 +427,14 @@
     "incentive_token": "Incentive token",
     "survey_logo": "Survey logo",
     "validator_must_not_spaces": "The validator must not start or end with spaces",
+    "address": "Address",
+    "survey_address": "Survey address",
     "token_address": "Token address",
     "you_have_received_x": "You have received {{val1}}",
     "check_balance_should_received_x": "Check your balance, you should have received {{val1}}.",
     "invalid_image": "Invalid image",
     "inc_sale": "INC Sale",
-    "survey_on_blockchain_few_time_to_be_indexed": "Your survey is already on the blockchain, however it will take a few minutes for it to be indexed in our search engine."
+    "survey_on_blockchain_few_time_to_be_indexed": "Your survey is already on the blockchain, however it will take a few minutes for it to be indexed in our search engine.",
+    "earnings_in_last_x": "Earnings in the last {{val1}}",
+    "owner": "Owner"
 }
