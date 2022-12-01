@@ -790,6 +790,18 @@ div[contenteditable]:empty:not(:focus):before {
   animation: dot-pulse 1s infinite linear;
 }
 
+.termsfeed-com---nb-simple {
+    position: fixed;
+    bottom: 0;
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    line-height: 1 !important;
+}
+.termsfeed-com---nb .cc-nb-main-container {
+    padding: 1rem !important;
+}
+
 /* keyframes */
 
 @keyframes custom-progress-spinner-color {
