@@ -33,6 +33,8 @@ export class Web3Service implements OnDestroy {
   get loadedChainData(): boolean { return this.accountData != undefined; }
 
   get web3(): any { return this._web3; }
+  get gasPriceGwei(): any { return this._gasPriceGwei; }
+  get blockHeader(): any { return this._blockHeader; }
   get incContract(): any { return this._incContract; }
   get offerContract(): any { return this._offerContract; }
   get surveyContract(): any { return this._surveyContract; }
@@ -47,6 +49,8 @@ export class Web3Service implements OnDestroy {
   get currenTime(): any { return new Date().getTime() + (this.timeDiff ?? 0); }
 
   private _web3: any;
+  private _gasPriceGwei: any;
+  private _blockHeader: any;
   private _incContract: any;
   private _offerContract: any;
   private _surveyContract: any;
@@ -61,6 +65,7 @@ export class Web3Service implements OnDestroy {
   private _timeDiff: number;
 
   private web3Modal: any;
+  private subscriptions: any = [];
   //private intervalId: any;
 
   onAccountLoaded = new SimpleListener();// (accountData: AccountData) => void;
@@ -379,6 +384,9 @@ export class Web3Service implements OnDestroy {
         let provider = await this.web3Modal.connect();
         this._web3 = new Web3(provider);
 
+        // Config web3
+        this.configWeb3();
+
         // Subscribe to provider events
         this.configProvider(provider);
 
@@ -483,6 +491,45 @@ export class Web3Service implements OnDestroy {
     //console.debug("configProps:: " + JSON.stringify(this.configProps));
   }
 
+  private async loadGasPrice() {
+    const wei = await this.web3.eth.getGasPrice();
+    const gwei = this.web3.utils.fromWei(wei, 'gwei');
+    this._gasPriceGwei = toFormatBigNumber(new BigNumber(gwei), 3);
+  }
+
+  private async loadAccountBalance() {
+    const address = this.accountData?.address;
+    if(address) {
+      const ccyBalance = await this.getCcyBalance(address);
+      const incBalance = await this.getIncBalance(address);
+
+      if(address == this.accountData?.address) {
+        this.accountData.ccyBalance = ccyBalance;
+        this.accountData.incBalance = incBalance;
+      }
+    }
+  }  
+
+  private configWeb3() {
+    const instance = this;
+    const subscription = this.web3.eth.subscribe('newBlockHeaders')
+      .on("connected", function (subscriptionId: any) {
+        console.log('Successfully subscribed: ' + subscriptionId);
+      })
+      .on("data", function (blockHeader: any) {
+        //console.log(blockHeader);
+        if (AppComponent.instance) {
+          AppComponent.instance.ngZone.run(() => {
+            instance._blockHeader = blockHeader;
+          });
+          instance.loadGasPrice();
+          instance.loadAccountBalance();
+        }
+      })
+      .on("error", console.error);
+      this.subscriptions.push(subscription);
+  }
+
   private configProvider(provider: any) {
     // Subscribe to chainId change
     provider.on("chainChanged", (chainId: number) => {
@@ -519,6 +566,8 @@ export class Web3Service implements OnDestroy {
   }
 
   private releaseData() {
+    this._gasPriceGwei = undefined;
+    this._blockHeader = undefined;
     this._incContract = undefined;
     this._offerContract = undefined;
     this._surveyContract = undefined;
@@ -540,6 +589,15 @@ export class Web3Service implements OnDestroy {
   private releaseConnection() {
     this._web3 = undefined;
     this.releaseData();
+    // unsubscribes the subscriptions
+    for(let subscription of this.subscriptions) {
+      subscription.unsubscribe(function (error: any, success: any) {
+        if (success) {
+          console.log('Successfully unsubscribed!');
+        }
+      });
+    }
+    this.subscriptions = [];
   }
 
   private releaseAll() {

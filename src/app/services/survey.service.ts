@@ -61,7 +61,7 @@ export class SurveyService implements OnDestroy {
     private ipfsService: IpfsService,
     private utilService: UtilService) {
     this.onChainLoadedRemover = this.web3Service.onChainLoaded.addAndFire(() => {
-      this.loadChainData();
+      this.loadAvgTxGas();
     }, () => {
       return this.web3Service.loadedChainData;
     });
@@ -105,21 +105,12 @@ export class SurveyService implements OnDestroy {
 
   async amountsOf(surveyAddr: string): Promise<SurveyAmounts> {
     this.checkContracts();
-    let amounts = await this.surveyContract.methods.remainingAmountsOf(surveyAddr).call();
-    let partNum = await this.surveyContract.methods.getParticipantsLength(surveyAddr).call();
+    let amounts = await this.surveyContract.methods.amountsOf(surveyAddr).call();
     return Promise.resolve<SurveyAmounts>({
       remainingBudget: new BigNumber(amounts[0]), 
       remainingGasReserve: new BigNumber(amounts[1]),
-      participantNumber: parseInt(partNum)
-    });
-
-    /* TODO use amountsOf()
-    let amounts = await this.surveyContract.methods.amountsOf(surveyAddr).call();
-    return Promise.resolve<RemainingAmounts>({
-      remainingBudget: new BigNumber(amounts[0]), 
-      remainingGasReserve: new BigNumber(amounts[1]),
       participantNumber: parseInt(amounts[2])
-    });*/
+    });
   }
 
   async toSurveyImpl(survey: Survey, questions: QuestionImpl[]): Promise<SurveyImpl> {
@@ -576,7 +567,11 @@ export class SurveyService implements OnDestroy {
     return gasPrice.multipliedBy(this.avgTxGas);
   }
 
-  private async loadChainData() {
+  async loadAvgTxGas() {
+    if(this.avgTxGas) {
+      return;
+    }
+
     this._txGasWgtSamples = filterOutliers(await this.txGasSamples(100));
 
     if(this.txGasWgtSamples.length > 0) {

@@ -35,6 +35,8 @@ export class AppComponent implements OnInit, OnDestroy {
   get ccy(): TokenData { return NATIVE_CURRENCY[CURRENT_CHAIN]; }
   get wCcy(): TokenData { return WRAPPED_CURRENCY[CURRENT_CHAIN]; }
   get web3(): any { return this.web3Service.web3; }
+  get gasPriceGwei(): any { return this.web3Service.gasPriceGwei; }
+  get blockHeader(): any { return this.web3Service.blockHeader; }
   get incContract(): any { return this.web3Service.incContract; }
   get accountData(): AccountData { return this.web3Service.accountData; }
   get accountShortAddress(): string | null {

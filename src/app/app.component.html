@@ -92,6 +92,18 @@
         </button>
     </div>
 
+    <div *ngIf="blockHeader || gasPriceGwei" class="chain-data">
+        <div *ngIf="blockHeader" class="block-number">
+            <mat-icon>view_in_ar</mat-icon>
+            <span>{{ blockHeader.number }}</span>
+        </div>
+
+        <div *ngIf="gasPriceGwei" class="gas-gwei">
+            <mat-icon>local_gas_station</mat-icon>
+            <span>{{ gasPriceGwei }}</span>
+        </div>
+    </div>
+
     <p-overlayPanel #addrOverlay [showCloseIcon]="false" styleClass="addr-overlay">
         <a mat-button (click)="changeWallet()">
             <mat-icon>manage_accounts</mat-icon> <span>{{ 'change_wallet' | translate }}</span>

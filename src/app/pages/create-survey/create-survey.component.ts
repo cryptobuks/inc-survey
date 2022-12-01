@@ -540,6 +540,7 @@ export class CreateSurveyComponent extends BasePageComponent {
   }
 
   private async loadPartPrice() {
+    await this.surveyService.loadAvgTxGas();
     this.partPrice = await this.surveyService.calcPartPrice();
     this.loadGasReserve();
   }

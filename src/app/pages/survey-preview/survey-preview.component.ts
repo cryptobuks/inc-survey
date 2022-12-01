@@ -177,9 +177,6 @@ export class SurveyPreviewComponent extends BasePageComponent {
 
       setAppCover(this.translateService.instant("please_wait"));
 
-      //console.log("success:: " + success + ", tx:: " + JSON.stringify(tx));
-      //await this.web3Service.loadAccountData(false);
-
       if (txHash) {
         this.state.txHash = txHash;
         this.router.navigate(['/create-survey/status']);

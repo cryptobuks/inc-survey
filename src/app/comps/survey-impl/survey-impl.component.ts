@@ -148,8 +148,8 @@ export class SurveyImplComponent implements OnInit, OnDestroy {
   checkSurvey(): [string, string] {
     let currTime = truncateSeconds(new Date(this.web3Service.currenTime)).getTime();
 
-    if(this.survey.startDate.getTime() < currTime + HOUR_MILLIS) {
-      return [".survey-start-date", this.translateService.instant("start_date_must_after_current_date_at_least_1_hour")];
+    if(this.survey.startDate.getTime() < currTime + (HOUR_MILLIS / 2)) {
+      return [".survey-start-date", this.translateService.instant("start_date_must_after_current_date_at_least_30_minutes")];
     }
 
     if(this.survey.startDate.getTime() - currTime > this.configProps.startMaxTime * 1000) {

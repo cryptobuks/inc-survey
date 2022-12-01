@@ -45,8 +45,6 @@ export class SurveySentComponent extends BasePageComponent {
         value: calcFeeTotal(this.state.survey.budget, this.state.survey.reward, this.configProps.feeWei)
       }
     ];
-
-    this.pushSuccess(this.translateService.instant('survey_on_blockchain_few_time_to_be_indexed'));
   }
 
   onViewLoaded() {
@@ -64,6 +62,8 @@ export class SurveySentComponent extends BasePageComponent {
     this.receipt = receipt;
 
     if (this.receipt.status) {
+      this.pushSuccess(this.translateService.instant('survey_on_blockchain_few_time_to_be_indexed'));
+      
       const events = await this.engineContract.getPastEvents('OnSurveyAdded', { fromBlock: this.receipt.blockNumber, toBlock: this.receipt.blockNumber });
       this.state.survey.address = events[0].returnValues.surveyAddr;
       // Send notification to subscribers

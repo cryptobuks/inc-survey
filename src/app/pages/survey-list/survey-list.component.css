@@ -17,6 +17,10 @@
     width: 50%;
 }
 
+.survey-filter .p-input-icon-right > .p-inputtext {
+    padding-right: 0.5rem;
+}
+
 ::ng-deep .survey-filter p-multiselect {
     max-width: 50%;
 }

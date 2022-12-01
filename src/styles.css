@@ -158,7 +158,7 @@ input::placeholder, textarea::placeholder {
     left: 4px;
 }
 
-.small-screen, .small-screen-inline-flex {
+.small-screen {
     display: none !important;
 }
 
@@ -651,6 +651,7 @@ div[contenteditable]:empty:not(:focus):before {
 
 .p-message .p-message-detail {
     white-space: pre-line;
+    margin-left: 1rem !important;
 }
 
 .inline-msg {
@@ -838,9 +839,6 @@ div[contenteditable]:empty:not(:focus):before {
 @media screen and (max-width: 991px) {
     .small-screen {
         display: block !important;
-    }
-    .small-screen-inline-flex {
-        display: inline-flex !important;
     }
     .large-screen {
         display: none !important;

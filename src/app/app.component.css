@@ -152,8 +152,8 @@
 .scroll-to-top {
   position: fixed;
   z-index: 1000;
-  bottom: 15px;
-  right: 15px;
+  bottom: 20px;
+  right: 14px;
   opacity: 0;
   transition: all .2s ease-in-out;
 }
@@ -161,6 +161,28 @@
 .show-scroll-top {
   opacity: 1;
   transition: all .2s ease-in-out;
+}
+
+.chain-data {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgb(0 0 0 / 75%);
+  border-radius: 2rem;
+  padding: 8px 16px;
+}
+.chain-data .mat-icon {
+  font-size: 16px;
+  height: 16px;
+  width: 16px;
+  color: #689F38;
+  margin-right: 4px;
+}
+.chain-data > div > span {
+  font-size: 12px;
 }
 
 /* Responsive Styles */
@@ -174,5 +196,9 @@
 @media screen and (max-width: 991px) {
   .footer {
     padding: 4rem 1.5rem 1.25rem 1.5rem;
+  }
+
+  .chain-data {
+    display: none !important;
   }
 }

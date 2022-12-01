@@ -36,10 +36,10 @@ export class NotifSubscriptionComponent implements OnInit {
     }
     
     navigator.permissions.query({ name: 'notifications' }).then((permissionStatus) => {
-      console.log(`geolocation permission status is ${permissionStatus.state}`);
+      console.log(`notification permission status is ${permissionStatus.state}`);
       this.permissionGranted = permissionStatus.state == 'granted';
       permissionStatus.onchange = () => {
-        console.log(`geolocation permission status has changed to ${permissionStatus.state}`);
+        console.log(`notification permission status has changed to ${permissionStatus.state}`);
         this.permissionGranted = permissionStatus.state == 'granted';
       };
     });
