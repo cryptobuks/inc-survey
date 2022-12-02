@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import { SurveyImpl } from 'src/app/models/survey-impl';
 import { SurveyState } from 'src/app/models/survey-support';
 import { SurveyStateInfoService } from 'src/app/services/survey-state-info.service';
-import { calcGasReserve, insertValidationError, removeAppCover, setAppCover, toAmount, toFixedBigNumber, toFormatBigNumber, toUnits } from 'src/app/shared/helper';
+import { calcGasReserve, equalsIgnoreCase, insertValidationError, removeAppCover, setAppCover, toAmount, toFixedBigNumber, toFormatBigNumber, toUnits } from 'src/app/shared/helper';
 import { isRouteFromDashboardMyParts, isRouteFromDashboardMySurveys, setBreadcrumbForDetails } from 'src/app/shared/menu';
 import { ListenerRemover } from 'src/app/shared/simple-listener';
 import { BasePageComponent } from '../base-page.component';
@@ -22,7 +22,6 @@ export class SurveyDetailsComponent extends BasePageComponent {
   survey: SurveyImpl;
   partPrice: BigNumber;
   questionsNum: number;
-  surveyOwnerLC: string;
   isFromMySurveys: boolean;
   isFromMyParts: boolean;
 
@@ -91,7 +90,7 @@ export class SurveyDetailsComponent extends BasePageComponent {
   }
 
   get isSurveyOwner(): boolean {
-    return this.accountData.address == this.surveyOwnerLC;
+    return equalsIgnoreCase(this.accountData.address, this.survey?.owner);
   }
 
   get isLowRmngGasReserve(): boolean {
@@ -299,8 +298,6 @@ export class SurveyDetailsComponent extends BasePageComponent {
         this.backToList();
         return;
       }
-
-      this.surveyOwnerLC = this.survey.owner.toLowerCase();
 
       if(!this.checkOwnerRoute()) {
         return;

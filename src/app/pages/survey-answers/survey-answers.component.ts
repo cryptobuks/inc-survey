@@ -5,7 +5,7 @@ import { PaginatorData, PaginatorRows } from 'src/app/models/paginator-data';
 import { SurveyImpl } from 'src/app/models/survey-impl';
 import { getInput } from 'src/app/models/survey-support';
 import { SurveyStateInfoService } from 'src/app/services/survey-state-info.service';
-import { downloadCSV, moveScrollTo, printPage, removeAppCover, setAppCover } from 'src/app/shared/helper';
+import { downloadCSV, equalsIgnoreCase, moveScrollTo, printPage, removeAppCover, setAppCover } from 'src/app/shared/helper';
 import { isRouteFromDashboardMyParts, isRouteFromDashboardMySurveys, setBreadcrumbForDetails } from 'src/app/shared/menu';
 import { ListenerRemover } from 'src/app/shared/simple-listener';
 import { BasePageComponent } from '../base-page.component';
@@ -23,7 +23,6 @@ export class SurveyAnswersComponent extends BasePageComponent {
 
   survey: SurveyImpl;
   partsNum: number;
-  surveyOwnerLC: string;
   partAddress: string;
   partEntryTime: string;
   questionIndexes: number[] = [];
@@ -53,7 +52,7 @@ export class SurveyAnswersComponent extends BasePageComponent {
   };
 
   get isSurveyOwner(): boolean {
-    return this.accountData.address == this.surveyOwnerLC;
+    return equalsIgnoreCase(this.accountData.address, this.survey?.owner);
   }
 
   private onChainLoadedRemover: ListenerRemover;
@@ -226,8 +225,6 @@ export class SurveyAnswersComponent extends BasePageComponent {
         this.backToList();
         return;
       }
-
-      this.surveyOwnerLC = this.survey.owner.toLowerCase();
 
       if(!this.checkOwnerRoute()) {
         return;

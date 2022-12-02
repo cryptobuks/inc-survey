@@ -54,7 +54,8 @@ export const HTTP_OPTIONS = {
 export const NET_PARAMS: { [chainId: number]: NetData } = {
   [ChainId.MATIC]: newNetwork(ChainId.MATIC, "Matic Mainnet", "MATIC", "MATIC", 18, ["https://polygon-rpc.com"], ["https://polygonscan.com"]),
   [ChainId.MUMBAI]: newNetwork(ChainId.MUMBAI, "Polygon Testnet", "MATIC", "MATIC", 18, [
-    "https://rpc-mumbai.maticvigil.com", "https://rpc-mumbai.matic.today", "https://matic-mumbai.chainstacklabs.com"
+    "https://rpc-mumbai.maticvigil.com", "https://rpc-mumbai.matic.today", 
+    "https://matic-mumbai.chainstacklabs.com", "https://matic-testnet-archive-rpc.bwarelabs.com"
   ], ["https://mumbai.polygonscan.com"]),
   [ChainId.LOCAL]: newNetwork(ChainId.LOCAL, "Localnet", "MATIC", "MATIC", 18, ["http://127.0.0.1:8545"], ["http://127.0.0.1:8545/notfound"]),
 };
@@ -92,7 +93,7 @@ export const OFFER_ADDRESS: { [chainId: number]: string } = {
 
 export const SURVEY_ADDRESS: { [chainId: number]: string } = {
     [ChainId.MATIC]: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    [ChainId.MUMBAI]: "0xd37930bDae2C760f316A040851C2E852bB3C653e",
+    [ChainId.MUMBAI]: "0xe6AA6c9B2EDA24163F189b3Ca54CACd45e97D87a",
     [ChainId.LOCAL]: "0x07D21434b570Ec20e7a9CE1E4ee39985E5619D33"
 };
 
@@ -116,7 +117,7 @@ export const FORWARDER_ADDRESS: { [chainId: number]: string } = {
 
 export const ENGINE_ADDRESS: { [chainId: number]: string } = {
     [ChainId.MATIC]: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    [ChainId.MUMBAI]: "0x2B30353f727F2Ea2592dc5d1a1Fd85198A035C47",
+    [ChainId.MUMBAI]: "0xa8F2E9D7ed1b15d7b096D8E2F91EAd65cEaB1B6F",
     [ChainId.LOCAL]: "0x41D9342f3b2D49fA32C7cf04C6b87d5aaAb1dbb4"
 };
 

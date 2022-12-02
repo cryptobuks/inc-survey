@@ -109,23 +109,34 @@ export class UtilService {
             xhr.open(method, url, true);
 
             if(timeout) {
-                xhr.timeout = 3000; // tiempo en milisegundos
+                xhr.timeout = timeout; // Time in milliseconds
             }
 
             xhr.onload = function () {
-                if (this.status >= 200 && this.status < 300) {
+                // Request finished
+                if (xhr.status >= 200 && xhr.status < 300) {
                     resolve(xhr);
                 } else {
                     reject({
-                        status: this.status,
+                        status: xhr.status,
                         statusText: xhr.statusText
                     });
                 }
             };
 
-            xhr.onerror = function () {
+            xhr.ontimeout = (e) => {
+                // XMLHttpRequest timed out
+                xhr.abort();
                 reject({
-                    status: this.status,
+                    status: xhr.status,
+                    statusText: xhr.statusText
+                });
+            };
+
+            xhr.onerror = function () {
+                // An error has occurred
+                reject({
+                    status: xhr.status,
                     statusText: xhr.statusText
                 });
             };

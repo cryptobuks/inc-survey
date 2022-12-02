@@ -17,7 +17,7 @@ import { providerOptions } from '../shared/provider-options';
 import { SimpleListener } from '../shared/simple-listener';
 import { Web3Error } from '../models/web3-error';
 import { TokenData } from '../models/token-data';
-import { getTokenLogoURL, toAmount, toFormatBigNumber } from '../shared/helper';
+import { equalsIgnoreCase, getTokenLogoURL, toAmount, toFormatBigNumber } from '../shared/helper';
 declare var window: any;
 declare var Web3: any;
 
@@ -242,7 +242,7 @@ export class Web3Service implements OnDestroy {
     // Get list of accounts of the connected wallet
     // MetaMask does not give you all accounts, only the selected account
     let accounts = await this.web3.currentProvider.request({ method: 'eth_requestAccounts' });
-    data.address = accounts[0].toLowerCase();
+    data.address = accounts[0];
 
     data.ccyBalance = await this.getCcyBalance(data.address);
     //data.wCcyBalance = await this.getERC20Balance(WRAPPED_CURRENCY[CURRENT_CHAIN].address, data.address);
@@ -527,7 +527,7 @@ export class Web3Service implements OnDestroy {
         }
       })
       .on("error", console.error);
-      this.subscriptions.push(subscription);
+    this.subscriptions.push(subscription);
   }
 
   private configProvider(provider: any) {
@@ -557,7 +557,7 @@ export class Web3Service implements OnDestroy {
         return;
       }
 
-      if (accounts[0].toLowerCase() == this.accountData?.address) {
+      if (equalsIgnoreCase(accounts[0], this.accountData?.address)) {
         return;
       }
 

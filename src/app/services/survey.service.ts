@@ -4,7 +4,7 @@ import { QuestionImpl } from '../models/question-impl';
 import { SurveyImpl } from '../models/survey-impl';
 import { ConfigProps, Survey, Question, QuestionValidator, Participation, SurveyAmounts, ResponseCount, SurveyRequest } from '../models/survey-model';
 import { RESPONSE_TYPE, SurveyState } from '../models/survey-support';
-import { calcFeeTotal, calcGasMargin, filterOutliers } from '../shared/helper';
+import { calcFeeTotal, calcGasMargin, filterOutliers, keccak256 } from '../shared/helper';
 import { IpfsService } from './ipfs.service';
 import { Web3Service } from './web3.service';
 import { FwdRequest } from '../models/fwd-request';
@@ -14,7 +14,6 @@ import { ListIterator } from '../models/list-iterator';
 import { ListenerRemover } from '../shared/simple-listener';
 import { SurveyFilter } from '../models/survey-filter';
 import { SurveySearchResult } from '../models/survey-search-result';
-declare var keccak256: any;
 
 const EIP712Domain = [
   { name: 'name', type: 'string' },
@@ -377,7 +376,7 @@ export class SurveyService implements OnDestroy {
     }
 
     for(let i = 0; i < surveyImpl.partKeys.length; i++) {
-      let hash = '0x' + keccak256(surveyImpl.partKeys[i]);
+      let hash = keccak256(surveyImpl.partKeys[i]);
       let shortHash = hash.substring(2, 6) + hash.substring(hash.length-4, hash.length);
       hashes[i] = shortHash;
     }

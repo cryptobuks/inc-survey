@@ -1,4 +1,5 @@
 import { StorageItem } from "../models/storage-item";
+import { equalsIgnoreCase } from "./helper";
 import { DEFAULT_ACTIVE_LIST_URLS, DEFAULT_LIST_OF_LISTS_TO_DISPLAY } from "./token-lists";
 
 export class StorageUtil {
@@ -51,7 +52,7 @@ export class StorageUtil {
     }
 
     static isAddedToken(address: string) {
-        return this._addedTokens.value.find(item => item.address.toLowerCase() == address.toLowerCase());
+        return this._addedTokens.value.find(item => equalsIgnoreCase(item.address, address));
     }
 
     static addToken(token: any) {
@@ -61,7 +62,7 @@ export class StorageUtil {
 
     static removeToken(address: string) {
         if (this.isAddedToken(address)) {
-            this._addedTokens.value = this._addedTokens.value.filter(item => item.address.toLowerCase() !== address.toLowerCase());
+            this._addedTokens.value = this._addedTokens.value.filter(item => !equalsIgnoreCase(item.address, address));
         }
     }
 

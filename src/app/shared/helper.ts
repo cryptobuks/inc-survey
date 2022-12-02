@@ -5,6 +5,7 @@ import BigNumber from "bignumber.js";
 import { PaginatorData } from "../models/paginator-data";
 import { ChainId } from "../models/chains";
 import { INC_LOGO_URL, INC_TOKEN } from "./constants";
+declare var Web3: any;
 declare var $: any;
 declare const XLSX: any;
 declare var charts: any;
@@ -14,6 +15,14 @@ const ENS_NAME_REGEX = /^(([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\.)+)eth(\/.*)?$/
 
 export function getInstance<T>(token: Type<T> | AbstractType<T> | InjectionToken<T>, notFoundValue?: T, flags?: InjectFlags): T {
   return AppModule.injector.get(token, notFoundValue, flags);
+}
+
+export function keccak256(data: string) {
+  return Web3.utils.keccak256(data);
+}
+
+export function toChecksumAddress(data: string) {
+  return Web3.utils.toChecksumAddress(data);
 }
 
 export function isEmpty(value: string) {
@@ -167,8 +176,12 @@ export function joinWords(words: string[], max: number, separator?: string): str
   return str;
 }
 
+export function equalsIgnoreCase(str1: string, str2: string): boolean {
+  return str1?.toLowerCase() === str2?.toLowerCase();
+}
+
 export const indexOfIgnoreCase = (array: any[], val: any): number => {
-  return array.findIndex(item => item.toLowerCase() === val.toLowerCase());
+  return array.findIndex(item => equalsIgnoreCase(item, val));
 }
 
 export const containsIgnoreCase = (array: any[], val: any): boolean => {
@@ -178,7 +191,7 @@ export const containsIgnoreCase = (array: any[], val: any): boolean => {
 export function getUniqueItemsIgnoreCase(items: string[]) {
   const dest = [];
   for(let item of items) {
-    if(!dest.some(it => it.toLowerCase() == item.toLowerCase())) {
+    if(!dest.some(it => equalsIgnoreCase(it, item))) {
       dest.push(item);
     }
   }
@@ -244,10 +257,11 @@ export function parseENSAddress(ensAddress: string): { ensName: string; ensPath:
 function chainIdToNetworkName(networkId: ChainId): string {
   switch (networkId) {
     case ChainId.MAINNET:
+      return 'ethereum';
     case ChainId.MATIC:
-      return 'ethereum'
+      return 'polygon';
     default:
-      return 'ethereum'
+      return 'ethereum';
   }
 }
 
@@ -255,13 +269,13 @@ export const getTokenLogoURL = (
   address: string,
   chainId: ChainId
 ): string | undefined => {
-  if(INC_TOKEN[chainId].address.toLowerCase() == address.toLowerCase()) {
+  if(equalsIgnoreCase(INC_TOKEN[chainId].address, address)) {
     return INC_LOGO_URL;
   }
 
   const networkName = chainIdToNetworkName(chainId);
   if (networkName) {
-    return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${networkName}/assets/${address.toLowerCase()}/logo.png`;
+    return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${networkName}/assets/${address}/logo.png`;
   }
 
   return undefined;
