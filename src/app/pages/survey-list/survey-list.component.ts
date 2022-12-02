@@ -134,7 +134,7 @@ export class SurveyListComponent extends BasePageComponent {
         maxStartTime: onlyOpened? currTime: 0,
         minEndTime: onlyOpened? currTime: 0,
         token: ADDRESS_ZERO,// TODO <- add filter
-        orderField: 'rewardAmount',
+        orderField: 'rewardEther',
         order: 'desc'
       };
 

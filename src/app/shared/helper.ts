@@ -295,10 +295,10 @@ export const toAmount = (value: number | string | BigNumber, decimals: number = 
   return bn.dividedBy(p);
 };
 
-export function removeTrailingZeros(amount: number | string) {
-  if (!amount) return '';
+export function removeTrailingZeros(value: number | string) {
+  if (!value) return '';
 
-  let str = amount.toString();
+  let str = value.toString();
   let pointIndex = str.indexOf(".");
 
   if(pointIndex != -1) {
