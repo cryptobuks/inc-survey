@@ -224,7 +224,7 @@ export class SurveyDetailsComponent extends BasePageComponent {
 
       setAppCover(this.translateService.instant("please_wait"));
 
-      await this.web3Service.loadAccountData();
+      await this.web3Service.loadAccountBalance();
       await this.surveyStateInfo.loadData(this.survey, this.checkAlerts.bind(this));
 
       if (tx.events.OnSurveySolved.returnValues.budgetRefund > 0) {
@@ -273,7 +273,7 @@ export class SurveyDetailsComponent extends BasePageComponent {
 
       setAppCover(this.translateService.instant("please_wait"));
 
-      await this.web3Service.loadAccountData();
+      await this.web3Service.loadAccountBalance();
       await this.surveyStateInfo.loadData(this.survey, this.checkAlerts.bind(this));
 
       let gasAdded = toFormatBigNumber(toAmount(tx.events.OnGasReserveIncreased.returnValues.gasAdded));

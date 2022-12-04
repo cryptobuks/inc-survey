@@ -87,6 +87,6 @@ export class TxStatusComponent implements OnInit, OnDestroy {
   }
 
   private async loadBalance() {
-    await this.web3Service.loadAccountData(false);
+    await this.web3Service.loadAccountBalance();
   }
 }

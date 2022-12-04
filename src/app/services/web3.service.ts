@@ -68,6 +68,7 @@ export class Web3Service implements OnDestroy {
 
   private web3Modal: any;
   private subscriptions: any = [];
+  private ephemeralDataTime = 0;
   //private intervalId: any;
 
   onAccountLoaded = new SimpleListener();// (accountData: AccountData) => void;
@@ -418,6 +419,30 @@ export class Web3Service implements OnDestroy {
     }
   }
 
+  async loadAccountData(fireEvent = true) {
+    this._accountData = await this.getAccountData();
+    if (fireEvent) this.onAccountLoaded.fire(this.accountData);
+  }
+
+  async loadAccountBalance() {
+    const userAddr = this.accountData?.address;
+    if(userAddr) {
+      const ccyBalance = await this.getCcyBalance(userAddr);
+      const incBalance = await this.getIncBalance(userAddr);
+
+      if(this.accountData?.address == userAddr) {
+        this.accountData.ccyBalance = ccyBalance;
+        this.accountData.incBalance = incBalance;
+      }
+    }
+  }
+
+  async loadGasPrice() {
+    const wei = await this.web3.eth.getGasPrice();
+    const gwei = this.web3.utils.fromWei(wei, 'gwei');
+    this._gasPriceGwei = toFormatBigNumber(new BigNumber(gwei), 3);
+  }
+
   async connect() {
     try {
       if (!this.web3) {
@@ -485,11 +510,6 @@ export class Web3Service implements OnDestroy {
     }
   }
 
-  async loadAccountData(fireEvent = true) {
-    this._accountData = await this.getAccountData();
-    if (fireEvent) this.onAccountLoaded.fire(this.accountData);
-  }
-
   private async loadChainData() {
     await this.loadTimeDiff();
     await this.loadContracts();
@@ -531,24 +551,26 @@ export class Web3Service implements OnDestroy {
     //console.debug("configProps:: " + JSON.stringify(this.configProps));
   }
 
-  private async loadGasPrice() {
-    const wei = await this.web3.eth.getGasPrice();
-    const gwei = this.web3.utils.fromWei(wei, 'gwei');
-    this._gasPriceGwei = toFormatBigNumber(new BigNumber(gwei), 3);
-  }
-
-  private async loadAccountBalance() {
-    const userAddr = this.accountData?.address;
-    if(userAddr) {
-      const ccyBalance = await this.getCcyBalance(userAddr);
-      const incBalance = await this.getIncBalance(userAddr);
-
-      if(this.accountData?.address == userAddr) {
-        this.accountData.ccyBalance = ccyBalance;
-        this.accountData.incBalance = incBalance;
-      }
+  private async loadEphemeralData() {
+    let elapsedTime = new Date().getTime() - this.ephemeralDataTime;
+    if(elapsedTime < 10000) {// 10 seconds
+      return;
     }
-  }  
+
+    try {
+      this.loadGasPrice();
+      this.loadAccountBalance();
+
+      let stateService = getInstance(StateService);
+      if(stateService?.surveyEditState?.survey?.tokenData) {
+        this.loadTokenBalance(stateService.surveyEditState.survey.tokenData);
+      }
+
+      this.ephemeralDataTime = new Date().getTime();
+    } catch (error) {
+      console.warn('Network congested: ', error.message);
+    }
+  }
 
   private configWeb3() {
     const instance = this;
@@ -563,17 +585,7 @@ export class Web3Service implements OnDestroy {
             instance._blockHeader = blockHeader;
           });
 
-          try {
-            instance.loadGasPrice();
-            instance.loadAccountBalance();
-  
-            let stateService = getInstance(StateService);
-            if(stateService?.surveyEditState?.survey?.tokenData) {
-              instance.loadTokenBalance(stateService.surveyEditState.survey.tokenData);
-            }
-          } catch (error) {
-            console.warn('Network congested: ', error.message);
-          }
+          instance.loadEphemeralData();
         }
       })
       .on("error", console.error);

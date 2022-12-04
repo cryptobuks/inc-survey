@@ -270,15 +270,10 @@ export class TokenSaleComponent extends BasePageComponent {
       let tx = await this.offerContract.methods.buy(deadline, minTknUnits).send({ from: this.accountData.address, value: weiAmount, gasLimit: gasLimit });
       //console.log("tx:: " + JSON.stringify(tx));
 
-      await this.web3Service.loadAccountData();
+      await this.web3Service.loadAccountBalance();
 
       let incAmount = toAmount(tx.events.OnBought.returnValues.tokenAmount);
       this.messageHelperService.showSuccess(this.translateService.instant("have_bought_x", { val1: incAmount + ' INC' }));
-
-      if(tx.events.OnReward) {
-        incAmount = toAmount(tx.events.OnReward.returnValues.amount);
-        this.messageHelperService.showInfo(this.translateService.instant("have_received_reward_x", { val1: incAmount + ' INC' }));
-      }
 
     } catch (err: any) {
       this.messageHelperService.showTxError(err);
