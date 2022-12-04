@@ -4,8 +4,7 @@
 
         <div class="survey-select">
             <div class="survey-logo">
-                <img *ngIf="survey.imageData" class="thumb-circle" alt="Logo" [src]="survey.imageData" loading="lazy" onerror="this.src='assets/img/broken_image.png';" />
-                <img *ngIf="!survey.imageData" class="thumb-circle" alt="Logo" src="assets/img/empty_image.png" />
+                <lazy-thumb class="survey-thumb" [url]="survey.imageData" size="100px"></lazy-thumb>
                 
                 <div *ngIf="showLogoUrl && survey.logoUrl" class="data-item">
                     <!-- <label>{{ 'logo_url' | translate }}</label> -->

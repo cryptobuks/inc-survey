@@ -14,14 +14,14 @@
 
                 <div class="bases-title">
                     <span>{{ 'common_bases' | translate }}</span>
-                    <i class="pi pi-question-circle" pTooltip="{{ 'common_bases_description' | translate }}" tooltipPosition="right"></i>
+                    <i class="pi pi-question-circle" pTooltip="{{ 'common_bases_description' | translate }}" tooltipPosition="bottom"></i>
                     <!--<i class="pi pi-question-circle" (mouseenter)="basesHelpOverlay.toggle($event)"></i>-->
                 </div>
 
                 <div class="bases-cnt">
                     <button *ngFor="let token of bases; let i = index" mat-stroked-button class="token-item"
                         [class.disabled]="isSelectedToken(token)" (click)="selectToken(token)">
-                        <img class="token-icon" [alt]="token.symbol" [src]="token.logoURI" loading="lazy" (error)="onTokenIconError($event)" />
+                        <lazy-thumb class="token-icon" [url]="token.logoURI" [alt]="token.symbol" type="token" size="24px"></lazy-thumb>
                         <span class="token-symbol">{{ token.symbol }}</span>
                     </button>
                 </div>
@@ -46,7 +46,7 @@
                 
                 <div *ngFor="let token of tokensToShow; let i = index" matRipple class="token-row"
                     [class.disabled]="isSelectedToken(token)" (click)="selectToken(token)">
-                    <img class="token-icon" [alt]="token.symbol" [src]="token.logoURI" loading="lazy" (error)="onTokenIconError($event)" />
+                    <lazy-thumb class="token-icon" [url]="token.logoURI" [alt]="token.symbol" type="token" size="32px"></lazy-thumb>
                     <div class="token-info">
                         <span class="token-symbol">{{ token.symbol }}</span>
                         <span class="token-name">{{ token.name }} {{ (token.added? ' • ': '') }} {{ (token.added? 'added_by_user': '') | translate }}</span>
@@ -64,7 +64,7 @@
                 </div>
 
                 <div *ngFor="let token of suggestedTokens; let i = index" class="input-tag">
-                    <img class="tag-icon rounded" [alt]="token.symbol" [src]="token.logoURI" loading="lazy" (error)="onTokenIconError($event)" />
+                    <lazy-thumb class="tag-icon" [url]="token.logoURI" [alt]="token.symbol" type="token" size="32px"></lazy-thumb>
                     <div class="tag-info">
                         <span class="tag-title">{{ token.symbol }}</span>
                         <span class="tag-desc">{{ token.name }}</span>
@@ -107,7 +107,7 @@
                         [(ngModel)]="listFilter" [disabled]="loadingLists" (input)="searchList($event.target.value)" />
 
                     <div *ngIf="listTag" class="input-tag">
-                        <img class="tag-icon" [alt]="listTag.name" [src]="listTag.logoURI" loading="lazy" (error)="onListIconError($event)" />
+                        <lazy-thumb class="tag-icon" [url]="listTag.logoURI" [alt]="listTag.name" type="token-list" size="32px"></lazy-thumb>
                         <div class="tag-info">
                             <span class="tag-title">{{ listTag.name }}</span>
                             <span class="tag-desc">{{ listTag.count }} {{ 'tokens' | translate | lowercase }}</span>
@@ -129,7 +129,7 @@
                         [(ngModel)]="customTokenFilter" [disabled]="loadingCustomTokens" (input)="searchCustomToken($event.target.value)" />
 
                     <div *ngIf="customTokenTag" class="input-tag">
-                        <img class="tag-icon rounded" [alt]="customTokenTag.symbol" [src]="customTokenTag.logoURI" loading="lazy" (error)="onTokenIconError($event)" />
+                        <lazy-thumb class="tag-icon" [url]="customTokenTag.logoURI" [alt]="customTokenTag.symbol" type="token" size="32px"></lazy-thumb>
                         <div class="tag-info">
                             <span class="tag-title">{{ customTokenTag.symbol }}</span>
                             <span class="tag-desc">{{ customTokenTag.name }}</span>
@@ -166,7 +166,7 @@
                    [style.color]="list.active? 'white': 'black'"
                    [style.background-color]="list.active? list.color: '#edeef2'"
                    [style.opacity]="(list.count > 0)? 1: .5">
-                    <img class="list-icon" [alt]="list.name" [src]="list.logoURI" loading="lazy" (error)="onListIconError($event)" />
+                    <lazy-thumb class="list-icon" [url]="list.logoURI" [alt]="list.name" type="token-list" size="40px"></lazy-thumb>
                     <div class="list-info">
                         <span class="list-name">{{ list.name }}</span>
                         <div class="list-count" [style.color]="list.active? '#EEEEEE': '#9E9E9E'">
@@ -198,7 +198,7 @@
                 </div>
 
                 <div *ngFor="let token of customTokens; let i = index" class="custom-token-row">
-                    <img class="token-icon" [alt]="token.symbol" [src]="token.logoURI" loading="lazy" (error)="onTokenIconError($event)" />
+                    <lazy-thumb class="token-icon" [url]="token.logoURI" [alt]="token.symbol" type="token" size="32px"></lazy-thumb>
                     <div class="token-info">
                         <span class="token-symbol">{{ token.symbol }}</span>
                         <span class="token-name">{{ token.name }}</span>

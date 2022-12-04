@@ -10,16 +10,16 @@
                     <label>{{ 'survey_logo' | translate }}</label>
                     <div class="data-field thumb-cnt">
                         <input type="file" accept="image/jpeg, image/png" class="hidden-input" (change)="onSelectImage($event)" #imageInput>
-                        <img *ngIf="!imageLoading && survey.imageData" class="thumb-circle" alt="Logo" [src]="survey.imageData" (click)="imageInput.click()" loading="lazy" (error)="onImageError($event)" />
-                        <img *ngIf="!imageLoading && !survey.imageData" class="thumb-circle" alt="Logo" src="assets/img/empty_image.png" (click)="imageInput.click()" />
-                        <mat-spinner *ngIf="imageLoading" diameter="48"></mat-spinner>
+                        <lazy-thumb class="survey-thumb" [url]="survey.imageData" size="100px" [loading]="imageLoading"
+                        (click)="imageInput.click()" (onError)="onImageError($event)"></lazy-thumb>
                         <span>{{ 'maximum_x' | translate:{val1 : '1MB' } }} ({{ 'image_reduced_automatically' | translate }})</span>
                         <span>{{ 'image_uploaded_to_server_link_saved_on_blockchain' | translate }}</span>
                         <span>{{ 'can_indicate_your_link' | translate }}</span>
                     </div>
                 </div>
                 
-                <input class="url-input" type="url" placeholder="{{ 'logo_placeholder' | translate }}" maxlength="2048" [(ngModel)]="survey.logoUrl" (ngModelChange)="onChangeLogoUrl($event)" />
+                <input class="url-input" type="url" placeholder="{{ 'logo_placeholder' | translate }}" maxlength="2048" [disabled]="imageLoading"
+                [(ngModel)]="survey.logoUrl" (ngModelChange)="onChangeLogoUrl($event)" />
             </div>
 
             <div class="survey-token data-item">

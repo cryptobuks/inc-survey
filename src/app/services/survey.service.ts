@@ -57,8 +57,8 @@ export class SurveyService implements OnDestroy {
 
   constructor(
     private web3Service: Web3Service, 
-    private ipfsService: IpfsService,
-    private utilService: UtilService) {
+    private utilService: UtilService
+  ) {
     this.onChainLoadedRemover = this.web3Service.onChainLoaded.addAndFire(() => {
       this.loadAvgTxGas();
     }, () => {
@@ -115,8 +115,7 @@ export class SurveyService implements OnDestroy {
   async toSurveyImpl(survey: Survey, questions: QuestionImpl[]): Promise<SurveyImpl> {
     this.checkContracts();
     let tokenData = await this.web3Service.loadToken(survey.token);
-    let imageData = await this.ipfsService.ipfsImage(survey.logoUrl);
-    return Promise.resolve<SurveyImpl>(SurveyImpl.toImpl(survey, tokenData, imageData, questions));
+    return Promise.resolve<SurveyImpl>(SurveyImpl.toImpl(survey, tokenData, questions));
   }
 
   // ### Surveys ###

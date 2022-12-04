@@ -108,11 +108,8 @@
 }
 
 .token-selector .token-icon {
-    width: 24px;
-    height: 24px;
+    display: inline-block;
     box-shadow: rgb(0 0 0 / 8%) 0px 6px 10px;
-    border-radius: 50%;
-    margin-right: 8px;
 }
 
 .token-selector .token-symbol {
@@ -135,8 +132,12 @@
 .token-selector .token-item {
     border-radius: 1rem;
     margin: 4px;
-    padding: 0.5rem;
+    padding: 6px 8px;
     line-height: normal;
+}
+
+.token-selector .token-item .token-icon {
+    margin-right: 4px;
 }
 
 .token-selector .token-row,
@@ -160,13 +161,6 @@
 .token-selector .token-row .token-info>span,
 .token-selector .custom-token-row .token-info>span {
     display: block;
-}
-
-.token-selector .token-row .token-icon,
-.token-selector .custom-token-row .token-icon {
-    width: 32px !important;
-    height: 32px !important;
-    margin-right: 0 !important;
 }
 
 /*.token-item:enabled:hover {
@@ -304,8 +298,7 @@
 }
 
 .list-item .list-icon {
-    width: 40px;
-    height: 40px;
+    display: inline-block;
 }
 
 .list-item .list-info {
@@ -332,23 +325,6 @@
     margin-left: 10px;
 }
 
-::ng-deep .list-item .p-overlaypanel .title {
-    margin-left: 10px;
-}
-
-::ng-deep .list-item .p-overlaypanel .p-overlaypanel-content {
-    padding: 10px;
-}
-
-/*::ng-deep .list-item .p-overlaypanel:after, ::ng-deep .list-item .p-overlaypanel:before {
-    display: none;
-}*/
-
-::ng-deep .list-item .p-overlaypanel a {
-    padding: 4px 10px;
-    min-width: 100px;
-}
-
 .list-item p-divider {
     display: block;
     margin: 10px 0;
@@ -370,8 +346,7 @@
 }
 
 .input-tag .tag-icon {
-    width: 32px;
-    height: 32px;
+    display: inline-block;
 }
 
 .input-tag .tag-info {

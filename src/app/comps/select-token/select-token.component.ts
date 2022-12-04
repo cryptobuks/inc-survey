@@ -52,8 +52,7 @@ export class SelectTokenComponent implements OnInit, OnDestroy {
 
   async loadBalance() {
     try {
-      this.data.balance = await this.web3Service.getERC20Balance(this.data.address, this.web3Service.accountData.address);
-      this.data.hfBalance = this.data.balance ? toFormatBigNumber(toAmount(this.data.balance, this.data.decimals)) : '0';
+      await this.web3Service.loadTokenBalance(this.data);
     } catch (error) {
       console.error("Failed to get balance for " + this.data.symbol);
     }

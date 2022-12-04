@@ -8,18 +8,6 @@
     cursor: pointer;
 }
 
-.survey-banner .survey-logo {
-    text-align: center;
-    min-width: 48px;
-    min-height: 48px;
-}
-
-.survey-banner .survey-logo > .thumb-circle {
-    width: 48px;
-    height: 48px;
-    min-width: 48px;
-}
-
 .survey-banner .survey-info {
     font-size: 14px;
     text-align: start;

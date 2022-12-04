@@ -17,7 +17,9 @@ import { providerOptions } from '../shared/provider-options';
 import { SimpleListener } from '../shared/simple-listener';
 import { Web3Error } from '../models/web3-error';
 import { TokenData } from '../models/token-data';
-import { equalsIgnoreCase, getTokenLogoURL, toAmount, toFormatBigNumber } from '../shared/helper';
+import { equalsIgnoreCase, getInstance, toAmount, toFormatBigNumber } from '../shared/helper';
+import { StateService } from './state.service';
+import { UtilService } from './util.service';
 declare var window: any;
 declare var Web3: any;
 
@@ -71,7 +73,9 @@ export class Web3Service implements OnDestroy {
   onAccountLoaded = new SimpleListener();// (accountData: AccountData) => void;
   onChainLoaded = new SimpleListener();// () => void;
 
-  constructor() {
+  constructor(
+    private utilService: UtilService
+  ) {
     this.web3Modal = new Web3Modal({
       network: "mainnet", // optional mainnet, ropsten, etc..
       cacheProvider: true, // optional
@@ -218,15 +222,22 @@ export class Web3Service implements OnDestroy {
 
   async getERC20Balance(contractAddress: string, userAddress: string): Promise<BigNumber> {
     this.checkConnection();
-    let token = await ERC20(this.web3, contractAddress);
-    let balance = await token.methods.balanceOf(userAddress).call();
+    let tokenCnt = await ERC20(this.web3, contractAddress);
+    let balance = await tokenCnt.methods.balanceOf(userAddress).call();
     return Promise.resolve<BigNumber>(new BigNumber(balance));
+  }
+
+  async getERC20Allowance(contractAddress: string, owner: string, spender: string): Promise<BigNumber> {
+    this.checkContracts();
+    let tokenCnt = await ERC20(this.web3, contractAddress);
+    let allowance = await tokenCnt.methods.allowance(owner, spender).call();
+    return Promise.resolve<BigNumber>(new BigNumber(allowance));
   }
 
   async getERC20Contract(contractAddress: string): Promise<any> {
     this.checkConnection();
-    let token = await ERC20(this.web3, contractAddress);
-    return Promise.resolve<any>(token);
+    let tokenCnt = await ERC20(this.web3, contractAddress);
+    return Promise.resolve<any>(tokenCnt);
   }
 
   async getAccountData(): Promise<AccountData> {
@@ -372,10 +383,39 @@ export class Web3Service implements OnDestroy {
       symbol: symbol,
       decimals: decimals,
       balance: new BigNumber(balance),
-      logoURI: getTokenLogoURL(address, chainId),
+      logoURI: this.utilService.retrieveTokenLogoURL(chainId, address),
       hfBalance: toFormatBigNumber(toAmount(balance, decimals))
     };
     return Promise.resolve<any>(token);
+  }
+
+  async loadTokenBalance(token: TokenData, defaultValue = '0') {
+    const tokenAddr = token.address;
+    const userAddr = this.accountData?.address;
+    if(!tokenAddr || !userAddr) {
+      return;
+    }
+
+    let contract: any;
+
+    try {
+      contract = await this.getERC20Contract(tokenAddr);
+    } catch (error) {
+      throw new Web3Error(Web3Error.CODE_NOT_FOUNT_CONTRACT, error);
+    }
+
+    let balance: number;
+
+    try {
+      balance = await contract.methods.balanceOf(userAddr).call();
+    } catch (error) {
+      throw new Web3Error(Web3Error.CODE_INVALID_TOKEN, error);
+    }
+
+    if(token.address == tokenAddr && this.accountData?.address == userAddr) {
+      token.balance = new BigNumber(balance);
+      token.hfBalance = balance ? toFormatBigNumber(toAmount(balance, token.decimals)) : defaultValue;
+    }
   }
 
   async connect() {
@@ -498,12 +538,12 @@ export class Web3Service implements OnDestroy {
   }
 
   private async loadAccountBalance() {
-    const address = this.accountData?.address;
-    if(address) {
-      const ccyBalance = await this.getCcyBalance(address);
-      const incBalance = await this.getIncBalance(address);
+    const userAddr = this.accountData?.address;
+    if(userAddr) {
+      const ccyBalance = await this.getCcyBalance(userAddr);
+      const incBalance = await this.getIncBalance(userAddr);
 
-      if(address == this.accountData?.address) {
+      if(this.accountData?.address == userAddr) {
         this.accountData.ccyBalance = ccyBalance;
         this.accountData.incBalance = incBalance;
       }
@@ -522,8 +562,18 @@ export class Web3Service implements OnDestroy {
           AppComponent.instance.ngZone.run(() => {
             instance._blockHeader = blockHeader;
           });
-          instance.loadGasPrice();
-          instance.loadAccountBalance();
+
+          try {
+            instance.loadGasPrice();
+            instance.loadAccountBalance();
+  
+            let stateService = getInstance(StateService);
+            if(stateService?.surveyEditState?.survey?.tokenData) {
+              instance.loadTokenBalance(stateService.surveyEditState.survey.tokenData);
+            }
+          } catch (error) {
+            console.warn('Network congested: ', error.message);
+          }
         }
       })
       .on("error", console.error);

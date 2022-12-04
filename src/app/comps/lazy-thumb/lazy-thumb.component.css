@@ -1,0 +1,19 @@
+::ng-deep lazy-thumb {
+    line-height: 0;
+    text-align: center;
+}
+
+.lazy-thumb {
+    border-radius: 50%;
+    object-fit: cover;
+    overflow: hidden;
+    width: 48px;
+    height: 48px;
+}
+
+.lazy-thumb.animate-flicker {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background: #bdc5d1;
+}

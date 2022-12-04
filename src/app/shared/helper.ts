@@ -226,7 +226,7 @@ export function ipfsToURL(ipfs: string) {
 }
 
 export function isIpfsUri(uri: string): boolean {
-  return uri && /^ipfs:\/\/[0-9a-zA-Z]{46,59}$/.test(uri);
+  return uri && /ipfs:\/\/[0-9a-zA-Z]{46,100}$/.test(uri);
 }
 
 export function uriToHttp(uri: string): string[] {
@@ -259,6 +259,7 @@ function chainIdToNetworkName(networkId: ChainId): string {
     case ChainId.MAINNET:
       return 'ethereum';
     case ChainId.MATIC:
+    case ChainId.MUMBAI:
       return 'polygon';
     default:
       return 'ethereum';
@@ -266,8 +267,8 @@ function chainIdToNetworkName(networkId: ChainId): string {
 }
 
 export const getTokenLogoURL = (
-  address: string,
-  chainId: ChainId
+  chainId: ChainId,
+  address: string
 ): string | undefined => {
   if(equalsIgnoreCase(INC_TOKEN[chainId].address, address)) {
     return INC_LOGO_URL;
@@ -366,7 +367,7 @@ export const truncateSeconds = (date: Date) => {
 * Resize a base 64 Image
 */
 export function resizeBase64Image(base64: string, maxWidth: number, maxHeight: number): Promise<string> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     let img = new Image();
     img.src = base64;
 
@@ -392,6 +393,10 @@ export function resizeBase64Image(base64: string, maxWidth: number, maxHeight: n
       ctx.drawImage(img, 0, 0, width, height);
 
       resolve(canvas.toDataURL());
+    };
+
+    img.onerror = (e) => {
+      reject(e);
     };
   })
 }

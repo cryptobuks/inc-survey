@@ -1,17 +1,17 @@
-<div class="select-token" matRipple (click)="emitSelect($event)" [class.selectable]="hasSelect" title="{{ data.hfBalance }} {{ data.symbol }}">
+<div class="select-token" matRipple (click)="emitSelect($event)" [class.selectable]="hasSelect" 
+pTooltip="{{ data.address? data.hfBalance + ' ' + data.symbol: '' }}" tooltipPosition="top">
     <div class="icon">
-        <img *ngIf="data.logoURI" [alt]="data.symbol" [src]="data.logoURI" onerror="this.src='assets/img/unk_token.png';" />
-        <img *ngIf="!data.logoURI" alt="{{ 'empty_token' | translate }}" src="assets/img/empty_token.png" />
+        <lazy-thumb class="token-thumb" [url]="data.logoURI" [alt]="data.symbol" type="token" size="40px"></lazy-thumb>
     </div>
 
     <div class="text">
-        <span class="tkn-desc line-limit">{{ data.name }}</span>
-        <div *ngIf="data.symbol" class="tkn-dets">
+        <span *ngIf="data.address && data.name" class="tkn-desc line-limit">{{ data.name }}</span>
+        <span *ngIf="data.address && !data.name" class="tkn-desc line-limit">{{ 'unknown' | translate }}</span>
+        <span *ngIf="!data.address" class="tkn-desc line-limit">{{ 'select_token' | translate }}</span>
+        <div *ngIf="data.address && data.symbol" class="tkn-dets">
             <span class="tkn-symbol line-limit">{{ data.symbol }}</span>
             <span class="tkn-balance line-limit">{{ shortAddress }}</span>
         </div>
-        <button *ngIf="!data.symbol" pButton pRipple type="button" label="{{ 'select_token' | translate }}"
-            class="p-button-outlined p-button-rounded p-button-secondary select-btn"></button>
     </div>
 
     <mat-icon *ngIf="hasSelect">arrow_drop_down</mat-icon>

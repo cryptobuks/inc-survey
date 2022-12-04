@@ -436,5 +436,9 @@
     "inc_sale": "INC Sale",
     "survey_on_blockchain_few_time_to_be_indexed": "Your survey is already on the blockchain, however it will take a few minutes for it to be indexed in our search engine.",
     "earnings_in_last_x": "Earnings in the last {{val1}}",
-    "owner": "Owner"
+    "owner": "Owner",
+    "unknown": "Unknown",
+    "select_token": "Select token",
+    "please_select_token": "Please select a token",
+    "invalid_file": "Invalid file"
 }

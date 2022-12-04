@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { isIpfsUri } from '../shared/helper';
+import { ipfsToURL, isIpfsUri } from '../shared/helper';
 import { UtilService } from './util.service';
 declare var Ipfs: any;
 
@@ -26,9 +26,9 @@ export class IpfsService {
   /**
    * ipfs-js sometimes crashes during ´stream´ iteration (when the resource is wrong).
    * Using the HTTP Gateway: https://ipfs.io/ipfs/QmPChd2hVbrJ6bfo3WBcTW4iZnpHm8TEzWkLHmLpXhF68A
-   */
+   * /
   async cat(cid: string) {
-    /*await this.create();
+    await this.create();
     const stream = await this.node.cat(cid);
     let data = '';
 
@@ -37,11 +37,7 @@ export class IpfsService {
       data += chunk.toString();
     }
 
-    return data;*/
-
-    const ipfsUrl = `https://ipfs.io/ipfs/${cid}`;
-    const xhr = await this.utilService.request('GET', ipfsUrl, 5000);
-    return xhr.responseText;
+    return data;
   }
 
   async ipfsImage(url: string): Promise<string> {
@@ -54,7 +50,23 @@ export class IpfsService {
       } catch (err) {
         console.error(err);
         // Reset repository name
-        //this.setRepoName();
+        this.setRepoName();
+      }
+    }
+
+    return Promise.resolve<string>(result);
+  }*/
+
+  async ipfsImage(url: string): Promise<string> {
+    let result = url;
+
+    if (isIpfsUri(url)) {
+      try {
+        const ipfsUrl = ipfsToURL(url);
+        const xhr = await this.utilService.request('GET', ipfsUrl, 3000);
+        result = xhr.responseText;
+      } catch (error) {
+        console.error(error.message);
       }
     }
 

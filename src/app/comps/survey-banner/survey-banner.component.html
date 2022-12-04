@@ -1,9 +1,6 @@
 <div class="content-panel survey-banner" matRipple (click)="onClick.emit($event)">
 
-    <div class="survey-logo">
-        <img *ngIf="survey.imageData" class="thumb-circle" alt="Logo" [src]="survey.imageData" loading="lazy" onerror="this.src='assets/img/broken_image.png';" />
-        <img *ngIf="!survey.imageData" class="thumb-circle" alt="Logo" src="assets/img/empty_image.png" />
-    </div>
+    <lazy-thumb class="survey-thumb" [url]="survey.imageData"></lazy-thumb>
 
     <div class="survey-info">
         <span class="line-limit survey-title" title="{{ survey.title }}">{{ survey.title }}</span>

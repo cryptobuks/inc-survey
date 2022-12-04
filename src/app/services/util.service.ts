@@ -6,6 +6,13 @@ import { RelResponse } from "../models/rel-response";
 import { NotifType } from "../models/notif-type";
 import { RELAYER_API_URL, COINGECKO_PRICE_URL, HTTP_OPTIONS, RECAPTCHA_RENDER } from "../shared/constants";
 import { SurveyFilter } from "../models/survey-filter";
+import Ajv, { ValidateFunction } from 'ajv';
+import addFormats from 'ajv-formats';
+import { schema, TokenList } from '@uniswap/token-lists';
+import { StorageUtil } from "../shared/storage-util";
+import { UNSUPPORTED_LIST_URLS } from "../shared/token-lists";
+import { ChainId } from "../models/chains";
+import { getTokenLogoURL, ipfsToURL } from "../shared/helper";
 declare var grecaptcha: any;
 
 @Injectable({
@@ -13,23 +20,31 @@ declare var grecaptcha: any;
 })
 export class UtilService {
 
+    private tokenLogoUrls: { [chainId: string]: { [address: string]: string } } = {};
+
+    validate: ValidateFunction;
+
     constructor(private http: HttpClient) {
+        const ajv = new Ajv({ allErrors: true });
+        addFormats(ajv);
+        this.validate = ajv.compile(schema);
+        this.loadTokenLogoUrls();
     }
 
     async loadJson(url: string): Promise<any> {
         return await this.http.get<any>(url)
-        .pipe(
-            retry(1)
-        ).toPromise();
+            .pipe(
+                retry(1)
+            ).toPromise();
     }
 
     async getCurrencyPrice(symbol: string): Promise<number> {
         let currencyId: string;
-        if(symbol == 'ETH') {
+        if (symbol == 'ETH') {
             currencyId = 'ethereum';
-        } else if(symbol == 'AVAX') {
+        } else if (symbol == 'AVAX') {
             currencyId = 'avalanche-2';
-        } else if(symbol == 'MATIC') {
+        } else if (symbol == 'MATIC') {
             currencyId = 'matic-network';
         } else {
             throw new Error('Unk. currency: ' + symbol);
@@ -108,7 +123,7 @@ export class UtilService {
             let xhr = new XMLHttpRequest();
             xhr.open(method, url, true);
 
-            if(timeout) {
+            if (timeout) {
                 xhr.timeout = timeout; // Time in milliseconds
             }
 
@@ -117,32 +132,33 @@ export class UtilService {
                 if (xhr.status >= 200 && xhr.status < 300) {
                     resolve(xhr);
                 } else {
-                    reject({
-                        status: xhr.status,
-                        statusText: xhr.statusText
-                    });
+                    reject(new Error(`${method.toUpperCase()} ${url}: ${xhr.status} ${xhr.statusText}`));
                 }
             };
 
             xhr.ontimeout = (e) => {
                 // XMLHttpRequest timed out
                 xhr.abort();
-                reject({
-                    status: xhr.status,
-                    statusText: xhr.statusText
-                });
+                reject(new Error(`${method.toUpperCase()} ${url}: timed out`));
             };
 
-            xhr.onerror = function () {
+            xhr.onerror = function (e) {
                 // An error has occurred
-                reject({
-                    status: xhr.status,
-                    statusText: xhr.statusText
-                });
+                reject(new Error(`${method.toUpperCase()} ${url}: ${xhr.status} ${xhr.statusText}`));
             };
 
             xhr.send();
         });
+    }
+
+    retrieveTokenLogoURL(chainId: ChainId, address: string, logoURI: string = undefined): string | undefined {
+        let logoUrl = this.tokenLogoUrls[chainId][address];
+
+        if(!logoUrl) {
+            logoUrl = getTokenLogoURL(chainId, address);
+        }
+
+        return logoUrl;
     }
 
     private async loadCurrencyData(currencyId: string): Promise<any> {
@@ -151,5 +167,33 @@ export class UtilService {
                 retry(1)
             ).toPromise();
         return Promise.resolve<number>(data[0]);
+    }
+
+    private async loadTokenLogoUrls() {
+        // const activeListUrls = DEFAULT_ACTIVE_LIST_URLS.filter((url: string) => !UNSUPPORTED_LIST_URLS.includes(url));
+        const activeListUrls = StorageUtil.activeLists.filter((url: string) => !UNSUPPORTED_LIST_URLS.includes(url));
+        const logoUrls = {};
+
+        if (activeListUrls.length == 0) {
+            return;
+        }
+
+        for (const url of activeListUrls) {
+            let list: TokenList = await this.loadJson(url);
+            if (!this.validate(list) || !list?.tokens) {
+                continue;
+            }
+
+            for (const tokenInfo of list.tokens) {
+                if (!logoUrls[tokenInfo.chainId]) {
+                    logoUrls[tokenInfo.chainId] = [];
+                }
+
+                tokenInfo.logoURI = tokenInfo.logoURI ? ipfsToURL(tokenInfo.logoURI) : getTokenLogoURL(tokenInfo.chainId, tokenInfo.address);
+                logoUrls[tokenInfo.chainId][tokenInfo.address] = tokenInfo.logoURI;
+            }
+        }
+
+        this.tokenLogoUrls = logoUrls;
     }
 }

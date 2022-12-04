@@ -27,12 +27,9 @@
   overflow: hidden;
 }
 
-.input-token .selector .icon > img {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
+.input-token .selector .icon > .token-thumb {
+    display: block;
     margin: 7px 0 0 7px;
-    border-radius: 50%;
 }
 
 .input-token .selector .text {

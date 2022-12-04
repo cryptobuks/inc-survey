@@ -78,6 +78,7 @@ import { TokenSelectorComponent } from './comps/token-selector/token-selector.co
 import { SelectTokenComponent } from './comps/select-token/select-token.component';
 import { SurveyCardComponent } from './comps/survey-card/survey-card.component';
 import { OwnPartsChartComponent } from './comps/own-parts-chart/own-parts-chart.component';
+import { LazyThumbComponent } from './comps/lazy-thumb/lazy-thumb.component';
 
 @NgModule({
   declarations: [
@@ -138,7 +139,8 @@ import { OwnPartsChartComponent } from './comps/own-parts-chart/own-parts-chart.
     TokenSelectorComponent,
     SelectTokenComponent,
     SurveyCardComponent,
-    OwnPartsChartComponent
+    OwnPartsChartComponent,
+    LazyThumbComponent
   ],
   imports: [
     BrowserModule,

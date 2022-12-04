@@ -37,7 +37,6 @@ export class AppComponent implements OnInit, OnDestroy {
   get web3(): any { return this.web3Service.web3; }
   get gasPriceGwei(): any { return this.web3Service.gasPriceGwei; }
   get blockHeader(): any { return this.web3Service.blockHeader; }
-  get incContract(): any { return this.web3Service.incContract; }
   get accountData(): AccountData { return this.web3Service.accountData; }
   get accountShortAddress(): string | null {
     return shortAddress(this.accountData?.address);

@@ -44,7 +44,7 @@ export class SurveyImpl {
       return impl.formatted;
     }
 
-    static toImpl(survey: Survey, tokenData: TokenData, imageData: string, questions: QuestionImpl[]): SurveyImpl {
+    static toImpl(survey: Survey, tokenData: TokenData, questions: QuestionImpl[]): SurveyImpl {
       let impl: SurveyImpl = {
         address: survey.addr,
         owner: survey.account,
@@ -57,8 +57,8 @@ export class SurveyImpl {
         budget: new BigNumber(survey.budget),
         reward: new BigNumber(survey.reward),
         keyRequired: survey.keyRequired,
+        imageData: survey.logoUrl,
         tokenData,
-        imageData,
         questions
       };
 

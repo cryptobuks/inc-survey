@@ -802,7 +802,19 @@ div[contenteditable]:empty:not(:focus):before {
     padding: 1rem !important;
 }
 
+.animate-flicker {
+    animation: flickerAnimation 1s infinite;
+ }
+
 /* keyframes */
+
+@keyframes flickerAnimation {
+    0%   { opacity:1; }
+    25%  { opacity:0.25; }
+    50%  { opacity:0.5; }
+    75%  { opacity:0.75; }
+    100% { opacity:1; }
+}
 
 @keyframes custom-progress-spinner-color {
     100%, 0% {

@@ -2,11 +2,11 @@ import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UtilService } from 'src/app/services/util.service';
 import { Web3Service } from 'src/app/services/web3.service';
-import { confirmDialog, getTokenLogoURL, ipfsToURL, isEmpty, parseENSAddress, toAmount, toFormatBigNumber, uriToHttp } from 'src/app/shared/helper';
+import { confirmDialog, getTokenLogoURL, ipfsToURL, isEmpty, parseENSAddress, uriToHttp } from 'src/app/shared/helper';
 import { COMMON_BASES, DEFAULT_LIST_OF_LISTS_TO_DISPLAY, UNSUPPORTED_LIST_URLS } from 'src/app/shared/token-lists';
 import Ajv, { ValidateFunction } from 'ajv';
-import addFormats from "ajv-formats"
-import { schema, TokenList } from '@uniswap/token-lists'
+import addFormats from 'ajv-formats';
+import { schema, TokenList } from '@uniswap/token-lists';
 import { StorageUtil } from 'src/app/shared/storage-util';
 import { TranslateService } from '@ngx-translate/core';
 import { CURRENT_CHAIN, INC_TOKEN } from 'src/app/shared/constants';
@@ -115,21 +115,6 @@ export class TokenSelectorComponent implements OnInit {
     // Better get organized the next time the user opens the list.
     //this.sortLists(this.listsToShow); 
     this.checkListTag();
-  }
-
-  onTokenIconError(event: Event) {
-    let elem: any = event.target;
-    elem.src = "assets/img/unk_token.png";
-  }
-
-  onListIconError(event: Event) {
-    let elem: any = event.target;
-    elem.src = "assets/img/unk_list.png";
-    let jqElem = $(elem);
-
-    if (!jqElem.hasClass("rounded")) {
-      jqElem.addClass("rounded");
-    }
   }
 
   close() {
@@ -392,7 +377,7 @@ export class TokenSelectorComponent implements OnInit {
   }
 
   private complementAddedToken(token: any) {
-    token.logoURI = token.logoURI ? ipfsToURL(token.logoURI) : getTokenLogoURL(token.address, token.chainId);
+    token.logoURI = token.logoURI ? ipfsToURL(token.logoURI) : getTokenLogoURL(token.chainId, token.address);
     token.isToken = true;
     token.added = true;
   }
@@ -443,8 +428,7 @@ export class TokenSelectorComponent implements OnInit {
       let token = tokens[i];
 
       try {
-        token.balance = await this.web3Service.getERC20Balance(token.address, this.accountData.address);
-        token.hfBalance = token.balance ? toFormatBigNumber(toAmount(token.balance, token.decimals)) : defaultValue;
+        await this.web3Service.loadTokenBalance(token, defaultValue);
       } catch (error) {
         console.error("Failed to get balance for " + token.symbol);
       }
@@ -531,7 +515,7 @@ export class TokenSelectorComponent implements OnInit {
         }
 
         if (!existsToken(tmpList, tokenInfo)) {
-          tokenInfo.logoURI = tokenInfo.logoURI ? ipfsToURL(tokenInfo.logoURI) : getTokenLogoURL(tokenInfo.address, tokenInfo.chainId);
+          tokenInfo.logoURI = tokenInfo.logoURI ? ipfsToURL(tokenInfo.logoURI) : getTokenLogoURL(tokenInfo.chainId, tokenInfo.address);
           tmpList.push(tokenInfo);
         }
       }
@@ -686,7 +670,7 @@ export class TokenSelectorComponent implements OnInit {
 
         if (tokenInfo.chainId == this.data.chainId && !existsToken(this.suggestedTokens, tokenInfo) &&
           !existsToken(this.tokens, tokenInfo) && matchToken(tokenInfo, value)) {
-          tokenInfo.logoURI = tokenInfo.logoURI ? ipfsToURL(tokenInfo.logoURI) : getTokenLogoURL(tokenInfo.address, tokenInfo.chainId);
+          tokenInfo.logoURI = tokenInfo.logoURI ? ipfsToURL(tokenInfo.logoURI) : getTokenLogoURL(tokenInfo.chainId, tokenInfo.address);
           this.suggestedTokens.push(tokenInfo);
         }
       }

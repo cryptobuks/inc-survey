@@ -149,7 +149,8 @@ export class SurveyPreviewComponent extends BasePageComponent {
           }
 
           this.state.survey.logoUrl = "ipfs://" + cid;
-          this.state.survey.imageData = await this.ipfsService.ipfsImage(this.state.survey.logoUrl);
+          //this.state.survey.imageData = await this.ipfsService.ipfsImage(this.state.survey.logoUrl);
+          this.state.survey.imageData = this.state.survey.logoUrl;
         } catch(err) {
           insertValidationError('.survey-logo', this.translateService.instant('image_not_loaded_try_again_later'));
           throw err;
@@ -162,11 +163,12 @@ export class SurveyPreviewComponent extends BasePageComponent {
       await this.loadAllowance();
 
       if(!this.hasAllowance()) {
-        //let gasLimit = await this.incContract.methods.approve(this.engineContract._address, MAX_UINT256).estimateGas({ from: this.accountData.address, gas: 5000000 });
-        let data = this.incContract.methods.approve(this.engineContract._address, MAX_UINT256).encodeABI();
-        let estimatedGas = await this.web3Service.estimateGas(this.accountData.address, this.incContract._address, data);
+        //let gasLimit = await tokenCnt.methods.approve(this.engineContract._address, MAX_UINT256).estimateGas({ from: this.accountData.address, gas: 5000000 });
+        let tokenCnt = await this.web3Service.getERC20Contract(this.state.survey.tokenData.address);
+        let data = tokenCnt.methods.approve(this.engineContract._address, MAX_UINT256).encodeABI();
+        let estimatedGas = await this.web3Service.estimateGas(this.accountData.address, tokenCnt._address, data);
         let gasLimit = calcGasMargin(estimatedGas, 30);
-        success = await this.incContract.methods.approve(this.engineContract._address, MAX_UINT256).send({ from: this.accountData.address, gasLimit: gasLimit });
+        success = await tokenCnt.methods.approve(this.engineContract._address, MAX_UINT256).send({ from: this.accountData.address, gasLimit: gasLimit });
       }
 
       let txHash: string;
@@ -191,7 +193,6 @@ export class SurveyPreviewComponent extends BasePageComponent {
   }
 
   private async loadAllowance() {
-    let allowanceStr = await this.incContract.methods.allowance(this.accountData.address, this.engineContract._address).call({ from: this.accountData.address });
-    this.allowance = new BigNumber(allowanceStr);
+    this.allowance = await this.web3Service.getERC20Allowance(this.state.survey.tokenData.address, this.accountData.address, this.engineContract._address);
   }
 }

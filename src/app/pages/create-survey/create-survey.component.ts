@@ -282,7 +282,6 @@ export class CreateSurveyComponent extends BasePageComponent {
   }
 
   onImageError(event: Event) {
-    this.survey.imageData = "assets/img/broken_image.png";
     this.imageError = true;
   }
 
@@ -296,8 +295,13 @@ export class CreateSurveyComponent extends BasePageComponent {
   }
 
   onSelectImage(event: any) { // called each time file input changes
+    if(this.imageLoading) {
+      return;
+    }
+    
     this.survey.imageData = undefined;
     this.survey.logoUrl = undefined;
+    this.imageError = false;
 
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
@@ -323,11 +327,19 @@ export class CreateSurveyComponent extends BasePageComponent {
             }
             
             this.imageLoading = false;
+          }, (e) => {
+            insertValidationError(".survey-logo", this.translateService.instant("invalid_file"));
+            this.imageLoading = false;
           });
         } else {
           this.survey.imageData = image;
           this.imageLoading = false;
         }
+      };
+
+      reader.onerror = (event) => { 
+        insertValidationError(".survey-logo", this.translateService.instant("invalid_file"));
+        this.imageLoading = false;
       };
     }
   }
@@ -535,7 +547,8 @@ export class CreateSurveyComponent extends BasePageComponent {
 
   private async loadImageData() {
     if(!this.survey.imageData) {
-      this.survey.imageData = await this.ipfsService.ipfsImage(this.survey.logoUrl);
+      //this.survey.imageData = await this.ipfsService.ipfsImage(this.survey.logoUrl);
+      this.survey.imageData = this.survey.logoUrl;
     }
   }
 
@@ -572,31 +585,19 @@ export class CreateSurveyComponent extends BasePageComponent {
     this.survey.description = this.survey.description?.trim();
 
      // logo is optional
-    /*if(this.survey.logoUrl) {
-      if(this.survey.logoUrl.length > this.configProps.urlMaxLength) {
-        return [".survey-logo", this.translateService.instant("url_too_long_max_x_chars", { val1: this.configProps.urlMaxLength })];
-      }
-
-      let isIpfs = isIpfsUri(this.survey.logoUrl);
-
-      if(!isIpfs && !isValidHttpUrl(this.survey.logoUrl)) {
-        return [".survey-logo", this.translateService.instant("invalid_url")];
-      }
-
-      if((!isIpfs && !isImageUrl(this.survey.logoUrl)) || (isIpfs && !isImageData(this.imageSrc))) {
-        return [".survey-logo", this.translateService.instant("url_is_not_image")];
-      }
-    }*/
+    if((this.survey.logoUrl || this.survey.imageData) && this.imageError) {
+      return [".survey-logo", this.translateService.instant("invalid_image")];
+    }
 
     if(this.survey.logoUrl && this.survey.logoUrl.length > this.configProps.urlMaxLength) {
       return [".survey-logo", this.translateService.instant("url_too_long_max_x_chars", { val1: this.configProps.urlMaxLength })];
     }
 
-    if((this.survey.logoUrl || this.survey.imageData) && this.imageError) {
-      return [".survey-logo", this.translateService.instant("invalid_image")];
+    if(!this.survey.tokenData?.address) {
+      return [".survey-token", this.translateService.instant("please_select_token")];
     }
 
-    if(!this.survey.tokenData || isEmpty(this.survey.tokenData.symbol) || isEmpty(this.survey.tokenData.name) ||
+    if(isEmpty(this.survey.tokenData.symbol) || isEmpty(this.survey.tokenData.name) ||
     this.survey.tokenData.symbol.length > this.configProps.tknSymbolMaxLength || 
     this.survey.tokenData.name.length > this.configProps.tknNameMaxLength) {
       return [".survey-token", this.translateService.instant("invalid_token")];

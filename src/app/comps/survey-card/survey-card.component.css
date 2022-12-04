@@ -13,12 +13,6 @@
     gap: 10px;
 }
 
-.survey-card .survey-logo > .thumb-circle {
-    width: 48px;
-    height: 48px;
-    min-width: 48px;
-}
-
 .survey-card .survey-title {
     overflow: hidden;
     display: -webkit-box;

@@ -24,7 +24,7 @@
     text-align: center;
 }
 
-.survey-logo .thumb-cnt > img {
+.survey-logo .thumb-cnt > .survey-thumb {
     cursor: pointer;
 }
 

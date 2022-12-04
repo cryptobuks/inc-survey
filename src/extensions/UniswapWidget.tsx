@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FunctionComponent, useState } from 'react';
-import { darkTheme, lightTheme, SwapWidget } from '@uniswap/widgets';
+import { darkTheme, defaultTheme, lightTheme, SwapWidget } from '@uniswap/widgets';
 import '@uniswap/widgets/fonts.css';
 
 export interface IUniswapWidgetProps {
@@ -26,6 +26,9 @@ export const UniswapWidget: FunctionComponent<IUniswapWidgetProps> = (props: IUn
 
   useConstructor(() => {
     // Occurs ONCE, BEFORE the initial render.
+    // The interface ´Colors´ must be changed by adding ´fontFamily´: @uniswap/widgets/dist/index.d.ts
+    darkTheme.fontFamily = 'inherit';
+    lightTheme.fontFamily = 'inherit';
     lightTheme.container = "#ffffff";
   });
 
