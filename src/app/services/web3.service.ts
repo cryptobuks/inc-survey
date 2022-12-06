@@ -17,7 +17,7 @@ import { providerOptions } from '../shared/provider-options';
 import { SimpleListener } from '../shared/simple-listener';
 import { Web3Error } from '../models/web3-error';
 import { TokenData } from '../models/token-data';
-import { equalsIgnoreCase, getInstance, toAmount, toFormatBigNumber } from '../shared/helper';
+import { cloneDeep, equalsIgnoreCase, getInstance, toAmount, toFormatBigNumber } from '../shared/helper';
 import { StateService } from './state.service';
 import { UtilService } from './util.service';
 declare var window: any;
@@ -356,6 +356,13 @@ export class Web3Service implements OnDestroy {
       chainId = await this.getChainId();
     } catch (error) {
       throw new Web3Error(Web3Error.CODE_FAILED_CONNECTION, error);
+    }
+
+    let tokenData = this.utilService.retrieveTrustToken(chainId, address);
+    if(tokenData) {
+      tokenData = cloneDeep(tokenData);
+      await this.loadTokenBalance(tokenData);
+      return tokenData;
     }
 
     let contract: any;

@@ -51,10 +51,11 @@ export class UniswapWidgetWrapper implements OnChanges, OnDestroy, AfterViewInit
     }
 
     loadAndRender = async() => {
-        const data = await fetch(`https://tokens.uniswap.org/`);
+        const data = await fetch(`https://tokens.uniswap.org`);
         const tokenData = await data.json();
         this.tokenList = tokenData.tokens;
-        // TODO this.tokenList.push(INC_TOKEN[CURRENT_CHAIN]);
+        // TODO This will be done in the future when we have created a pool on uniswap.
+        //this.tokenList.push(INC_TOKEN[CURRENT_CHAIN]);
         this.render();
     };
 

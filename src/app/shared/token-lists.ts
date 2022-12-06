@@ -1,8 +1,8 @@
 import { ChainId } from "../models/chains";
 
-const UNI_LIST = 'https://tokens.uniswap.org'
-const UNI_EXTENDED_LIST = 'https://extendedtokens.uniswap.org/'
-const UNI_UNSUPPORTED_LIST = 'https://unsupportedtokens.uniswap.org/'
+const UNI_LIST = 'https://tokens.uniswap.org';
+const UNI_EXTENDED_LIST = 'https://extendedtokens.uniswap.org';
+const UNI_UNSUPPORTED_LIST = 'https://unsupportedtokens.uniswap.org';
 
 export const DEFAULT_LIST_OF_LISTS_TO_DISPLAY: string[] = [
   UNI_LIST,
