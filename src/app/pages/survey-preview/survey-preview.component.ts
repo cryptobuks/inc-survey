@@ -2,7 +2,8 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import BigNumber from 'bignumber.js';
 import { SurveyImplComponent } from 'src/app/comps/survey-impl/survey-impl.component';
 import { SurveyEditState } from 'src/app/models/survey-edit-state';
-import { MAX_UINT256 } from 'src/app/shared/constants';
+import { SurveyImpl } from 'src/app/models/survey-impl';
+import { CURRENT_CHAIN, MAX_UINT256 } from 'src/app/shared/constants';
 import { calcFeeTotal, calcGasMargin, insertValidationError, removeAppCover, setAppCover, toAmount, toFormatBigNumber } from 'src/app/shared/helper';
 import { ListenerRemover } from 'src/app/shared/simple-listener';
 import { BasePageComponent } from '../base-page.component';
@@ -17,6 +18,7 @@ export class SurveyPreviewComponent extends BasePageComponent {
   readonly titleKey = "survey_preview";
 
   state: SurveyEditState;
+  survey: SurveyImpl;
 
   loading = false;
   editing = false;
@@ -48,18 +50,10 @@ export class SurveyPreviewComponent extends BasePageComponent {
     }
 
     this.state.validated = false;
+    this.survey = this.state.survey;
+
     this.onChainLoadedRemover = this.web3Service.onChainLoaded.addAndFire(() => {
-      let totalFee = calcFeeTotal(this.state.survey.budget, this.state.survey.reward, this.configProps.feeWei);
-
-      let gasReserveAmount = toAmount(this.state.survey.gasReserve);
-      let rateAmount = toAmount(totalFee);
-      let totalAmount = toAmount(totalFee.plus(this.state.survey.gasReserve));
-
-      this.gasReserve = toFormatBigNumber(gasReserveAmount);
-      this.engineRate = toFormatBigNumber(rateAmount);
-      this.totalToPay = toFormatBigNumber(totalAmount);
-
-      this.loadAllowance();
+      this.loadChainData();
     }, () => {
       return this.loadedChainData;
     });
@@ -111,7 +105,7 @@ export class SurveyPreviewComponent extends BasePageComponent {
 
     this.confirmationService.confirm({
         target: event.target,
-        message: this.translateService.instant('first_time_two_transactions_x_executed', { val1: this.state.survey.tokenData.symbol }),
+        message: this.translateService.instant('first_time_two_transactions_x_executed', { val1: this.survey.tokenData.symbol }),
         icon: 'pi pi-exclamation-circle',
         accept: () => {
           this.sendSurvey();
@@ -122,7 +116,31 @@ export class SurveyPreviewComponent extends BasePageComponent {
   }
 
   hasAllowance() {
-    return this.allowance && this.allowance.isGreaterThanOrEqualTo(this.state.survey.budget);
+    return this.allowance && this.allowance.isGreaterThanOrEqualTo(this.survey.budget);
+  }
+
+  private async loadChainData() {
+    // in a multi-chain future, if the chainId changes, the survey must be edited again.
+    if(this.survey.tokenData.chainId != CURRENT_CHAIN) {
+      this.editSurvey();
+      return;
+    }
+    
+    let totalFee = calcFeeTotal(this.survey.budget, this.survey.reward, this.configProps.feeWei);
+
+    let gasReserveAmount = toAmount(this.survey.gasReserve);
+    let rateAmount = toAmount(totalFee);
+    let totalAmount = toAmount(totalFee.plus(this.survey.gasReserve));
+
+    this.gasReserve = toFormatBigNumber(gasReserveAmount);
+    this.engineRate = toFormatBigNumber(rateAmount);
+    this.totalToPay = toFormatBigNumber(totalAmount);
+
+    await this.loadAllowance();
+  }
+
+  private async loadAllowance() {
+    this.allowance = await this.web3Service.getERC20Allowance(this.survey.tokenData.address, this.accountData.address, this.engineContract._address);
   }
 
   private async sendSurvey() {
@@ -138,19 +156,19 @@ export class SurveyPreviewComponent extends BasePageComponent {
       }
 
       // create logo URL & upload image if has imageData
-      let hasImageToUpload = !this.state.survey.logoUrl && this.state.survey.imageData;
+      let hasImageToUpload = !this.survey.logoUrl && this.survey.imageData;
 
       if(hasImageToUpload) {
         try {
-          let cid = await this.ipfsService.add(this.state.survey.imageData);
+          let cid = await this.ipfsService.add(this.survey.imageData);
 
           if(!cid) {
             throw new Error("ipfs cid not found");
           }
 
-          this.state.survey.logoUrl = "ipfs://" + cid;
-          //this.state.survey.imageData = await this.ipfsService.ipfsImage(this.state.survey.logoUrl);
-          this.state.survey.imageData = this.state.survey.logoUrl;
+          this.survey.logoUrl = "ipfs://" + cid;
+          //this.survey.imageData = await this.ipfsService.ipfsImage(this.survey.logoUrl);
+          this.survey.imageData = this.survey.logoUrl;
         } catch(err) {
           insertValidationError('.survey-logo', this.translateService.instant('image_not_loaded_try_again_later'));
           throw err;
@@ -164,7 +182,7 @@ export class SurveyPreviewComponent extends BasePageComponent {
 
       if(!this.hasAllowance()) {
         //let gasLimit = await tokenCnt.methods.approve(this.engineContract._address, MAX_UINT256).estimateGas({ from: this.accountData.address, gas: 5000000 });
-        let tokenCnt = await this.web3Service.getERC20Contract(this.state.survey.tokenData.address);
+        let tokenCnt = await this.web3Service.getERC20Contract(this.survey.tokenData.address);
         let data = tokenCnt.methods.approve(this.engineContract._address, MAX_UINT256).encodeABI();
         let estimatedGas = await this.web3Service.estimateGas(this.accountData.address, tokenCnt._address, data);
         let gasLimit = calcGasMargin(estimatedGas, 30);
@@ -174,7 +192,7 @@ export class SurveyPreviewComponent extends BasePageComponent {
       let txHash: string;
 
       if(success) {
-        txHash = await this.surveyService.sendSurvey(this.state.survey);
+        txHash = await this.surveyService.sendSurvey(this.survey);
       }
 
       setAppCover(this.translateService.instant("please_wait"));
@@ -190,9 +208,5 @@ export class SurveyPreviewComponent extends BasePageComponent {
       this.loading = false;
       this.sending = false;
     }
-  }
-
-  private async loadAllowance() {
-    this.allowance = await this.web3Service.getERC20Allowance(this.state.survey.tokenData.address, this.accountData.address, this.engineContract._address);
   }
 }

@@ -10,7 +10,8 @@ import { SurveyEditState } from 'src/app/models/survey-edit-state';
 import { SurveyImpl } from 'src/app/models/survey-impl';
 import { ValidationOperator, ValidationExpression, ResponseType } from 'src/app/models/survey-model';
 import { ComponentType, RESPONSE_TYPE } from 'src/app/models/survey-support';
-import { CURRENT_CHAIN, HOUR_MILLIS, INC_TOKEN } from 'src/app/shared/constants';
+import { newTokenFromInfo } from 'src/app/models/token-data';
+import { CURRENT_CHAIN, HOUR_MILLIS } from 'src/app/shared/constants';
 import { cloneDeep, isEmpty, isValidHttpUrl, lengthBase64, resizeBase64Image, truncateSeconds, isDigit, isUDigit, ScrollPosition, loadPageList, uniqueId, moveScrollTo, insertValidationError, toFixedBigNumber, isIpfsUri, formatDuration, toAmount, toUnits, calcGasReserve } from 'src/app/shared/helper';
 import { ListenerRemover } from 'src/app/shared/simple-listener';
 import { BasePageComponent } from '../base-page.component';
@@ -265,7 +266,7 @@ export class CreateSurveyComponent extends BasePageComponent {
     }
 
     this.onChainLoadedRemover = this.web3Service.onChainLoaded.addAndFire(() => {
-      this.loadPartPrice();
+      this.loadChainData();
     }, () => {
       return this.loadedChainData;
     });
@@ -354,16 +355,11 @@ export class CreateSurveyComponent extends BasePageComponent {
       data: data
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.survey.tokenData.chainId = result.chainId;
-        this.survey.tokenData.address = result.address;
-        this.survey.tokenData.name = result.name;
-        this.survey.tokenData.symbol = result.symbol;
-        this.survey.tokenData.decimals = parseInt(result.decimals);
-        this.survey.tokenData.logoURI = result.logoURI;
-        this.survey.tokenData.balance = result.balance;
-        this.survey.tokenData.hfBalance = result.hfBalance;
+    dialogRef.afterClosed().subscribe(tokenInfo => {
+      if (tokenInfo) {
+        this.survey.tokenData = newTokenFromInfo(tokenInfo);
+        this.survey.tokenData.balance = tokenInfo.balance;
+        this.survey.tokenData.hfBalance = tokenInfo.hfBalance;
       }
     });
   }
@@ -539,16 +535,18 @@ export class CreateSurveyComponent extends BasePageComponent {
     this.survey.budget = budget;
     this.survey.reward = reward;
     this.survey.gasReserve = gasReserve;
+
     this.state.validated = true;
     this.router.navigate(['/create-survey/preview']);
 
     this.loading = false;
   }
 
-  private async loadImageData() {
-    if(!this.survey.imageData) {
-      //this.survey.imageData = await this.ipfsService.ipfsImage(this.survey.logoUrl);
-      this.survey.imageData = this.survey.logoUrl;
+  private async loadChainData() {
+    await this.loadPartPrice();
+    // in a multi-chain future, if the chainId changes, the token must be cleaned up.
+    if(this.survey.tokenData.chainId != CURRENT_CHAIN) {
+      this.survey.tokenData = {};
     }
   }
 
@@ -556,6 +554,14 @@ export class CreateSurveyComponent extends BasePageComponent {
     await this.surveyService.loadAvgTxGas();
     this.partPrice = await this.surveyService.calcPartPrice();
     this.loadGasReserve();
+  }
+
+  private async loadImageData() {
+    if(!this.survey.imageData && this.survey.logoUrl) {
+      //this.survey.imageData = await this.ipfsService.ipfsImage(this.survey.logoUrl);
+      this.survey.logoUrl = encodeURI(this.survey.logoUrl);
+      this.survey.imageData = this.survey.logoUrl;
+    }
   }
 
   private loadPage(nextPage: number = undefined, selector: string = undefined, callback: () => void = undefined) {

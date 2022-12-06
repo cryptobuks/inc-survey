@@ -3,6 +3,10 @@
     margin: 0 auto;
 }
 
+::ng-deep .take-survey-cnt .p-message-detail a {
+    color: var(--indigo-600);
+}
+
 .part-key-cnt {
     margin-top: 20px;
     text-align: start;

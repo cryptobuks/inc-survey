@@ -6,7 +6,7 @@ import { SurveyTakeState } from 'src/app/models/survey-take-state';
 import { insertValidationError, isUUID, removeAppCover, setAppCover, shortAddress } from 'src/app/shared/helper';
 import { ListenerRemover } from 'src/app/shared/simple-listener';
 import { BasePageComponent } from '../base-page.component';
-import { CURRENT_CHAIN } from 'src/app/shared/constants';
+import { CURRENT_CHAIN, NET_PARAMS } from 'src/app/shared/constants';
 import { SurveyStateInfoService } from 'src/app/services/survey-state-info.service';
 import { setBreadcrumbForDetails } from 'src/app/shared/menu';
 import { FwdRequest } from 'src/app/models/fwd-request';
@@ -274,12 +274,22 @@ export class TakeSurveyComponent extends BasePageComponent {
 
         this.state.survey = this.survey;
         this.state.questionsNum = questionsNum;
+      } 
+      // in a multi-chain future, if the chainId changes, the survey must be reloaded.
+      else if(this.survey.tokenData.chainId != CURRENT_CHAIN) {
+        this.backToList();
+        return;
       }
 
       await this.surveyStateInfo.loadData(this.survey, this.checkGasReserve.bind(this));
       
       this.setTitle(this.translateService.instant("take_survey") + ": " + this.survey.title);
       setBreadcrumbForDetails(this.router, surveyAddr, this.survey.title);
+
+      if(!this.utilService.retrieveTrustToken(CURRENT_CHAIN, this.survey.tokenData.address)) {
+        const link = NET_PARAMS[CURRENT_CHAIN].blockExplorerUrls[0] + '/address/' + this.survey.tokenData.address + '#code';
+        this.pushWarn(this.translateService.instant('warning_about_unknown_token', { val1: link }));
+      }
 
     } catch (err: any) {
       console.error(err);

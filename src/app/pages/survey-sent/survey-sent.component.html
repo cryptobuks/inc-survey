@@ -6,7 +6,7 @@
 
     <tx-status class="survey-tx" [txHash]="state.txHash" [txValues]="txValues" (onReceipt)="onReceipt($event)"></tx-status>
     
-    <survey-impl class="survey-details" [survey]="state.survey" [showLogoUrl]="true" [showLocation]="state.survey.address" [showQuestions]="false" [showQuestionsNum]="true" 
+    <survey-impl class="survey-details" [survey]="survey" [showLogoUrl]="true" [showLocation]="survey.address" [showQuestions]="false" [showQuestionsNum]="true" 
     [showMaxParts]="true" [showKeys]="true" #surveyComp></survey-impl>
 
     <div class="control-grid">

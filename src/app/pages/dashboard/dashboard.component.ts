@@ -38,13 +38,13 @@ export class DashboardComponent extends BasePageComponent {
 
   onInit() {
     this.onChainLoadedRemover = this.web3Service.onChainLoaded.addAndFire(() => {
-      this.loadData();
+      this.loadAccountData();
     }, () => {
       return this.loadedChainData;
     });
 
     this.onAccountLoadedRemover = this.web3Service.onAccountLoaded.add(() => {
-      this.loadData();
+      this.loadAccountData();
 
       if(this.ownOpenedSurveysChart) {
         this.ownOpenedSurveysChart.loadData();
@@ -76,7 +76,7 @@ export class DashboardComponent extends BasePageComponent {
     this.router.navigate(['/dashboard/my-parts']);
   }
 
-  private async loadData() {
+  private async loadAccountData() {
     this.loading = true;
 
     try {

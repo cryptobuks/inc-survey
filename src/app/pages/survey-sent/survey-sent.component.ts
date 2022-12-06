@@ -1,6 +1,7 @@
 import { Component, ElementRef } from '@angular/core';
 import { NotifType } from 'src/app/models/notif-type';
 import { SurveyEditState } from 'src/app/models/survey-edit-state';
+import { SurveyImpl } from 'src/app/models/survey-impl';
 import { TxValue } from 'src/app/models/tx-value';
 import { CURRENT_CHAIN } from 'src/app/shared/constants';
 import { calcFeeTotal, printPage } from 'src/app/shared/helper';
@@ -17,6 +18,8 @@ export class SurveySentComponent extends BasePageComponent {
   readonly titleKey = "survey_status";
 
   state: SurveyEditState;
+  survey: SurveyImpl;
+  
   txValues: TxValue[] = [];
   receipt: any;
 
@@ -33,16 +36,17 @@ export class SurveySentComponent extends BasePageComponent {
       return;
     }
 
-    this.setTitle(this.translateService.instant("survey_status") + " ´" + this.state.survey.title + "´");
+    this.survey = this.state.survey;
+    this.setTitle(this.translateService.instant("survey_status") + " ´" + this.survey.title + "´");
 
     this.txValues = [
       {
         title: this.translateService.instant("gas_reserve"),
-        value: this.state.survey.gasReserve
+        value: this.survey.gasReserve
       },
       {
         title: this.translateService.instant("engine_rate"),
-        value: calcFeeTotal(this.state.survey.budget, this.state.survey.reward, this.configProps.feeWei)
+        value: calcFeeTotal(this.survey.budget, this.survey.reward, this.configProps.feeWei)
       }
     ];
   }
@@ -65,11 +69,11 @@ export class SurveySentComponent extends BasePageComponent {
       this.pushSuccess(this.translateService.instant('survey_on_blockchain_few_time_to_be_indexed'));
       
       const events = await this.engineContract.getPastEvents('OnSurveyAdded', { fromBlock: this.receipt.blockNumber, toBlock: this.receipt.blockNumber });
-      this.state.survey.address = events[0].returnValues.surveyAddr;
+      this.survey.address = events[0].returnValues.surveyAddr;
       // Send notification to subscribers
       await this.utilService.triggerNotification(NotifType.NEW_SURVEY, {
         chainId: CURRENT_CHAIN,
-        surveyAddr: this.state.survey.address
+        surveyAddr: this.survey.address
       });
     }
   }

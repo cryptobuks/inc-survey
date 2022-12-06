@@ -26,6 +26,7 @@ export interface ConfigProps {
     feeWei: BigNumber;
 }
 
+// ArrayText elements should not contain the separator (;)
 export enum ResponseType {
     Bool, Text, Number, Percent, Date, Rating, OneOption, 
     ManyOptions, Range, DateRange,

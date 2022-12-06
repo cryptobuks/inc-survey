@@ -1,3 +1,4 @@
+import { TokenInfo } from "@uniswap/widgets";
 import BigNumber from "bignumber.js";
 
 export interface TokenData {
@@ -16,11 +17,22 @@ export interface TokenData {
 export const newToken =
   (chainId: number, address: string, name: string, symbol: string, decimals: number, logoURI: string): TokenData => {
     return {
-      chainId: chainId,
-      address: address,
-      name: name,
-      symbol: symbol,
-      decimals: decimals,
-      logoURI: logoURI
-    }
+      chainId,
+      address,
+      name,
+      symbol,
+      decimals,
+      logoURI
+    };
   };
+
+export const newTokenFromInfo = (tokenInfo: TokenInfo): TokenData => {
+  return {
+    chainId: tokenInfo.chainId,
+    address: tokenInfo.address,
+    name: tokenInfo.name,
+    symbol: tokenInfo.symbol,
+    decimals: tokenInfo.decimals,
+    logoURI: tokenInfo.logoURI
+  };
+};

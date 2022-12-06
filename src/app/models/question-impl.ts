@@ -13,7 +13,7 @@ export class QuestionImpl {
     // Question.responseType not used
     static toImpl(question: Question, validators: QuestionValidator[]): QuestionImpl {
       let impl: QuestionImpl = {
-        content: QuestionImpl.amplifyContent(JSON.parse(question.content)),
+        content: QuestionImpl.amplifyContent(question.content),
         viewId: uniqueId(),
         mandatory: question.mandatory,
         validators: validators,
@@ -23,17 +23,20 @@ export class QuestionImpl {
       return impl;
     }
 
-    static minifyContent(content: QuestionContent): MinifiedQuestionContent {
-        return {
+    static minifyContent(content: QuestionContent): string {
+        const minified: MinifiedQuestionContent = {
             t: content.title,
             d: content.description,
             e: content.errorMessage,
             ct: content.componentType,
             cd: content.componentData
         };
+        return JSON.stringify(minified);
     }
     
-    static amplifyContent(minified: MinifiedQuestionContent): QuestionContent {
+    static amplifyContent(content: string): QuestionContent {
+        const minified = JSON.parse(content) as MinifiedQuestionContent;
+        
         return {
             title: minified.t,
             description: minified.d,

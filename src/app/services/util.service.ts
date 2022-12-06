@@ -4,15 +4,16 @@ import { retry } from "rxjs/operators";
 import { FwdRequest } from "../models/fwd-request";
 import { RelResponse } from "../models/rel-response";
 import { NotifType } from "../models/notif-type";
-import { RELAYER_API_URL, COINGECKO_PRICE_URL, HTTP_OPTIONS, RECAPTCHA_RENDER } from "../shared/constants";
+import { RELAYER_API_URL, COINGECKO_PRICE_URL, HTTP_OPTIONS, RECAPTCHA_RENDER, INC_TOKEN, CURRENT_CHAIN } from "../shared/constants";
 import { SurveyFilter } from "../models/survey-filter";
 import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
 import { schema, TokenList } from '@uniswap/token-lists';
 import { StorageUtil } from "../shared/storage-util";
-import { UNSUPPORTED_LIST_URLS } from "../shared/token-lists";
+import { DEFAULT_ACTIVE_LIST_URLS, UNSUPPORTED_LIST_URLS } from "../shared/token-lists";
 import { ChainId } from "../models/chains";
-import { getTokenLogoURL, ipfsToURL } from "../shared/helper";
+import { cloneDeep, getTokenLogoURL, ipfsToURL } from "../shared/helper";
+import { newTokenFromInfo, TokenData } from "../models/token-data";
 declare var grecaptcha: any;
 
 @Injectable({
@@ -20,6 +21,7 @@ declare var grecaptcha: any;
 })
 export class UtilService {
 
+    private trustTokens: { [chainId: string]: { [address: string]: TokenData } } = {};
     private tokenLogoUrls: { [chainId: string]: { [address: string]: string } } = {};
 
     validate: ValidateFunction;
@@ -28,7 +30,7 @@ export class UtilService {
         const ajv = new Ajv({ allErrors: true });
         addFormats(ajv);
         this.validate = ajv.compile(schema);
-        this.loadTokenLogoUrls();
+        this.loadTokens();
     }
 
     async loadJson(url: string): Promise<any> {
@@ -151,10 +153,14 @@ export class UtilService {
         });
     }
 
-    retrieveTokenLogoURL(chainId: ChainId, address: string, logoURI: string = undefined): string | undefined {
-        let logoUrl = this.tokenLogoUrls[chainId][address];
+    retrieveTrustToken(chainId: ChainId, address: string, logoURI: string = undefined): TokenData | undefined {
+        return this.trustTokens[chainId] ? this.trustTokens[chainId][address] : undefined;
+    }
 
-        if(!logoUrl) {
+    retrieveTokenLogoURL(chainId: ChainId, address: string, logoURI: string = undefined): string | undefined {
+        let logoUrl = this.tokenLogoUrls[chainId] ? this.tokenLogoUrls[chainId][address] : undefined;
+
+        if (!logoUrl) {
             logoUrl = getTokenLogoURL(chainId, address);
         }
 
@@ -169,31 +175,43 @@ export class UtilService {
         return Promise.resolve<number>(data[0]);
     }
 
-    private async loadTokenLogoUrls() {
-        // const activeListUrls = DEFAULT_ACTIVE_LIST_URLS.filter((url: string) => !UNSUPPORTED_LIST_URLS.includes(url));
-        const activeListUrls = StorageUtil.activeLists.filter((url: string) => !UNSUPPORTED_LIST_URLS.includes(url));
-        const logoUrls = {};
+    private async loadTokens() {
+        let listUrls = DEFAULT_ACTIVE_LIST_URLS.concat(StorageUtil.activeLists);
+        listUrls = listUrls.filter((url, pos) => listUrls.indexOf(url) === pos && !UNSUPPORTED_LIST_URLS.includes(url));
+        const tokens: { [chainId: string]: { [address: string]: TokenData } } = {};
+        const logoUrls: { [chainId: string]: { [address: string]: string } } = {};
 
-        if (activeListUrls.length == 0) {
-            return;
-        }
+        // add INC token
+        let incToken = cloneDeep(INC_TOKEN[CURRENT_CHAIN]);
+        tokens[CURRENT_CHAIN] = {};
+        tokens[CURRENT_CHAIN][incToken.address] = incToken;
 
-        for (const url of activeListUrls) {
-            let list: TokenList = await this.loadJson(url);
+        for (const listUrl of listUrls) {
+            let list: TokenList = await this.loadJson(listUrl);
             if (!this.validate(list) || !list?.tokens) {
                 continue;
             }
 
             for (const tokenInfo of list.tokens) {
+                if (!tokens[tokenInfo.chainId]) {
+                    tokens[tokenInfo.chainId] = {};
+                }
+
                 if (!logoUrls[tokenInfo.chainId]) {
-                    logoUrls[tokenInfo.chainId] = [];
+                    logoUrls[tokenInfo.chainId] = {};
                 }
 
                 tokenInfo.logoURI = tokenInfo.logoURI ? ipfsToURL(tokenInfo.logoURI) : getTokenLogoURL(tokenInfo.chainId, tokenInfo.address);
+
+                if (DEFAULT_ACTIVE_LIST_URLS.includes(listUrl)) {
+                    tokens[tokenInfo.chainId][tokenInfo.address] = newTokenFromInfo(tokenInfo);
+                }
+
                 logoUrls[tokenInfo.chainId][tokenInfo.address] = tokenInfo.logoURI;
             }
         }
 
+        this.trustTokens = tokens;
         this.tokenLogoUrls = logoUrls;
     }
 }

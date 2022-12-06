@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { isEmpty } from '../shared/helper';
 
-const blockchainErrorRegex = /(?:.*execution reverted: )(?:[a-zA-z]+:\s*)?([^"]+)/gm;
+const blockchainErrorRegex = /.*execution reverted: (?:[a-zA-z]+:\s*)?([^"]+)/gm;
 const serverErrorRegex = /Relayer:\s*(.+)/g;
 const toastDefaultLive = 10000;
 

@@ -5,7 +5,6 @@ import { SurveyImpl } from '../models/survey-impl';
 import { ConfigProps, Survey, Question, QuestionValidator, Participation, SurveyAmounts, ResponseCount, SurveyRequest } from '../models/survey-model';
 import { RESPONSE_TYPE, SurveyState } from '../models/survey-support';
 import { calcFeeTotal, calcGasMargin, filterOutliers, keccak256 } from '../shared/helper';
-import { IpfsService } from './ipfs.service';
 import { Web3Service } from './web3.service';
 import { FwdRequest } from '../models/fwd-request';
 import { AccountData } from '../models/account-data';
@@ -357,7 +356,7 @@ export class SurveyService implements OnDestroy {
     for(let i = 0; i < surveyImpl.questions.length; i++) {
       let question = surveyImpl.questions[i];
       let newQuestion: Question = {
-        content: JSON.stringify(QuestionImpl.minifyContent(question.content)),
+        content: QuestionImpl.minifyContent(question.content),
         mandatory: question.mandatory,
         responseType: RESPONSE_TYPE[question.content.componentType]
       };

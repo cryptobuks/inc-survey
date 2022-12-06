@@ -38,13 +38,13 @@ export class OwnSurveysComponent extends BasePageComponent {
 
   onInit() {
     this.onChainLoadedRemover = this.web3Service.onChainLoaded.addAndFire(() => {
-      this.loadData();
+      this.loadAccountData();
     }, () => {
       return this.loadedChainData;
     });
 
     this.onAccountLoadedRemover = this.web3Service.onAccountLoaded.add(() => {
-      this.loadData();
+      this.loadAccountData();
     });
   }
 
@@ -67,12 +67,22 @@ export class OwnSurveysComponent extends BasePageComponent {
     });
   }
 
+  backToDashboard() {
+    this.router.navigate(['/dashboard']);
+  }
+
   exploreSurvey(surveyAddr: number) {
     this.router.navigate(['/dashboard/my-surveys/' + surveyAddr]);
   }
 
-  private async loadData() {
+  private async loadAccountData() {
     this.surveysLength = await this.surveyService.getOwnSurveysLength();
+
+    if (this.surveysLength == 0) {
+      this.backToDashboard();
+      return;
+    }
+
     this.firstList();
   }
 

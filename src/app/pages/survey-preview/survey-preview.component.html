@@ -4,7 +4,7 @@
 
     <p-messages [(value)]="messages" [enableService]="false"></p-messages>
 
-    <survey-impl *ngIf="state?.survey" [survey]="state.survey" [showLogoUrl]="true" [showQuestionsNum]="true" [showMaxParts]="true" [showKeys]="true" 
+    <survey-impl *ngIf="survey" [survey]="survey" [showLogoUrl]="true" [showQuestionsNum]="true" [showMaxParts]="true" [showKeys]="true" 
     [gasReserve]="gasReserve" [engineRate]="engineRate" [totalToPay]="totalToPay" #surveyComp></survey-impl>
 
     <div class="control-grid">

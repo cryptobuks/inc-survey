@@ -56,7 +56,7 @@ export class SurveyListComponent extends BasePageComponent {
     }
 
     this.onChainLoadedRemover = this.web3Service.onChainLoaded.addAndFire(() => {
-      this.loadData();
+      this.loadChainData();
     }, () => {
       return this.loadedChainData;
     });
@@ -103,7 +103,7 @@ export class SurveyListComponent extends BasePageComponent {
     this.router.navigate(['/surveys/' + surveyAddr]);
   }
 
-  private async loadData() {
+  private async loadChainData() {
     await this.firstList();
   }
 

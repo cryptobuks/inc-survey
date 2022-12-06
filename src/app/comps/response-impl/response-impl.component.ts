@@ -48,7 +48,7 @@ export class ResponseImplComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.onChainLoadedRemover = this.web3Service.onChainLoaded.addAndFire(() => {
-      this.loadData();
+      this.loadChainData();
     }, () => {
       return this.web3Service.loadedChainData;
     });
@@ -132,7 +132,7 @@ export class ResponseImplComponent implements OnInit, OnDestroy {
     } as ResponseData);
   }
 
-  private async loadData() {
+  private async loadChainData() {
     this.loading = true;
 
     try {

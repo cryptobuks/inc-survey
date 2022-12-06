@@ -42,13 +42,13 @@ export class OwnPartsComponent extends BasePageComponent {
 
   onInit() {
     this.onChainLoadedRemover = this.web3Service.onChainLoaded.addAndFire(() => {
-      this.loadData();
+      this.loadAccountData();
     }, () => {
       return this.loadedChainData;
     });
 
     this.onAccountLoadedRemover = this.web3Service.onAccountLoaded.add(() => {
-      this.loadData();
+      this.loadAccountData();
     });
   }
 
@@ -83,7 +83,7 @@ export class OwnPartsComponent extends BasePageComponent {
     printPage(this.element);
   }
 
-  private async loadData() {
+  private async loadAccountData() {
     this.partsNum = await this.surveyService.getOwnParticipationsLength();
 
     if (this.partsNum == 0) {

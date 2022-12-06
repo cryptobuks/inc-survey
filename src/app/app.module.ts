@@ -53,6 +53,8 @@ import { ResponseImplComponent } from './comps/response-impl/response-impl.compo
 import { ResponseTextComponent } from './comps/response-text/response-text.component';
 import { ResponseOptionsComponent } from './comps/response-options/response-options.component';
 import { NumberArrayPipe } from './shared/number-array.pipe';
+import { SafeHtmlPipe } from './shared/safe-html.pipe';
+import { SafeUrlPipe } from './shared/safe-url.pipe';
 import { ResponseChecksComponent } from './comps/response-checks/response-checks.component';
 import { ResponseLinearScaleComponent } from './comps/response-linear-scale/response-linear-scale.component';
 import { ResponseRatingComponent } from './comps/response-rating/response-rating.component';
@@ -117,6 +119,8 @@ import { LazyThumbComponent } from './comps/lazy-thumb/lazy-thumb.component';
     ResponseTextComponent,
     ResponseOptionsComponent,
     NumberArrayPipe,
+    SafeHtmlPipe,
+    SafeUrlPipe,
     ResponseChecksComponent,
     ResponseLinearScaleComponent,
     ResponseRatingComponent,

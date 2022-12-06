@@ -1,4 +1,5 @@
 import { Component, ElementRef } from '@angular/core';
+import { SurveyImpl } from 'src/app/models/survey-impl';
 import { SurveyTakeState } from 'src/app/models/survey-take-state';
 import { SurveyStateInfoService } from 'src/app/services/survey-state-info.service';
 import { printPage } from 'src/app/shared/helper';
@@ -16,6 +17,7 @@ export class PartSentComponent extends BasePageComponent {
   readonly titleKey = "participation_status";
 
   state: SurveyTakeState;
+  survey: SurveyImpl;
   txHash: string;
   receipt: any;
 
@@ -36,8 +38,9 @@ export class PartSentComponent extends BasePageComponent {
       return;
     }
 
-    this.setTitle(this.translateService.instant("participation_status") + " ´" + this.state.survey.title + "´");
-    setBreadcrumbForDetails(this.router, this.state.survey.address, this.state.survey.title);
+    this.survey = this.state.survey;
+    this.setTitle(this.translateService.instant("participation_status") + " ´" + this.survey.title + "´");
+    setBreadcrumbForDetails(this.router, this.survey.address, this.survey.title);
     this.loadSurveyStateInfo();
 
     if (this.state.isMetaTx) {
@@ -64,13 +67,13 @@ export class PartSentComponent extends BasePageComponent {
     if (receipt.status) {
       this.messageHelperService.showSuccess(this.translateService.instant(
         "check_balance_should_received_x",
-        { val1: this.state.survey.formatted.rewardAmount + ' ' + this.state.survey.tokenData.symbol }
+        { val1: this.survey.formatted.rewardAmount + ' ' + this.survey.tokenData.symbol }
       ));
     }
   }
 
   backToDetails() {
-    this.router.navigate(['/surveys/' + this.state.survey.address]);
+    this.router.navigate(['/surveys/' + this.survey.address]);
   }
 
   goDashboard() {
@@ -82,7 +85,7 @@ export class PartSentComponent extends BasePageComponent {
   }
 
   private async loadSurveyStateInfo() {
-    await this.surveyStateInfo.loadData(this.state.survey);
+    await this.surveyStateInfo.loadData(this.survey);
   }
 
   private async getTxHash() {

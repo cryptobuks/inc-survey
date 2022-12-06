@@ -13,7 +13,7 @@
 
         <div *ngIf="surveyStateInfo.canParticipate">
 
-            <p-messages [(value)]="messages" [enableService]="false"></p-messages>
+            <p-messages [(value)]="messages" [enableService]="false" [escape]="false"></p-messages>
 
             <div *ngIf="survey.keyRequired" class="content-panel part-key-cnt">
                 <span class="question-title">{{ 'enter_oupon_provided_by_survey_owner' | translate }}</span>

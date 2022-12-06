@@ -99,7 +99,7 @@ export const SURVEY_ADDRESS: { [chainId: number]: string } = {
 
 export const VALIDATOR_ADDRESS: { [chainId: number]: string } = {
   [ChainId.MATIC]: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  [ChainId.MUMBAI]: "0x5Df3EDEc3e805f8386599413D81660a413918007",
+  [ChainId.MUMBAI]: "0xd1019E08aC5d7e3fB546d5ef4f3C7D18008644C7",
   [ChainId.LOCAL]: "0x3F8483fCC04B6BBBb875eae6333AebB6f2D96149"
 };
 

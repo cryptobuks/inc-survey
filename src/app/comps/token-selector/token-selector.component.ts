@@ -2,7 +2,7 @@ import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UtilService } from 'src/app/services/util.service';
 import { Web3Service } from 'src/app/services/web3.service';
-import { confirmDialog, getTokenLogoURL, ipfsToURL, isEmpty, parseENSAddress, uriToHttp } from 'src/app/shared/helper';
+import { cloneDeep, confirmDialog, getTokenLogoURL, ipfsToURL, isEmpty, parseENSAddress, uriToHttp } from 'src/app/shared/helper';
 import { COMMON_BASES, DEFAULT_LIST_OF_LISTS_TO_DISPLAY, UNSUPPORTED_LIST_URLS } from 'src/app/shared/token-lists';
 import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
@@ -484,7 +484,7 @@ export class TokenSelectorComponent implements OnInit {
     //tmpList.push(this.bases[0]);
 
     // add INC token
-    let incToken = INC_TOKEN[CURRENT_CHAIN];
+    let incToken = cloneDeep(INC_TOKEN[CURRENT_CHAIN]);
     tmpList.push(incToken);
 
     // load tokens from active lists
