@@ -1,3 +1,2 @@
-<img *ngIf="!isLoading && imageData" class="lazy-thumb" [alt]="alt" [src]="imageData" loading="lazy" (error)="onErrorThrown($event)" [style.width]="size" [style.height]="size" />
-<img *ngIf="!isLoading && !imageData" class="lazy-thumb" [alt]="alt" [src]="empty" [style.width]="size" [style.height]="size" [class.animate-flicker]="loading" />
-<span *ngIf="isLoading" class="lazy-thumb animate-flicker" [style.width]="size" [style.height]="size"></span>
+<img class="lazy-thumb" [alt]="alt" [src]="url ?? empty" loading="lazy" [style.width]="size" [style.height]="size" [class.animate-flicker]="isLoading"
+(load)="onImageLoad($event)" (error)="onImageError($event)" />

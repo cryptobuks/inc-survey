@@ -3,6 +3,6 @@
     <img *ngIf="symbolIcon" class="symbol-icon" alt="Symbol" [src]="symbolIcon" 
         [pTooltip]="symbol" [tooltipPosition]="iconTooltipPosition" />
     <span class="balance">{{ balance }}</span>
-    <mat-icon *ngIf="icon" [class.action-icon]="onIconClick.observers.length > 0" (click)="emitIconClick($event)"
+    <mat-icon *ngIf="icon" [class.action-item]="onIconClick.observers.length > 0" (click)="emitIconClick($event)"
         [pTooltip]="iconTooltip" [tooltipPosition]="iconTooltipPosition">{{ icon }}</mat-icon>
 </div>

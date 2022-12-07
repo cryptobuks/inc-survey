@@ -58,7 +58,7 @@
 
             <div *ngIf="hasSuggestedTokens()" class="tokens-cnt suggested-tokens-cnt">
                 <div class="suggested-tokens-head">
-                    <mat-icon class="small-icon action-icon">generating_tokens</mat-icon>
+                    <mat-icon class="small-icon action-item">generating_tokens</mat-icon>
                     <span>{{ 'expanded_results_from_inactive_lists' | translate }}</span>
                     <i class="pi pi-question-circle" pTooltip="{{ 'tokens_from_inactive_lists_description' | translate }}" tooltipPosition="left"></i>
                 </div>
@@ -158,7 +158,7 @@
             <div *ngIf="viewIndex == 2 && !hasCustomTokens()" class="no-result-cnt">
                 <p-progressSpinner *ngIf="loadingCustomTokens" styleClass="custom-spinner" strokeWidth="8"
                     animationDuration=".5s"></p-progressSpinner>
-                <span *ngIf="!loadingCustomTokens">{{ 'no_results_found' | translate }}</span>
+                <span *ngIf="!loadingCustomTokens">{{ 'no_custom_tokens' | translate }}</span>
             </div>
 
             <div *ngIf="viewIndex == 1 && hasLists()" class="lists-cnt">
@@ -171,7 +171,7 @@
                         <span class="list-name">{{ list.name }}</span>
                         <div class="list-count" [style.color]="list.active? '#EEEEEE': '#9E9E9E'">
                             <span>{{ list.count }} {{ 'tokens' | translate | lowercase }}</span>
-                            <mat-icon class="small-icon action-icon" (click)="listOverlay.toggle($event)">settings</mat-icon>
+                            <mat-icon class="small-icon action-item" (click)="listOverlay.toggle($event)">settings</mat-icon>
                         </div>
                     </div>
                     <toggle-switch [(checked)]="list.active" [color]="list.color" (checkedChange)="onListChanged(list.url, $event)"></toggle-switch>
@@ -179,10 +179,10 @@
                     <p-overlayPanel #listOverlay [showCloseIcon]="false">
                         <span class="title">{{ list.version }}</span>
                         <p-divider></p-divider>
-                        <a class="action-icon" (click)="listOverlay.hide();viewList(list.url);">
+                        <a class="action-item" (click)="listOverlay.hide();viewList(list.url);">
                             {{ 'view_list' | translate }}
                         </a>
-                        <a *ngIf="isCutomList(list.url)" class="action-icon" (click)="listOverlay.hide();removeList(list.url);">
+                        <a *ngIf="isCutomList(list.url)" class="action-item" (click)="listOverlay.hide();removeList(list.url);">
                             {{ 'remove_list' | translate }}
                         </a>
                     </p-overlayPanel>
@@ -192,7 +192,7 @@
             <div *ngIf="viewIndex == 2 && hasCustomTokens()" class="custom-tokens-cnt">
                 <div class="custom-tokens-head">
                     <span>{{ customTokens.length }} {{ 'custom_tokens' | translate | lowercase }}</span>
-                    <a class="action-icon" (click)="removeCustomTokens()">
+                    <a class="action-item" (click)="removeCustomTokens()">
                         {{ 'remove_all' | translate }}
                     </a>
                 </div>
@@ -204,9 +204,9 @@
                         <span class="token-name">{{ token.name }}</span>
                     </div>
                     <div class="token-actions">
-                        <mat-icon class="medium-icon action-icon" (click)="removeCustomToken(token.address)" title="{{ 'remove_custom_token' | translate }}">delete_outline</mat-icon>
-                        <mat-icon class="medium-icon action-icon" (click)="viewCustomToken(token.address)" title="{{ 'view_custom_token' | translate }}">open_in_new</mat-icon>
-                        <mat-icon class="medium-icon action-icon" (click)="selectToken(token)" title="{{ 'select_custom_token' | translate }}">task_alt</mat-icon>
+                        <mat-icon class="medium-icon action-item" (click)="removeCustomToken(token.address)" title="{{ 'remove_custom_token' | translate }}">delete_outline</mat-icon>
+                        <mat-icon class="medium-icon action-item" (click)="viewCustomToken(token.address)" title="{{ 'view_custom_token' | translate }}">open_in_new</mat-icon>
+                        <mat-icon class="medium-icon action-item" (click)="selectToken(token)" title="{{ 'select_custom_token' | translate }}">task_alt</mat-icon>
                     </div>
                 </div>
             </div>

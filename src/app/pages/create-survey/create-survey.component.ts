@@ -558,7 +558,6 @@ export class CreateSurveyComponent extends BasePageComponent {
 
   private async loadImageData() {
     if(!this.survey.imageData && this.survey.logoUrl) {
-      //this.survey.imageData = await this.ipfsService.ipfsImage(this.survey.logoUrl);
       this.survey.logoUrl = encodeURI(this.survey.logoUrl);
       this.survey.imageData = this.survey.logoUrl;
     }

@@ -1,8 +1,10 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { TokenData } from 'src/app/models/token-data';
 import { Web3Service } from 'src/app/services/web3.service';
-import { shortAddress, toAmount, toFormatBigNumber } from 'src/app/shared/helper';
+import { shortAddress } from 'src/app/shared/helper';
 import { ListenerRemover } from 'src/app/shared/simple-listener';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { OverlayPanel } from 'primeng/overlaypanel';
 
 @Component({
   selector: 'select-token',
@@ -17,6 +19,8 @@ export class SelectTokenComponent implements OnInit, OnDestroy {
   @Output()
   onSelect: EventEmitter<any> = new EventEmitter();
 
+  @ViewChild('menuOverlay') menuOverlay: OverlayPanel;
+
   get shortAddress(): string {
     return shortAddress(this.data.address);
   };
@@ -27,7 +31,10 @@ export class SelectTokenComponent implements OnInit, OnDestroy {
 
   private onAccountLoadedRemover: ListenerRemover;
 
-  constructor(private web3Service: Web3Service) { }
+  constructor(
+    private web3Service: Web3Service,
+    private clipboard: Clipboard
+  ) { }
 
   ngOnInit(): void {
     if(!this.data.balance || !this.data.hfBalance) {
@@ -46,8 +53,22 @@ export class SelectTokenComponent implements OnInit, OnDestroy {
     this.onAccountLoadedRemover && this.onAccountLoadedRemover();
   }
 
-  emitSelect(e: Event): void {
+  emitSelect(e: Event) {
     this.onSelect.emit(e);
+  }
+
+  onRightClick(e: Event) {
+    if(!this.data.address) {
+      return;
+    }
+
+    e.preventDefault();
+    this.menuOverlay.toggle(e);
+   }
+
+  copyAddress() {
+    this.menuOverlay.hide();
+    this.clipboard.copy(this.data.address);
   }
 
   async loadBalance() {

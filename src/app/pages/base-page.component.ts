@@ -13,7 +13,6 @@ import { ConfirmationService, Message } from 'primeng/api';
 import { ConfigProps } from '../models/survey-model';
 import { StateService } from '../services/state.service';
 import { CURRENT_CHAIN, NATIVE_CURRENCY, WRAPPED_CURRENCY } from '../shared/constants';
-import { IpfsService } from '../services/ipfs.service';
 import { MessageHelperService } from '../services/message-helper.service';
 declare var components: any;
 declare var $: any;
@@ -33,7 +32,6 @@ export abstract class BasePageComponent implements OnInit, OnDestroy {
   protected utilService: UtilService;
   protected web3Service: Web3Service;
   protected surveyService: SurveyService;
-  protected ipfsService: IpfsService;
   protected messageHelperService: MessageHelperService;
   protected confirmationService: ConfirmationService;
   protected navState: any;
@@ -68,7 +66,6 @@ export abstract class BasePageComponent implements OnInit, OnDestroy {
     this.utilService = AppModule.injector.get(UtilService);
     this.web3Service = AppModule.injector.get(Web3Service);
     this.surveyService = AppModule.injector.get(SurveyService);
-    this.ipfsService = AppModule.injector.get(IpfsService);
     this.messageHelperService = AppModule.injector.get(MessageHelperService);
     this.confirmationService = AppModule.injector.get(ConfirmationService);
 

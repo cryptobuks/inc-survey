@@ -4,7 +4,7 @@ import { SurveyImplComponent } from 'src/app/comps/survey-impl/survey-impl.compo
 import { SurveyEditState } from 'src/app/models/survey-edit-state';
 import { SurveyImpl } from 'src/app/models/survey-impl';
 import { CURRENT_CHAIN, MAX_UINT256 } from 'src/app/shared/constants';
-import { calcFeeTotal, calcGasMargin, insertValidationError, removeAppCover, setAppCover, toAmount, toFormatBigNumber } from 'src/app/shared/helper';
+import { calcFeeTotal, calcGasMargin, dataURIToBase64, insertValidationError, removeAppCover, setAppCover, toAmount, toFormatBigNumber } from 'src/app/shared/helper';
 import { ListenerRemover } from 'src/app/shared/simple-listener';
 import { BasePageComponent } from '../base-page.component';
 
@@ -160,14 +160,15 @@ export class SurveyPreviewComponent extends BasePageComponent {
 
       if(hasImageToUpload) {
         try {
-          let cid = await this.ipfsService.add(this.survey.imageData);
+          let base64 = dataURIToBase64(this.survey.imageData);
+          let result = await this.utilService.ipfsUpload(base64);
 
-          if(!cid) {
-            throw new Error("ipfs cid not found");
+          if(!result.success) {
+            throw new Error(result.data);
           }
 
+          const cid = result.data.path;
           this.survey.logoUrl = "ipfs://" + cid;
-          //this.survey.imageData = await this.ipfsService.ipfsImage(this.survey.logoUrl);
           this.survey.imageData = this.survey.logoUrl;
         } catch(err) {
           insertValidationError('.survey-logo', this.translateService.instant('image_not_loaded_try_again_later'));

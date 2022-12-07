@@ -46,7 +46,7 @@
 }
 
 .select-token .icon > .token-thumb {
-    display: block;
+    display: inline-block;
     margin: 7px 0 0 7px;
 }
 

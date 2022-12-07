@@ -1,20 +1,21 @@
 import { ChainId } from "../models/chains";
+import { CURRENT_URL } from "./constants";
 
-const UNI_LIST = 'https://tokens.uniswap.org';
-const UNI_EXTENDED_LIST = 'https://extendedtokens.uniswap.org';
-const UNI_UNSUPPORTED_LIST = 'https://unsupportedtokens.uniswap.org';
+export const INC_LIST = CURRENT_URL + '/assets/tokens.json';
+export const INC_EXTENDED_LIST = CURRENT_URL + '/assets/extended-tokens.json';
+export const INC_UNSUPPORTED_LIST = CURRENT_URL + '/assets/unsupported-tokens.json';
 
 export const DEFAULT_LIST_OF_LISTS_TO_DISPLAY: string[] = [
-  UNI_LIST,
-  UNI_EXTENDED_LIST
+  INC_LIST,
+  INC_EXTENDED_LIST
 ];
 
 export const DEFAULT_ACTIVE_LIST_URLS: string[] = [
-  UNI_LIST
+  INC_LIST
 ];
 
 export const UNSUPPORTED_LIST_URLS: string[] = [
-  UNI_UNSUPPORTED_LIST
+  INC_UNSUPPORTED_LIST
 ];
 
 export const COMMON_BASES: {[chainId: number]: string[]} = {

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { IpfsService } from 'src/app/services/ipfs.service';
+import { ipfsToURL } from 'src/app/shared/helper';
 
 @Component({
   selector: 'lazy-thumb',
@@ -13,9 +13,8 @@ export class LazyThumbComponent implements OnInit {
     return this._url;
   }
   set url(value: string) {
-    if(value != this._url) {
-      this._url = value;
-      this.loadImage();
+    if (value != this._url) {
+      this.loadImage(value);
     }
   }
   _url: string;
@@ -41,16 +40,17 @@ export class LazyThumbComponent implements OnInit {
 
   empty: string;
   broken: string;
-  imageData: string;
   loadingInternal: boolean;
 
-  constructor(private ipfsService: IpfsService) { }
+  timeout: NodeJS.Timeout;
+
+  constructor() {}
 
   ngOnInit(): void {
-    if(this.type == 'token') {
+    if (this.type == 'token') {
       this.empty = "assets/img/empty_token.png";
       this.broken = "assets/img/unk_token.png";
-    } else if(this.type == 'token-list') {
+    } else if (this.type == 'token-list') {
       this.empty = "assets/img/unk_list.png";
       this.broken = "assets/img/unk_list.png";
     } else {
@@ -59,14 +59,30 @@ export class LazyThumbComponent implements OnInit {
     }
   }
 
-  onErrorThrown(event: Event) {
-    this.imageData = this.broken;
-    this.onError.emit(event);
+  onImageLoad(event: Event) {
+    this.loadingInternal = false;
   }
 
-  async loadImage() {
-    this.loadingInternal = true;
-    this.imageData = await this.ipfsService.ipfsImage(this.url);
+  onImageError(event: Event) {
+    this.onError.emit(event);
+    this._url = this.broken;
     this.loadingInternal = false;
+  }
+
+  async loadImage(value: string) {
+    clearTimeout(this.timeout);
+
+    if(value) {
+      this.loadingInternal = true;
+      this._url = ipfsToURL(value);
+  
+      this.timeout = setTimeout(() => {
+        if(this.loadingInternal) {
+          this.onImageError(undefined);
+        }
+      }, 5000);
+    } else {
+      this._url = value;
+    }
   }
 }

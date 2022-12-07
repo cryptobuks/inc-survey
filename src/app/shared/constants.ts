@@ -79,6 +79,7 @@ export const CONVENIENCE_FEE_ADDRESS: { [chainId: number]: string } = {
   [ChainId.LOCAL]: "0x696E0A2cca80e3b43294c1895E02A7575686172b"
 };
 
+// TODO change token mainnet address in assets\tokens.json
 // TODO add addresses
 export const INC_TOKEN: { [chainId: number]: TokenData } = {
     [ChainId.MATIC]: newToken(ChainId.MATIC, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "Incentive", "INC", 18, INC_LOGO_URL),

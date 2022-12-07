@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { ipfsToURL, isIpfsUri } from '../shared/helper';
 import { UtilService } from './util.service';
 declare var Ipfs: any;
@@ -6,7 +6,7 @@ declare var Ipfs: any;
 @Injectable({
   providedIn: 'root',
 })
-export class IpfsService {
+export class IpfsService implements OnDestroy {
 
   private node: any;
 
@@ -16,7 +16,13 @@ export class IpfsService {
     }
   }
 
-  async add(content: string) {
+  ngOnDestroy() {
+    // stopping a node
+    this.node && this.node.stop();
+    console.log('IpfsService destroyed.');
+  }
+
+  async add(content: any) {
     await this.create();
     const { cid } = await this.node.add(content);
     console.log('cid: ' + cid);
@@ -57,13 +63,14 @@ export class IpfsService {
     return Promise.resolve<string>(result);
   }*/
 
-  async ipfsImage(url: string): Promise<string> {
+  // For image saved as Base64
+  async ipfsImage(url: string, timeout = 3000): Promise<string> {
     let result = url;
 
     if (isIpfsUri(url)) {
       try {
         const ipfsUrl = ipfsToURL(url);
-        const xhr = await this.utilService.request('GET', ipfsUrl, 3000);
+        const xhr = await this.utilService.request('GET', ipfsUrl, timeout);
         result = xhr.responseText;
       } catch (error) {
         console.error(error.message);

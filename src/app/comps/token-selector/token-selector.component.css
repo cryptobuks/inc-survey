@@ -109,7 +109,6 @@
 
 .token-selector .token-icon {
     display: inline-block;
-    box-shadow: rgb(0 0 0 / 8%) 0px 6px 10px;
 }
 
 .token-selector .token-symbol {
@@ -210,6 +209,7 @@
     padding: 6px;
     display: flex;
     gap: 10px;
+    background: rgb(0 0 0 / 10%);
 }
 
 .token-selector .manage-button-row .manage-button {
@@ -223,22 +223,12 @@
     color: var(--text-color);
 }
 
+.token-selector .manage-button-row .manage-button.selected {
+    background: rgb(0 0 0 / 12%);
+}
+
 .token-selector .manage-button-row .manage-button:not(.selected):hover {
     background: rgb(0 0 0 / 6%);
-}
-
-::ng-deep .light-theme .token-selector .manage-button-row {
-    background: var(--gray-200);
-}
-::ng-deep .light-theme .token-selector .manage-button-row .selected {
-    background: var(--gray-300);
-}
-
-::ng-deep .dark-theme .token-selector .manage-button-row {
-    background: var(--gray-400);
-}
-::ng-deep .dark-theme .token-selector .manage-button-row .selected {
-    background: var(--gray-500);
 }
 
 .token-selector .manage-filter-cnt {
@@ -261,10 +251,6 @@
     place-content: center space-between;
     align-items: center;
     padding: 10px;
-}
-
-.token-selector .custom-tokens-head .action-icon {
-    color: var(--text-color-secondary);
 }
 
 .token-selector .suggested-tokens-cnt {
@@ -337,8 +323,8 @@
     flex-direction: row;
     align-items: center;
     transition: all 200ms ease 0s;
-    color: black; 
-    background-color: #edeef2;
+    color: var(--text-color);
+    background-color: rgb(0 0 0 / 10%);
 }
 
 .input-tag:not(:first-child) {

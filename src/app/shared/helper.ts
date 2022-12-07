@@ -4,7 +4,6 @@ import { AbstractType, ElementRef, InjectFlags, InjectionToken, Type } from "@an
 import BigNumber from "bignumber.js";
 import { PaginatorData } from "../models/paginator-data";
 import { ChainId } from "../models/chains";
-import { INC_LOGO_URL, INC_TOKEN } from "./constants";
 declare var Web3: any;
 declare var $: any;
 declare const XLSX: any;
@@ -270,13 +269,9 @@ export const getTokenLogoURL = (
   chainId: ChainId,
   address: string
 ): string | undefined => {
-  if(equalsIgnoreCase(INC_TOKEN[chainId].address, address)) {
-    return INC_LOGO_URL;
-  }
-
   const networkName = chainIdToNetworkName(chainId);
   if (networkName) {
-    return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${networkName}/assets/${address}/logo.png`;
+    return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${networkName}/assets/${toChecksumAddress(address)}/logo.png`;
   }
 
   return undefined;
@@ -398,7 +393,7 @@ export function resizeBase64Image(base64: string, maxWidth: number, maxHeight: n
     img.onerror = (e) => {
       reject(e);
     };
-  })
+  });
 }
 
 /**
@@ -411,6 +406,32 @@ export function lengthBase64(base64: string) {
     let lastChars = base64.substring(characterCount - 2, 2);
     let paddingCount = (lastChars.match(/=/g) || []).length;
     return (3 * Math.ceil(characterCount / 4)) - paddingCount;
+}
+
+/**
+ * Convert DataURI to Base64 string, removing prefix 'data:image/png;base64,'
+ */
+ export function dataURIToBase64(dataURI: string): string {
+  return (dataURI.indexOf(',') != -1)? dataURI.split(',')[1]: dataURI;
+}
+
+/**
+ * Convert Base64 starts with 'data:image/png;base64,' to ArrayBuffer
+ */
+export function base64ToArrayBuffer(base64: string): Promise<ArrayBuffer> {
+  return new Promise((resolve, reject) => {
+    try {
+      let binaryString = atob(base64);
+      let len = binaryString.length;
+      let bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      return resolve(bytes.buffer);
+    } catch (err) {
+      reject(err);
+    }
+  });
 }
 
 export function isValidHttpUrl(spec: string) {

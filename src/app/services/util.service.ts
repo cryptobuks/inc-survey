@@ -1,18 +1,18 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { retry } from "rxjs/operators";
+import { retry, timeout } from "rxjs/operators";
 import { FwdRequest } from "../models/fwd-request";
 import { RelResponse } from "../models/rel-response";
 import { NotifType } from "../models/notif-type";
-import { RELAYER_API_URL, COINGECKO_PRICE_URL, HTTP_OPTIONS, RECAPTCHA_RENDER, INC_TOKEN, CURRENT_CHAIN } from "../shared/constants";
+import { RELAYER_API_URL, COINGECKO_PRICE_URL, HTTP_OPTIONS, RECAPTCHA_RENDER } from "../shared/constants";
 import { SurveyFilter } from "../models/survey-filter";
 import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
 import { schema, TokenList } from '@uniswap/token-lists';
 import { StorageUtil } from "../shared/storage-util";
-import { DEFAULT_ACTIVE_LIST_URLS, UNSUPPORTED_LIST_URLS } from "../shared/token-lists";
+import { DEFAULT_LIST_OF_LISTS_TO_DISPLAY, UNSUPPORTED_LIST_URLS } from "../shared/token-lists";
 import { ChainId } from "../models/chains";
-import { cloneDeep, getTokenLogoURL, ipfsToURL } from "../shared/helper";
+import { getTokenLogoURL, ipfsToURL } from "../shared/helper";
 import { newTokenFromInfo, TokenData } from "../models/token-data";
 declare var grecaptcha: any;
 
@@ -33,10 +33,10 @@ export class UtilService {
         this.loadTokens();
     }
 
-    async loadJson(url: string): Promise<any> {
+    async loadJson(url: string, mTimeout = 30000): Promise<any> {
         return await this.http.get<any>(url)
             .pipe(
-                retry(1)
+                timeout(mTimeout)
             ).toPromise();
     }
 
@@ -111,6 +111,14 @@ export class UtilService {
         }, HTTP_OPTIONS).toPromise();
     }
 
+    async ipfsUpload(data: string) {
+        const recaptcha = await grecaptcha.execute(RECAPTCHA_RENDER, { action: 'submit' });
+        return this.http.post<RelResponse>(RELAYER_API_URL + '/ipfs-upload', {
+            data,
+            recaptcha
+        }, HTTP_OPTIONS).toPromise();
+    }
+
     async findSurveys(chainId: number, filter: SurveyFilter): Promise<RelResponse> {
         const recaptcha = await grecaptcha.execute(RECAPTCHA_RENDER, { action: 'submit' });
         return this.http.post<RelResponse>(RELAYER_API_URL + '/find-surveys', {
@@ -154,11 +162,11 @@ export class UtilService {
     }
 
     retrieveTrustToken(chainId: ChainId, address: string, logoURI: string = undefined): TokenData | undefined {
-        return this.trustTokens[chainId] ? this.trustTokens[chainId][address] : undefined;
+        return this.trustTokens[chainId] ? this.trustTokens[chainId][address.toLowerCase()] : undefined;
     }
 
     retrieveTokenLogoURL(chainId: ChainId, address: string, logoURI: string = undefined): string | undefined {
-        let logoUrl = this.tokenLogoUrls[chainId] ? this.tokenLogoUrls[chainId][address] : undefined;
+        let logoUrl = this.tokenLogoUrls[chainId] ? this.tokenLogoUrls[chainId][address.toLowerCase()] : undefined;
 
         if (!logoUrl) {
             logoUrl = getTokenLogoURL(chainId, address);
@@ -176,15 +184,10 @@ export class UtilService {
     }
 
     private async loadTokens() {
-        let listUrls = DEFAULT_ACTIVE_LIST_URLS.concat(StorageUtil.activeLists);
+        let listUrls = DEFAULT_LIST_OF_LISTS_TO_DISPLAY.concat(StorageUtil.activeLists);
         listUrls = listUrls.filter((url, pos) => listUrls.indexOf(url) === pos && !UNSUPPORTED_LIST_URLS.includes(url));
         const tokens: { [chainId: string]: { [address: string]: TokenData } } = {};
         const logoUrls: { [chainId: string]: { [address: string]: string } } = {};
-
-        // add INC token
-        let incToken = cloneDeep(INC_TOKEN[CURRENT_CHAIN]);
-        tokens[CURRENT_CHAIN] = {};
-        tokens[CURRENT_CHAIN][incToken.address] = incToken;
 
         for (const listUrl of listUrls) {
             let list: TokenList = await this.loadJson(listUrl);
@@ -203,11 +206,11 @@ export class UtilService {
 
                 tokenInfo.logoURI = tokenInfo.logoURI ? ipfsToURL(tokenInfo.logoURI) : getTokenLogoURL(tokenInfo.chainId, tokenInfo.address);
 
-                if (DEFAULT_ACTIVE_LIST_URLS.includes(listUrl)) {
-                    tokens[tokenInfo.chainId][tokenInfo.address] = newTokenFromInfo(tokenInfo);
+                if (DEFAULT_LIST_OF_LISTS_TO_DISPLAY.includes(listUrl)) {
+                    tokens[tokenInfo.chainId][tokenInfo.address.toLowerCase()] = newTokenFromInfo(tokenInfo);
                 }
 
-                logoUrls[tokenInfo.chainId][tokenInfo.address] = tokenInfo.logoURI;
+                logoUrls[tokenInfo.chainId][tokenInfo.address.toLowerCase()] = tokenInfo.logoURI;
             }
         }
 

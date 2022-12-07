@@ -2,14 +2,13 @@ import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UtilService } from 'src/app/services/util.service';
 import { Web3Service } from 'src/app/services/web3.service';
-import { cloneDeep, confirmDialog, getTokenLogoURL, ipfsToURL, isEmpty, parseENSAddress, uriToHttp } from 'src/app/shared/helper';
+import { confirmDialog, getTokenLogoURL, ipfsToURL, isEmpty, parseENSAddress, uriToHttp } from 'src/app/shared/helper';
 import { COMMON_BASES, DEFAULT_LIST_OF_LISTS_TO_DISPLAY, UNSUPPORTED_LIST_URLS } from 'src/app/shared/token-lists';
 import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
 import { schema, TokenList } from '@uniswap/token-lists';
 import { StorageUtil } from 'src/app/shared/storage-util';
 import { TranslateService } from '@ngx-translate/core';
-import { CURRENT_CHAIN, INC_TOKEN } from 'src/app/shared/constants';
 import { Web3Error } from 'src/app/models/web3-error';
 declare var Web3: any;
 declare var $: any;
@@ -30,8 +29,8 @@ const existsAddr = (array: string[], address: string) => (
   array.some(addr => addr.toLowerCase() == address.toLowerCase())
 );
 
-const activeColors = [ 
-  "#4b5de4", "#953579", "#958c12", "#0085cc", "#c747a3", "#579575",
+const activeColors = [
+  "#4b5de4", "#958c12", "#0085cc", "#953579", "#c747a3", "#579575",
   "#367f8d", "#2193b9", "#8d8878", "#839557", "#736221", "#777777"
 ];
 
@@ -482,10 +481,6 @@ export class TokenSelectorComponent implements OnInit {
 
     // add ETH as first token - if uncommented, must change hasTokens()
     //tmpList.push(this.bases[0]);
-
-    // add INC token
-    let incToken = cloneDeep(INC_TOKEN[CURRENT_CHAIN]);
-    tmpList.push(incToken);
 
     // load tokens from active lists
     for (const url of activeListUrls) {

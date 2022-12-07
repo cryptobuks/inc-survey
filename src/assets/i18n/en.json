@@ -442,5 +442,7 @@
     "select_token": "Select token",
     "please_select_token": "Please select a token",
     "invalid_file": "Invalid file",
+    "copy_address": "Copy address",
+    "no_custom_tokens": "No custom tokens",
     "warning_about_unknown_token": "We do not know the token of this survey, it may be a new asset or a fake contract.\nIf it has a known name, it is most likely FALSE. Please, check it before participating, because it is possible that you will not receive any reward. <a class='link' target='_blank' href='{{val1}}'>View on block explorer</a>"
 }

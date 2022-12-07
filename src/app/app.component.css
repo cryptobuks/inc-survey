@@ -148,6 +148,13 @@
   transition: all .2s ease-in-out;
 }
 
+::ng-deep .light-theme .chain-data {
+  background: rgb(0 0 0 / 10%);
+}
+::ng-deep .dark-theme .chain-data {
+  background: rgb(0 0 0 / 75%);
+}
+
 .chain-data {
   position: fixed;
   bottom: 10px;
@@ -155,7 +162,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgb(0 0 0 / 75%);
   border-radius: 2rem;
   padding: 8px 16px;
 }

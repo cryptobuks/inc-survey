@@ -14,15 +14,15 @@
     <mat-divider></mat-divider>
 
     <div class="dash-card-base">
-        <div class="dash-card-info" [class.action-icon]="onInfoClick.observers.length > 0" 
-            [class.action-icon-disabled]="disabledAction && onInfoClick.observers.length > 0" 
+        <div class="dash-card-info" [class.action-item]="onInfoClick.observers.length > 0" 
+            [class.disabled]="disabledAction && onInfoClick.observers.length > 0" 
             (click)="emitInfoClick($event)">
             <mat-icon>{{ infoIcon }}</mat-icon>
             <span>{{ info }}</span>
         </div>
 
-        <mat-icon [class.action-icon]="onExtraClick.observers.length > 0" 
-            [class.action-icon-disabled]="disabledAction && onExtraClick.observers.length > 0" 
+        <mat-icon [class.action-item]="onExtraClick.observers.length > 0" 
+            [class.disabled]="disabledAction && onExtraClick.observers.length > 0" 
             [pTooltip]="extraTooltip" tooltipPosition="bottom" 
             (click)="emitExtraClick($event)">{{ extraIcon }}</mat-icon>
     </div>

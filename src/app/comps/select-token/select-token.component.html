@@ -1,5 +1,5 @@
-<div class="select-token" matRipple (click)="emitSelect($event)" [class.selectable]="hasSelect" 
-pTooltip="{{ data.address? data.hfBalance + ' ' + data.symbol: '' }}" tooltipPosition="top">
+<div class="select-token" matRipple (click)="emitSelect($event)" (contextmenu)="onRightClick($event)"
+[class.selectable]="hasSelect" pTooltip="{{ data.address? data.hfBalance + ' ' + data.symbol: '' }}" tooltipPosition="top">
     <div class="icon">
         <lazy-thumb class="token-thumb" [url]="data.logoURI" [alt]="data.symbol" type="token" size="40px"></lazy-thumb>
     </div>
@@ -16,3 +16,11 @@ pTooltip="{{ data.address? data.hfBalance + ' ' + data.symbol: '' }}" tooltipPos
 
     <mat-icon *ngIf="hasSelect">arrow_drop_down</mat-icon>
 </div>
+
+<p-overlayPanel #menuOverlay [showCloseIcon]="false">
+    <span class="title">{{ data.symbol }} ({{ data.name }})</span>
+    <p-divider></p-divider>
+    <a class="action-item" (click)="copyAddress()">
+        {{ 'copy_address' | translate }}
+    </a>
+</p-overlayPanel>
