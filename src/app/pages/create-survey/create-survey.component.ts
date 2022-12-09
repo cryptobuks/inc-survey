@@ -12,7 +12,7 @@ import { ValidationOperator, ValidationExpression, ResponseType } from 'src/app/
 import { ComponentType, RESPONSE_TYPE } from 'src/app/models/survey-support';
 import { newTokenFromInfo } from 'src/app/models/token-data';
 import { CURRENT_CHAIN, HOUR_MILLIS } from 'src/app/shared/constants';
-import { cloneDeep, isEmpty, isValidHttpUrl, lengthBase64, resizeBase64Image, truncateSeconds, isDigit, isUDigit, ScrollPosition, loadPageList, uniqueId, moveScrollTo, insertValidationError, toFixedBigNumber, isIpfsUri, formatDuration, toAmount, toUnits, calcGasReserve } from 'src/app/shared/helper';
+import { cloneDeep, isEmpty, isValidHttpUrl, lengthBase64, resizeBase64Image, truncateSeconds, isDigit, isUDigit, loadPageList, uniqueId, moveScrollTo, insertValidationError, toFixedBigNumber, isIpfsUri, formatDuration, toAmount, toUnits, calcGasReserve } from 'src/app/shared/helper';
 import { ListenerRemover } from 'src/app/shared/simple-listener';
 import { BasePageComponent } from '../base-page.component';
 declare var $: any;
@@ -288,10 +288,12 @@ export class CreateSurveyComponent extends BasePageComponent {
 
   onChangeLogoUrl(url: string) {
     this.survey.imageData = undefined;
-    this.imageError = false;
 
     if(isIpfsUri(url) || isValidHttpUrl(url)) {
+      this.imageError = false;
       this.loadImageData();
+    } else {
+      this.imageError = true;
     }
   }
 
@@ -513,9 +515,8 @@ export class CreateSurveyComponent extends BasePageComponent {
       let elemId = validation[0];
       let errMsg = validation[1];
       let qIndex = validation[2];
-      let scrollPos = validation[3];// Not indicated
 
-      this.validationError(elemId, errMsg, qIndex, scrollPos);
+      this.validationError(elemId, errMsg, qIndex);
       this.loading = false;
       return;
     }
@@ -573,18 +574,18 @@ export class CreateSurveyComponent extends BasePageComponent {
     });
   }
 
-  private validationError(elemId: string, errMsg: string, qIndex: number = undefined, scrollPos: ScrollPosition = 'center') {
+  private validationError(elemId: string, errMsg: string, qIndex: number = undefined) {
     if(qIndex >= 0) {
       let nextPage = Math.ceil((qIndex+1) / this.state.paginatorData.rows) - 1;
       this.loadPage(nextPage, elemId, () => {
-        insertValidationError(elemId, errMsg, scrollPos);
+        insertValidationError(elemId, errMsg);
       });
     } else {
-      insertValidationError(elemId, errMsg, scrollPos);
+      insertValidationError(elemId, errMsg);
     }
   }
 
-  private validateSurvey(): [string, string] | [string, string, number] | [string, string, number, ScrollPosition] {
+  private validateSurvey(): [string, string, number?] {
 
     this.survey.title = this.survey.title.trim();
     this.survey.description = this.survey.description?.trim();
@@ -754,7 +755,7 @@ export class CreateSurveyComponent extends BasePageComponent {
                   return [elemId, this.translateService.instant("validator_value_must_be_integer"), i];
                 }
 
-                  // Fix validator value: 0001 = 1
+                // Fix validator value: 0001 = 1
                 validator.value = parseInt(validator.value).toString();
             }
             
@@ -768,6 +769,18 @@ export class CreateSurveyComponent extends BasePageComponent {
 
                 // Fix validator value: 0001 = 1
                 validator.value = parseInt(validator.value).toString();
+            }
+
+            if (validator.expression == ValidationExpression.MinLength || validator.expression == ValidationExpression.MaxLength) {
+              if(parseInt(validator.value) > this.configProps.responseMaxLength) {
+                return [elemId, this.translateService.instant("validator_value_exceeds_response_limit"), i];
+              }
+            }
+  
+            if (responseType == ResponseType.Bool || responseType == ResponseType.ArrayBool) {
+              if(validator.value != "true" && validator.value != "false") {
+                return [elemId, this.translateService.instant("validator_value_must_be_boolean"), i];
+              }
             }
         } else if(validator.value) {
           throw new Error("The validator does not require any value");

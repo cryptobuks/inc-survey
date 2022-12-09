@@ -148,6 +148,7 @@
 }
 
 .token-selector .token-row {
+    position: relative;
     cursor: pointer;
 }
 
@@ -189,6 +190,21 @@
 .token-selector .disabled {
     pointer-events: none;
     opacity: 0.5;
+}
+
+.token-selector .token-row.disabled::before {
+    content: '🗸';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 18px;
+    background: rgb(0 0 0 / 20%);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 2px;
 }
 
 .token-selector .no-result-cnt {

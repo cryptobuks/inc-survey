@@ -22,7 +22,7 @@ import { ResponseTextComponent } from "../comps/response-text/response-text.comp
 import { ResponseToggleComponent } from "../comps/response-toggle/response-toggle.component";
 import { isNumIn } from "../shared/helper";
 import { QuestionImpl } from "./question-impl";
-import { ResponseCount, ResponseType, ValidationExpression } from "./survey-model";
+import { ResponseCount, ResponseType, ValidationExpression, ValidationOperator } from "./survey-model";
 
 export enum ComponentType {
     TEXT_SINGLE_LINE, // ResponseType.Text
@@ -227,6 +227,14 @@ export const getExpressionTitle = (expression: ValidationExpression) => {
         case ValidationExpression.NotContainsDigits: return "not_contains_digits";
         case ValidationExpression.MinLength: return "min_length";
         case ValidationExpression.MaxLength: return "max_length";
+        default: return null;
+    }
+};
+
+export const getOperatorTitle = (operator: ValidationOperator) => {
+    switch (operator) {
+        case ValidationOperator.And: return "and";
+        case ValidationOperator.Or: return "or";
         default: return null;
     }
 };

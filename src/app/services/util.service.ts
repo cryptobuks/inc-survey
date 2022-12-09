@@ -10,7 +10,7 @@ import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
 import { schema, TokenList } from '@uniswap/token-lists';
 import { StorageUtil } from "../shared/storage-util";
-import { DEFAULT_LIST_OF_LISTS_TO_DISPLAY, UNSUPPORTED_LIST_URLS } from "../shared/token-lists";
+import { DEFAULT_LIST_OF_LISTS_TO_DISPLAY, TRUSTED_LISTS, UNSUPPORTED_LIST_URLS } from "../shared/token-lists";
 import { ChainId } from "../models/chains";
 import { getTokenLogoURL, ipfsToURL } from "../shared/helper";
 import { newTokenFromInfo, TokenData } from "../models/token-data";
@@ -186,8 +186,22 @@ export class UtilService {
     private async loadTokens() {
         let listUrls = DEFAULT_LIST_OF_LISTS_TO_DISPLAY.concat(StorageUtil.activeLists);
         listUrls = listUrls.filter((url, pos) => listUrls.indexOf(url) === pos && !UNSUPPORTED_LIST_URLS.includes(url));
-        const tokens: { [chainId: string]: { [address: string]: TokenData } } = {};
-        const logoUrls: { [chainId: string]: { [address: string]: string } } = {};
+        let unsupportedTokens = [];
+
+        for (const url of UNSUPPORTED_LIST_URLS) {
+            let list: TokenList = await this.loadJson(url);
+
+            if (!this.validate(list) || !list?.tokens) {
+                continue;
+            }
+
+            for (const tokenInfo of list.tokens) {
+                unsupportedTokens.push(tokenInfo.address.toLowerCase());
+            }
+        }
+
+        const trustTokens: { [chainId: string]: { [address: string]: TokenData } } = {};
+        const tokenLogoUrls: { [chainId: string]: { [address: string]: string } } = {};
 
         for (const listUrl of listUrls) {
             let list: TokenList = await this.loadJson(listUrl);
@@ -196,25 +210,29 @@ export class UtilService {
             }
 
             for (const tokenInfo of list.tokens) {
-                if (!tokens[tokenInfo.chainId]) {
-                    tokens[tokenInfo.chainId] = {};
+                if (!trustTokens[tokenInfo.chainId]) {
+                    trustTokens[tokenInfo.chainId] = {};
                 }
 
-                if (!logoUrls[tokenInfo.chainId]) {
-                    logoUrls[tokenInfo.chainId] = {};
+                if (!tokenLogoUrls[tokenInfo.chainId]) {
+                    tokenLogoUrls[tokenInfo.chainId] = {};
+                }
+
+                if(unsupportedTokens.includes(tokenInfo.address.toLowerCase())) {
+                    continue;
                 }
 
                 tokenInfo.logoURI = tokenInfo.logoURI ? ipfsToURL(tokenInfo.logoURI) : getTokenLogoURL(tokenInfo.chainId, tokenInfo.address);
 
-                if (DEFAULT_LIST_OF_LISTS_TO_DISPLAY.includes(listUrl)) {
-                    tokens[tokenInfo.chainId][tokenInfo.address.toLowerCase()] = newTokenFromInfo(tokenInfo);
+                if (TRUSTED_LISTS.includes(listUrl)) {
+                    trustTokens[tokenInfo.chainId][tokenInfo.address.toLowerCase()] = newTokenFromInfo(tokenInfo);
                 }
 
-                logoUrls[tokenInfo.chainId][tokenInfo.address.toLowerCase()] = tokenInfo.logoURI;
+                tokenLogoUrls[tokenInfo.chainId][tokenInfo.address.toLowerCase()] = tokenInfo.logoURI;
             }
         }
 
-        this.trustTokens = tokens;
-        this.tokenLogoUrls = logoUrls;
+        this.trustTokens = trustTokens;
+        this.tokenLogoUrls = tokenLogoUrls;
     }
 }

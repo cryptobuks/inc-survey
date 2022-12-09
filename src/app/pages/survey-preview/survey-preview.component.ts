@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js';
 import { SurveyImplComponent } from 'src/app/comps/survey-impl/survey-impl.component';
 import { SurveyEditState } from 'src/app/models/survey-edit-state';
 import { SurveyImpl } from 'src/app/models/survey-impl';
+import { IpfsService } from 'src/app/services/ipfs.service';
 import { CURRENT_CHAIN, MAX_UINT256 } from 'src/app/shared/constants';
 import { calcFeeTotal, calcGasMargin, dataURIToBase64, insertValidationError, removeAppCover, setAppCover, toAmount, toFormatBigNumber } from 'src/app/shared/helper';
 import { ListenerRemover } from 'src/app/shared/simple-listener';
@@ -24,6 +25,7 @@ export class SurveyPreviewComponent extends BasePageComponent {
   editing = false;
   testing = false;
   sending = false;
+  tested = false;
   
   allowance: BigNumber;
   gasReserve: string;
@@ -37,7 +39,8 @@ export class SurveyPreviewComponent extends BasePageComponent {
   private onAccountLoadedRemover: ListenerRemover;
 
   constructor(
-    element: ElementRef
+    element: ElementRef,
+    private ipfsService: IpfsService
   ) {
     super(element);
     this.state = this.stateService.surveyEditState;
@@ -62,7 +65,7 @@ export class SurveyPreviewComponent extends BasePageComponent {
       this.loadAllowance();
     });
 
-    this.pushInfo(this.translateService.instant('test_survey_before_submitting_to_blockchain'));
+    this.pushInfo(this.translateService.instant('test_survey_before_sending_to_blockchain'));
   }
 
   onViewLoaded() {
@@ -90,6 +93,7 @@ export class SurveyPreviewComponent extends BasePageComponent {
         return;
       }
   
+      this.tested = true;
       this.messageHelperService.showInfo(this.translateService.instant("data_entered_is_correct"));
     } finally {
       this.loading = false;
@@ -155,21 +159,21 @@ export class SurveyPreviewComponent extends BasePageComponent {
         return;
       }
 
+      if(!this.tested) {
+        this.messageHelperService.showWarn(this.translateService.instant('test_survey_before_sending'));
+        return;
+      }
+
       // create logo URL & upload image if has imageData
-      let hasImageToUpload = !this.survey.logoUrl && this.survey.imageData;
+      const hasImageToUpload = !this.survey.logoUrl && this.survey.imageData?.startsWith("data:image/");
+      let base64: string;
 
       if(hasImageToUpload) {
         try {
-          let base64 = dataURIToBase64(this.survey.imageData);
-          let result = await this.utilService.ipfsUpload(base64);
-
-          if(!result.success) {
-            throw new Error(result.data);
-          }
-
-          const cid = result.data.path;
+          base64 = dataURIToBase64(this.survey.imageData);
+          const buf = Buffer.from(base64, "base64");
+          const cid = await this.ipfsService.add(buf);
           this.survey.logoUrl = "ipfs://" + cid;
-          this.survey.imageData = this.survey.logoUrl;
         } catch(err) {
           insertValidationError('.survey-logo', this.translateService.instant('image_not_loaded_try_again_later'));
           throw err;
@@ -199,6 +203,30 @@ export class SurveyPreviewComponent extends BasePageComponent {
       setAppCover(this.translateService.instant("please_wait"));
 
       if (txHash) {
+        // upload image via infura
+        this.survey.imageData = this.survey.logoUrl;
+
+        if(hasImageToUpload) {
+          try {
+            const result = await this.utilService.ipfsUpload(base64);
+  
+            if(!result.success) {
+              throw new Error(result.data);
+            }
+  
+            const cid = result.data.path;
+
+            // This shouldn't happen
+            if(this.survey.logoUrl != "ipfs://" + cid) {
+              throw new Error("different cid: " + this.survey.logoUrl + " vs ipfs://" + cid);
+            }
+
+            this.survey.imageData = "https://inc.infura-ipfs.io/ipfs/" + cid;// To overcome lazy-thumb timeout in survey-sent
+          } catch(err) {
+            console.error(err);// TODO show message - It has not been possible to upload the survey logo to IPFS.
+          }
+        }
+
         this.state.txHash = txHash;
         this.router.navigate(['/create-survey/status']);
       }

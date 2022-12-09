@@ -560,18 +560,18 @@ export class Web3Service implements OnDestroy {
 
   private async loadEphemeralData() {
     let elapsedTime = new Date().getTime() - this.ephemeralDataTime;
-    if(elapsedTime < 10000) {// 10 seconds
+    if(elapsedTime < 30000) {// 30 seconds
       return;
     }
 
     try {
       this.loadGasPrice();
-      this.loadAccountBalance();
+      /*this.loadAccountBalance();
 
       let stateService = getInstance(StateService);
       if(stateService?.surveyEditState?.survey?.tokenData) {
         this.loadTokenBalance(stateService.surveyEditState.survey.tokenData);
-      }
+      }*/
 
       this.ephemeralDataTime = new Date().getTime();
     } catch (error) {

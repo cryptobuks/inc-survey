@@ -5,7 +5,7 @@ import { DynamicItem } from 'src/app/models/dynamic-item';
 import { MenuOption } from 'src/app/models/menu-option';
 import { QuestionImpl } from 'src/app/models/question-impl';
 import { ValidationExpression, ValidationOperator, ConfigProps } from 'src/app/models/survey-model';
-import { QUESTION_CLASS, getExpressionTitle, getValidationExpressions, getValueType, QuestionData, RESPONSE_TYPE, ValidationValueType } from 'src/app/models/survey-support';
+import { QUESTION_CLASS, getExpressionTitle, getValidationExpressions, getValueType, QuestionData, RESPONSE_TYPE, ValidationValueType, getOperatorTitle } from 'src/app/models/survey-support';
 import { SurveyService } from 'src/app/services/survey.service';
 import { isEmpty } from 'src/app/shared/helper';
 import { DynamicComponent } from '../dynamic-template/dynamic-template.component';
@@ -86,11 +86,11 @@ export class QuestionImplComponent implements OnInit, OnDestroy, DynamicComponen
 
     this.validationOperators = [
       {
-        title: this.translateService.instant("and"),
+        title: this.translateService.instant(getOperatorTitle(ValidationOperator.And)),
         value: ValidationOperator.And
       },
       {
-        title: this.translateService.instant("or"),
+        title: this.translateService.instant(getOperatorTitle(ValidationOperator.Or)),
         value: ValidationOperator.Or
       }
     ];

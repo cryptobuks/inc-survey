@@ -53,7 +53,7 @@ export const HTTP_OPTIONS = {
 };
 
 export const NET_PARAMS: { [chainId: number]: NetData } = {
-  [ChainId.MATIC]: newNetwork(ChainId.MATIC, "Matic Mainnet", "MATIC", "MATIC", 18, ["https://polygon-rpc.com"], ["https://polygonscan.com"]),
+  [ChainId.MATIC]: newNetwork(ChainId.MATIC, "Polygon Mainnet", "MATIC", "MATIC", 18, ["https://polygon-rpc.com"], ["https://polygonscan.com"]),
   [ChainId.MUMBAI]: newNetwork(ChainId.MUMBAI, "Polygon Testnet", "MATIC", "MATIC", 18, [
     "https://rpc-mumbai.maticvigil.com", "https://rpc-mumbai.matic.today", 
     "https://matic-mumbai.chainstacklabs.com", "https://matic-testnet-archive-rpc.bwarelabs.com"

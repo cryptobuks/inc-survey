@@ -4,6 +4,7 @@ import { AbstractType, ElementRef, InjectFlags, InjectionToken, Type } from "@an
 import BigNumber from "bignumber.js";
 import { PaginatorData } from "../models/paginator-data";
 import { ChainId } from "../models/chains";
+import { SimpleTable } from "../models/simple-table";
 declare var Web3: any;
 declare var $: any;
 declare const XLSX: any;
@@ -56,6 +57,35 @@ export function getUserLocale(defaultValue: string): string {
   let lang = wn.languages ? wn.languages[0] : defaultValue;
   lang = lang || wn.language || wn.browserLanguage || wn.userLanguage;
   return lang;
+}
+
+const ENTITY_MAP = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&apos;'
+};
+
+export function sanitizeHtml(value: string) {
+  if(!value) {
+    return value;
+  }
+
+  const reg = /[&<>"']/gim;
+  return normalizeHtml(value).replace(reg, (match)=>(ENTITY_MAP[match]));
+}
+
+export function normalizeHtml(value: string) {
+  if(!value) {
+    return value;
+  }
+
+  Object.keys(ENTITY_MAP).forEach((char) => {
+    value = value.replace(new RegExp(ENTITY_MAP[char], 'gim'), char);
+  });
+
+  return value;
 }
 
 export function messageDialog(title: string, content: string, type: string | null = null) {
@@ -611,10 +641,10 @@ export function cleanValidationError() {
   $('.validation-error').stop().remove();
 }
 
-export function insertValidationError(elemId: string, errMsg: string, scrollPos: ScrollPosition = 'center') {
+export function insertValidationError(elemId: string, errMsg: string, safeMsg = false, scrollPos: ScrollPosition = 'center') {
   $('.validation-error').stop().remove();
   const elem = $(elemId);
-  const error = $("<span class='validation-error'>" + errMsg + "</span>");
+  const error = $("<div class='validation-error'>" + (safeMsg? errMsg: sanitizeHtml(errMsg)) + "</div>");
   elem.append(error);
   error.fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500)/*.fadeOut(10000, function() {
     error.remove();
@@ -861,6 +891,31 @@ export function filterOutliers(someArray: number[]) {
   minValue = q1 - iqr * 1.5;
 
   return values.filter((x) => (x >= minValue) && (x <= maxValue));
+}
+
+export function generateSimpleTable(table: SimpleTable) {
+  let str = '<table class="simple-table">';
+
+  if(table.head) {
+    str += '<thead><tr>';
+    for(let col of table.head) {
+      str += `<th>${col}</th>`;
+    }
+    str += '</tr></thead>';
+  }
+
+  str += '<tbody>';
+  for(let row of table.body) {
+    str += '<tr>';
+    for(let col of row) {
+      str += `<td>${col}</td>`;
+    }
+    str += '</tr>';
+  }
+  str += '</tbody>';
+
+  str += '</table>';
+  return str;
 }
 
 export function delay(time: number) {

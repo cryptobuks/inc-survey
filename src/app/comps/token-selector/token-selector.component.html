@@ -51,8 +51,7 @@
                         <span class="token-symbol">{{ token.symbol }}</span>
                         <span class="token-name">{{ token.name }} {{ (token.added? ' • ': '') }} {{ (token.added? 'added_by_user': '') | translate }}</span>
                     </div>
-                    <span *ngIf="!isSelectedToken(token)" class="token-balance">{{ getBalance(token) }}</span>
-                    <mat-icon *ngIf="isSelectedToken(token)">done</mat-icon>
+                    <span class="token-balance">{{ getBalance(token) }}</span>
                 </div>
             </div>
 
@@ -211,6 +210,9 @@
                 </div>
             </div>
         </mat-dialog-content>
+        <mat-dialog-actions *ngIf="viewIndex == 1" class="dialog-actions" #dialActions>
+            <span class="tip">{{ 'custom_lists_are_stored_locally' | translate }}</span>
+        </mat-dialog-actions>
         <mat-dialog-actions *ngIf="viewIndex == 2" class="dialog-actions" #dialActions>
             <span class="tip">{{ 'custom_tokens_are_stored_locally' | translate }}</span>
         </mat-dialog-actions>

@@ -34,7 +34,7 @@ export class UniswapComponent extends BasePageComponent {
     this.provider = this.web3.currentProvider;
     this.jsonRpcEndpoint = NET_PARAMS[CURRENT_CHAIN].rpcUrls[0];
     this.defaultInputTokenAddress = 'NATIVE';
-    this.defaultOutputTokenAddress = INC_TOKEN[CURRENT_CHAIN].address;
+    // TODO this.defaultOutputTokenAddress = INC_TOKEN[CURRENT_CHAIN].address;
     this.convenienceFeeRecipient = CONVENIENCE_FEE_ADDRESS[CURRENT_CHAIN];
     this.darkMode = AppComponent.instance.isDarkTheme;
 

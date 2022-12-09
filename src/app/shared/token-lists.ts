@@ -1,13 +1,19 @@
 import { ChainId } from "../models/chains";
-import { CURRENT_URL } from "./constants";
 
-export const INC_LIST = CURRENT_URL + '/assets/tokens.json';
-export const INC_EXTENDED_LIST = CURRENT_URL + '/assets/extended-tokens.json';
-export const INC_UNSUPPORTED_LIST = CURRENT_URL + '/assets/unsupported-tokens.json';
+export const INC_LIST = "https://inctoken.github.io/tokens.json";
+export const INC_EXTENDED_LIST = "https://inctoken.github.io/extended-tokens.json";
+export const INC_EXPERIMENTAL_LIST = "https://inctoken.github.io/experimental-tokens.json";
+export const INC_UNSUPPORTED_LIST = "https://inctoken.github.io/unsupported-tokens.json";
+
+export const TRUSTED_LISTS: string[] = [
+  INC_LIST,
+  INC_EXTENDED_LIST
+];
 
 export const DEFAULT_LIST_OF_LISTS_TO_DISPLAY: string[] = [
   INC_LIST,
-  INC_EXTENDED_LIST
+  INC_EXTENDED_LIST,
+  INC_EXPERIMENTAL_LIST
 ];
 
 export const DEFAULT_ACTIVE_LIST_URLS: string[] = [

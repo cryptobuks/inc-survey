@@ -4,13 +4,14 @@ import { AccountData } from 'src/app/models/account-data';
 import { DynamicItem } from 'src/app/models/dynamic-item';
 import { PaginatorData, PaginatorRows } from 'src/app/models/paginator-data';
 import { QuestionImpl } from 'src/app/models/question-impl';
+import { SimpleTable } from 'src/app/models/simple-table';
 import { SurveyImpl } from 'src/app/models/survey-impl';
 import { QuestionValidator, ResponseType, ValidationExpression, ValidationOperator, ConfigProps } from 'src/app/models/survey-model';
-import { QUESTION_CLASS, QuestionData, RESPONSE_TYPE, parseResponse } from 'src/app/models/survey-support';
+import { QUESTION_CLASS, QuestionData, RESPONSE_TYPE, parseResponse, getExpressionTitle, getOperatorTitle } from 'src/app/models/survey-support';
 import { SurveyService } from 'src/app/services/survey.service';
 import { Web3Service } from 'src/app/services/web3.service';
 import { CURRENT_CHAIN, NATIVE_CURRENCY, DOMAIN_URL, HOUR_MILLIS } from 'src/app/shared/constants';
-import { calcFeeTotal, cleanValidationError, containsDigits, exportCoupons, insertValidationError, isDigit, isUDigit, loadPageList, moveScrollTo, ScrollPosition, truncateSeconds } from 'src/app/shared/helper';
+import { calcFeeTotal, cleanValidationError, containsDigits, exportCoupons, generateSimpleTable, insertValidationError, isDigit, isUDigit, loadPageList, moveScrollTo, sanitizeHtml, ScrollPosition, truncateSeconds } from 'src/app/shared/helper';
 declare var $: any;
 
 @Component({
@@ -182,7 +183,7 @@ export class SurveyImplComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  checkParticipation(): [string, string, number] {
+  checkParticipation(): [string, string, number, boolean?] {
     for(let i = 0; i < this.survey.questions.length; i++) {
       let question = this.survey.questions[i];
       // There will be no method output() if the user has not visited the component.
@@ -215,6 +216,9 @@ export class SurveyImplComponent implements OnInit, OnDestroy {
       for(let i = 0; i < values.length; i++) {
           let value = values[i];
           let valid = true;
+          let table: SimpleTable = {
+            body: []
+          };
 
           for(let j = 0; j < question.validators.length; j++) {
             let validator = question.validators[j];
@@ -226,10 +230,26 @@ export class SurveyImplComponent implements OnInit, OnDestroy {
               } else {// operator == None or And
                   valid = valid && this._checkExpression(validator, value);
               }
+
+              table.body[j] = [
+                this.translateService.instant(getExpressionTitle(validator.expression)),
+                sanitizeHtml(validator.value),
+                ''
+              ];
+              if(j < question.validators.length - 1) {
+                table.body[j][2] = this.translateService.instant(getOperatorTitle(validator.operator));
+              }
           }
 
           if(!valid) {
-            return [elemId, question.content.errorMessage?? this.translateService.instant("invalid_response"), i];
+            table.head = [
+              this.translateService.instant("expression"),
+              this.translateService.instant("value"),
+              this.translateService.instant("operator")
+            ];
+            let tableStr = generateSimpleTable(table);
+            let message =  sanitizeHtml(question.content.errorMessage)?? this.translateService.instant("invalid_response");
+            return [elemId, `<span>${message}</span>${tableStr}`, i, true];
           }
       }
     }
@@ -260,22 +280,23 @@ export class SurveyImplComponent implements OnInit, OnDestroy {
       let elemId = validation[0];
       let errMsg = validation[1];
       let qIndex = validation[2];
+      let safeMsg = validation[3];
 
-      this.validationError(elemId, errMsg, qIndex);
+      this.validationError(elemId, errMsg, qIndex, safeMsg);
       return false;
     }
 
     return true;
   }
 
-  validationError(elemId: string, errMsg: string, qIndex: number = undefined, scrollPos: ScrollPosition = 'center') {
+  validationError(elemId: string, errMsg: string, qIndex: number = undefined, safeMsg = false) {
     if(qIndex >= 0) {
       let nextPage = Math.ceil((qIndex+1) / this.paginatorData.rows) - 1;
       this.loadPage(nextPage, elemId, () => {
-        insertValidationError(elemId, errMsg, scrollPos);
+        insertValidationError(elemId, errMsg, safeMsg);
       });
     } else {
-        insertValidationError(elemId, errMsg, scrollPos);
+        insertValidationError(elemId, errMsg, safeMsg);
     }
   }
 
