@@ -382,6 +382,18 @@ export function calcGasReserve(budget: BigNumber, reward: BigNumber, partPrice: 
   return new BigNumber(calcGasMargin(minReserve, margin));
 }
 
+export function calcPecent(partialValue: number, totalValue: number) {
+  return Math.round((100 * partialValue) / totalValue);
+}
+
+export function limitStr(str: string, maxLength: number) {
+  if (!str || str.length <= maxLength) {
+    return str;
+  }
+
+  return str.substring(0, maxLength) + "...";
+}
+
 export const truncateSeconds = (date: Date) => {
   date.setSeconds(0);
   date.setMilliseconds(0);

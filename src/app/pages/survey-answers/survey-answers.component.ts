@@ -274,8 +274,8 @@ export class SurveyAnswersComponent extends BasePageComponent {
         return;
       }
 
-      this.partAddress = part.account;
-      this.partEntryTime = new Date(part.entryTime * 1000).toLocaleString();
+      this.partAddress = part.partOwner;
+      this.partEntryTime = new Date(part.partTime * 1000).toLocaleString();
 
       for(let i = 0; i < this.survey.questions.length; i++) {
         let question = this.survey.questions[i];

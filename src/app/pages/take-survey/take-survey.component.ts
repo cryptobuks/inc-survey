@@ -179,7 +179,7 @@ export class TakeSurveyComponent extends BasePageComponent {
       setAppCover(this.translateService.instant("waiting_reply"));
 
       if (useMetaTx) {
-        this.request = await this.surveyService.estimatePartFromForwarder(CURRENT_CHAIN, surveyAddr, responses, this.state.partKey);
+        this.request = await this.surveyService.estimatePartFromForwarder(surveyAddr, responses, this.state.partKey);
 
         const abiDecoder = new AbiDecoder(this.web3.eth.abi);
         abiDecoder.addABI(this.engineContract._jsonInterface);
@@ -210,7 +210,7 @@ export class TakeSurveyComponent extends BasePageComponent {
       setAppCover(this.translateService.instant("waiting_reply"));
 
       const signature = await this.surveyService.signTypedData(this.request);
-      const messageId = await this.surveyService.sendPartFromForwarder(CURRENT_CHAIN, this.request, signature);
+      const messageId = await this.surveyService.sendPartFromForwarder(this.request, signature);
 
       setAppCover(this.translateService.instant("please_wait"));
 

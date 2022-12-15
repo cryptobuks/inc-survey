@@ -110,7 +110,7 @@ export class OwnPartsComponent extends BasePageComponent {
       let questionsNum = await this.surveyService.getQuestionsLength(part.surveyAddr);
       // SurveyBase.questionMaxPerRequest = SurveyValidator.questionMaxPerSurvey
       this.survey.questions = await this.surveyService.getQuestions(part.surveyAddr, 0, questionsNum);
-      this.partEntryTime = new Date(part.entryTime * 1000).toLocaleString();
+      this.partEntryTime = new Date(part.partTime * 1000).toLocaleString();
 
       for(let i = 0; i < this.survey.questions.length; i++) {
         let question = this.survey.questions[i];

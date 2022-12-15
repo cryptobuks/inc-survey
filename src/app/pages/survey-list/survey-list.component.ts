@@ -2,7 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { SurveyFilter } from 'src/app/models/survey-filter';
 import { SurveyImpl } from 'src/app/models/survey-impl';
 import { SurveyListState } from 'src/app/models/survey-list-state';
-import { ADDRESS_ZERO, CURRENT_CHAIN } from 'src/app/shared/constants';
+import { ADDRESS_ZERO } from 'src/app/shared/constants';
 import { isEmpty, moveScrollTo } from 'src/app/shared/helper';
 import { ListenerRemover } from 'src/app/shared/simple-listener';
 import { BasePageComponent } from '../base-page.component';
@@ -133,14 +133,22 @@ export class SurveyListComponent extends BasePageComponent {
         onlyPublic: onlyPublic,
         maxStartTime: onlyOpened? currTime: 0,
         minEndTime: onlyOpened? currTime: 0,
-        token: ADDRESS_ZERO,// TODO <- add filter
-        orderField: 'rewardEther',
-        order: 'desc'
+        //token: ADDRESS_ZERO,// TODO <- add filter
+        sortItems: [
+          {
+            field: 'surveyTime',
+            order: 'desc'
+          },
+          {
+            field: 'rewardEther',
+            order: 'desc'
+          }
+        ]
       };
 
-      const searchResult = await this.surveyService.findSurveys(CURRENT_CHAIN, filter);
-      this.surveys = searchResult.surveys;
-      this.state.surveysTotal = searchResult.total;
+      const result = await this.surveyService.findSurveysOnServer(filter);
+      this.surveys = result.surveys;
+      this.state.surveysTotal = result.total;
     } catch (err: any) {
       console.error(err);
     } finally {

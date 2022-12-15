@@ -7,3 +7,7 @@
 ::ng-deep .chart .apexcharts-svg {
     overflow: visible;
 }
+
+::ng-deep .chart .apexcharts-tooltip-text-y-value {
+    white-space: pre-line;
+}

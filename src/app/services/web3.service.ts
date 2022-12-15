@@ -267,6 +267,7 @@ export class Web3Service implements OnDestroy {
     this.checkContracts();
     let data: any = {};
 
+    data.phase = parseInt(await this.offerContract.methods.phase().call());
     data.openingTime = parseInt(await this.offerContract.methods.openingTime().call());
     data.closingTime = parseInt(await this.offerContract.methods.closingTime().call());
     data.initialRate = parseInt(await this.offerContract.methods.initialRate().call());
@@ -349,7 +350,7 @@ export class Web3Service implements OnDestroy {
     return Promise.resolve(wasAdded);
   }
 
-  async loadToken(address: string): Promise<TokenData> {
+  async loadToken(address: string, loadBalanceForCachedToken = false): Promise<TokenData> {
     let chainId: number;
 
     try {
@@ -361,7 +362,11 @@ export class Web3Service implements OnDestroy {
     let tokenData = this.utilService.retrieveTrustToken(chainId, address);
     if(tokenData) {
       tokenData = cloneDeep(tokenData);
-      await this.loadTokenBalance(tokenData);
+
+      if(loadBalanceForCachedToken) {
+        await this.loadTokenBalance(tokenData);
+      }
+      
       return tokenData;
     }
 

@@ -153,8 +153,10 @@ export class SurveyPreviewComponent extends BasePageComponent {
 
     try {
       setAppCover(this.translateService.instant("please_wait"));
-      
+
+      await this.web3Service.loadTokenBalance(this.survey.tokenData);
       const isValid = this.surveyComp.validateSurvey();
+      
       if(!isValid) {
         return;
       }
@@ -175,7 +177,7 @@ export class SurveyPreviewComponent extends BasePageComponent {
           const cid = await this.ipfsService.add(buf);
           this.survey.logoUrl = "ipfs://" + cid;
         } catch(err) {
-          insertValidationError('.survey-logo', this.translateService.instant('image_not_loaded_try_again_later'));
+          insertValidationError('.survey-logo', this.translateService.instant('failed_upload_survey_logo_try_again_later'));
           throw err;
         }
       }
@@ -223,7 +225,8 @@ export class SurveyPreviewComponent extends BasePageComponent {
 
             this.survey.imageData = "https://inc.infura-ipfs.io/ipfs/" + cid;// To overcome lazy-thumb timeout in survey-sent
           } catch(err) {
-            console.error(err);// TODO show message - It has not been possible to upload the survey logo to IPFS.
+            console.error(err);
+            this.messageHelperService.showWarn(this.translateService.instant("failed_upload_survey_logo_use_other_means"));
           }
         }
 

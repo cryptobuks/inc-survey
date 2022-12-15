@@ -1,0 +1,17 @@
+<div class="survey-timeline light-card">
+
+    <div *ngIf="!loading" class="controls">
+        <button mat-button (click)="loadHour()" [class.control-active]="option == 1">1H</button>
+        <button mat-button (click)="loadDay()" [class.control-active]="option == 2">1D</button>
+        <button mat-button (click)="loadWeek()" [class.control-active]="option == 3">1W</button>
+        <button mat-button (click)="loadMonth()" [class.control-active]="option == 4">1M</button>
+        <button mat-button (click)="loadYear()" [class.control-active]="option == 5">1Y</button>
+    </div>
+
+    <div *ngIf="loading" class="loading-cnt">
+        <mat-spinner color="accent"></mat-spinner>
+    </div>
+
+    <div class="chart"></div>
+
+</div>

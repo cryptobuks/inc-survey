@@ -2,7 +2,7 @@ import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UtilService } from 'src/app/services/util.service';
 import { Web3Service } from 'src/app/services/web3.service';
-import { confirmDialog, getTokenLogoURL, ipfsToURL, isEmpty, parseENSAddress, uriToHttp } from 'src/app/shared/helper';
+import { confirmDialog, getTokenLogoURL, ipfsToURL, isEmpty, parseENSAddress, toAmount, toFormatBigNumber, uriToHttp } from 'src/app/shared/helper';
 import { COMMON_BASES, DEFAULT_LIST_OF_LISTS_TO_DISPLAY, UNSUPPORTED_LIST_URLS } from 'src/app/shared/token-lists';
 import Ajv, { ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
@@ -10,6 +10,7 @@ import { schema, TokenList } from '@uniswap/token-lists';
 import { StorageUtil } from 'src/app/shared/storage-util';
 import { TranslateService } from '@ngx-translate/core';
 import { Web3Error } from 'src/app/models/web3-error';
+import BigNumber from 'bignumber.js';
 declare var Web3: any;
 declare var $: any;
 
@@ -48,6 +49,7 @@ export class TokenSelectorComponent implements OnInit {
   lists: any[];
   customTokens: any[];
   suggestedTokens: any[];
+  balanceCache = {};
 
   viewIndex = 0;
   loadingTokens = false;
@@ -358,7 +360,7 @@ export class TokenSelectorComponent implements OnInit {
   }
 
   private async loadNewToken(address: string): Promise<any> {
-    let tokenData = await this.web3Service.loadToken(address);
+    let tokenData = await this.web3Service.loadToken(address, true);
 
     let token = {
       chainId: tokenData.chainId,
@@ -425,9 +427,16 @@ export class TokenSelectorComponent implements OnInit {
       }
 
       let token = tokens[i];
+      let balance: any;
+      if(balance = this.balanceCache[token.address]) {
+        token.balance = new BigNumber(balance);
+        token.hfBalance = !token.balance.isNaN() ? toFormatBigNumber(toAmount(token.balance, token.decimals)) : defaultValue;
+        return;
+      }
 
       try {
         await this.web3Service.loadTokenBalance(token, defaultValue);
+        this.balanceCache[token.address] = token.balance;
       } catch (error) {
         console.error("Failed to get balance for " + token.symbol);
       }

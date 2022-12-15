@@ -1,0 +1,24 @@
+.survey-timeline {
+    padding: 14px;
+    margin: 0 auto;
+}
+
+.survey-timeline .controls {
+    display: inline-flex;
+    gap: 4px;
+}
+
+.survey-timeline .controls .mat-button {
+    font-size: 12px;
+    min-width: auto;
+    line-height: normal;
+    padding: 4px 10px;
+}
+
+.survey-timeline .controls .control-active {
+    background: rgb(0 0 0 / 10%);
+}
+
+.survey-timeline .chart {
+    margin-top: 14px;
+}

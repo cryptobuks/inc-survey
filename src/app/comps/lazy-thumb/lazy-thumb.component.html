@@ -1,2 +1,2 @@
-<img class="lazy-thumb" [alt]="alt" [src]="url ?? empty" loading="lazy" [style.width]="size" [style.height]="size" [class.animate-flicker]="isLoading"
+<img class="lazy-thumb" [alt]="alt" [src]="url || empty" loading="lazy" [style.width]="size" [style.height]="size" [class.animate-flicker]="isLoading"
 (load)="onImageLoad($event)" (error)="onImageError($event)" />

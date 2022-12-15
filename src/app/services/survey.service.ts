@@ -13,6 +13,10 @@ import { ListIterator } from '../models/list-iterator';
 import { ListenerRemover } from '../shared/simple-listener';
 import { SurveyFilter } from '../models/survey-filter';
 import { SurveySearchResult } from '../models/survey-search-result';
+import { PartFilter } from '../models/part-filter';
+import { PartSearchResult } from '../models/part-search-result';
+import { CURRENT_CHAIN } from '../shared/constants';
+import { TokenData } from '../models/token-data';
 
 const EIP712Domain = [
   { name: 'name', type: 'string' },
@@ -29,6 +33,8 @@ const ForwardRequest = [
   { name: 'nonce', type: 'uint256' },
   { name: 'data', type: 'bytes' }
 ];
+
+type Cache = { [key: string]: any };
 
 @Injectable({
   providedIn: 'root'
@@ -53,6 +59,12 @@ export class SurveyService implements OnDestroy {
   private _txGasWgtSamples: number[];// weighted samples
   private _minTxGas: number;
   private _avgTxGas: number;
+
+  private surveyCache: Cache = {};
+  private questionCache: Cache = {};
+  private validatorCache: Cache = {};
+  private partCache: Cache = {};
+  private responseCache: Cache = {};
 
   constructor(
     private web3Service: Web3Service, 
@@ -80,6 +92,7 @@ export class SurveyService implements OnDestroy {
 
   // ### Survey functions ###
 
+  // TODO get from server
   async txGasSamples(maxLength: number): Promise<number[]> {
     this.checkContracts();
     let samples = await this.surveyContract.methods.txGasSamples(maxLength).call();
@@ -111,9 +124,17 @@ export class SurveyService implements OnDestroy {
     });
   }
 
-  async toSurveyImpl(survey: Survey, questions: QuestionImpl[]): Promise<SurveyImpl> {
+  async toSurveyImpl(survey: Survey | any, questions: QuestionImpl[]): Promise<SurveyImpl> {
     this.checkContracts();
-    let tokenData = await this.web3Service.loadToken(survey.token);
+    let tokenData: TokenData;
+    if(survey.token) {
+      tokenData = await this.web3Service.loadToken(survey.token);
+    } else if(survey.tokenName || survey.tokenSymbol) {
+      tokenData = {
+        name: survey.tokenName,
+        symbol: survey.tokenSymbol
+      }
+    }
     return Promise.resolve<SurveyImpl>(SurveyImpl.toImpl(survey, tokenData, questions));
   }
 
@@ -132,8 +153,10 @@ export class SurveyService implements OnDestroy {
   }
 
   async getSurveys(cursor: number, length: number): Promise<SurveyImpl[]> {
-    this.checkContracts();
-    let surveys = await this.surveyContract.methods.getSurveys(cursor, length).call();
+    let surveys = await this.cachedReq<Survey[]>(this.surveyCache, [cursor, length], () => {
+      return this.surveyContract.methods.getSurveys(cursor, length).call();
+    });
+
     let impls: SurveyImpl[] = [];
 
     for(let survey of surveys) {
@@ -145,8 +168,10 @@ export class SurveyService implements OnDestroy {
   }
 
   async findSurvey(surveyAddr: string): Promise<SurveyImpl> {
-    this.checkContracts();
-    let survey = await this.surveyContract.methods.findSurvey(surveyAddr).call();
+    let survey = await this.cachedReq<Survey>(this.surveyCache, [surveyAddr], () => {
+      return this.surveyContract.methods.findSurvey(surveyAddr).call();
+    });
+    
     let impl = await this.toSurveyImpl(survey, []);
     return Promise.resolve<SurveyImpl>(impl);
   }
@@ -171,8 +196,10 @@ export class SurveyService implements OnDestroy {
   }
   
   async getOwnSurveys(cursor: number, length: number): Promise<SurveyImpl[]> {
-    this.checkContracts();
-    let surveys = await this.surveyContract.methods.getOwnSurveys(cursor, length).call({ from : this.accountData.address });
+    let surveys = await this.cachedReq<Survey[]>(this.surveyCache, [this.accountData.address, cursor, length], () => {
+      return this.surveyContract.methods.getOwnSurveys(cursor, length).call({ from : this.accountData.address });
+    });
+
     let impls: SurveyImpl[] = [];
 
     for(let survey of surveys) {
@@ -197,8 +224,10 @@ export class SurveyService implements OnDestroy {
   }
 
   async getQuestions(surveyAddr: string, cursor: number, length: number): Promise<QuestionImpl[]> {
-    this.checkContracts();
-    let questions = await this.surveyContract.methods.getQuestions(surveyAddr, cursor, length).call();
+    let questions = await this.cachedReq<Question[]>(this.questionCache, [surveyAddr, cursor, length], () => {
+      return this.surveyContract.methods.getQuestions(surveyAddr, cursor, length).call();
+    });
+
     let impls: QuestionImpl[] = [];
 
     for(let question of questions) {
@@ -217,8 +246,19 @@ export class SurveyService implements OnDestroy {
   }
 
   async getValidators(surveyAddr: string, questionIndex: number): Promise<QuestionValidator[]> {
-    this.checkContracts();
-    let validators = await this.surveyContract.methods.getValidators(surveyAddr, questionIndex).call();
+    let validators = await this.cachedReq<QuestionValidator[]>(this.validatorCache, [surveyAddr, questionIndex], () => {
+      return this.surveyContract.methods.getValidators(surveyAddr, questionIndex).call();
+    });
+
+    validators = validators.map((v: QuestionValidator) => {
+      return {
+        questionIndex: parseInt(v.questionIndex+''),
+        operator: parseInt(v.operator+''),
+        expression: parseInt(v.expression+''),
+        value: v.value
+      };
+    });
+
     return Promise.resolve<QuestionValidator[]>(validators);
   }
 
@@ -259,14 +299,18 @@ export class SurveyService implements OnDestroy {
   }
 
   async getParticipations(surveyAddr: string, cursor: number, length: number): Promise<Participation[]> {
-    this.checkContracts();
-    let parts = await this.surveyContract.methods.getParticipations(surveyAddr, cursor, length).call();
+    let parts = await this.cachedReq<Participation[]>(this.partCache, [surveyAddr, cursor, length], () => {
+      return this.surveyContract.methods.getParticipations(surveyAddr, cursor, length).call();
+    });
+
     return Promise.resolve<Participation[]>(parts);
   }
 
   async findParticipation(surveyAddr: string, account: string): Promise<Participation> {
-    this.checkContracts();
-    let part = await this.surveyContract.methods.findParticipation(surveyAddr, account).call();
+    let part = await this.cachedReq<Participation>(this.partCache, [surveyAddr, account], () => {
+      return this.surveyContract.methods.findParticipation(surveyAddr, account).call();
+    });
+
     return Promise.resolve<Participation>(part);
   }
 
@@ -284,31 +328,43 @@ export class SurveyService implements OnDestroy {
   }
 
   async getOwnParticipations(cursor: number, length: number): Promise<Participation[]> {
-    this.checkContracts();
-    let parts = await this.surveyContract.methods.getOwnParticipations(cursor, length).call({ from : this.accountData.address });
+    let parts = await this.cachedReq<Participation[]>(this.partCache, [this.accountData.address, cursor, length], () => {
+      return this.surveyContract.methods.getOwnParticipations(cursor, length).call({ from : this.accountData.address });
+    });
+
     return Promise.resolve<Participation[]>(parts);
   }
 
   async findOwnParticipation(surveyAddr: string): Promise<Participation> {
-    this.checkContracts();
-    let part = await this.surveyContract.methods.findOwnParticipation(surveyAddr).call({ from : this.accountData.address });
+    let part = await this.cachedReq<Participation>(this.partCache, [this.accountData.address, surveyAddr], () => {
+      return this.surveyContract.methods.findOwnParticipation(surveyAddr).call({ from : this.accountData.address });
+    });
+
     return Promise.resolve<Participation>(part);
   }
 
   // ### Responses ###
 
   async getResponses(surveyAddr: string, questionIndex: number, cursor: number, length: number): Promise<string[]> {
-    this.checkContracts();
-    let responses = await this.surveyContract.methods.getResponses(surveyAddr, questionIndex, cursor, length).call();
+    let responses = await this.cachedReq<string[]>(this.responseCache, [surveyAddr, questionIndex, cursor, length], () => {
+      return this.surveyContract.methods.getResponses(surveyAddr, questionIndex, cursor, length).call();
+    });
+
     return Promise.resolve<string[]>(responses);
   }
 
   async getResponseCounts(surveyAddr: string, questionIndex: number): Promise<ResponseCount[]> {
-    this.checkContracts();
-    let responses = await this.surveyContract.methods.getResponseCounts(surveyAddr, questionIndex).call();
-    responses = responses.map((rc: ResponseCount) => {
-      return { value: rc.value, count: parseInt(rc.count+'') };
+    let responses = await this.cachedReq<ResponseCount[]>(this.responseCache, [surveyAddr, questionIndex], () => {
+      return this.surveyContract.methods.getResponseCounts(surveyAddr, questionIndex).call();
     });
+
+    responses = responses.map((rc: ResponseCount) => {
+      return { 
+        value: rc.value, 
+        count: parseInt(rc.count+'') 
+      };
+    });
+
     return Promise.resolve<ResponseCount[]>(responses);
   }
 
@@ -450,9 +506,9 @@ export class SurveyService implements OnDestroy {
     return txHash;
   }
 
-  async estimatePartFromForwarder(chainId: number, surveyAddr: string, responses: string[], key: string): Promise<FwdRequest> {
+  async estimatePartFromForwarder(surveyAddr: string, responses: string[], key: string): Promise<FwdRequest> {
     const account = this.accountData.address;
-    let result = await this.utilService.estimatePart(chainId, surveyAddr, responses, key);
+    let result = await this.utilService.estimatePart(CURRENT_CHAIN, surveyAddr, responses, key);
 
     if (!result.success) {
       throw new Error(result.data);
@@ -474,8 +530,8 @@ export class SurveyService implements OnDestroy {
     return Promise.resolve<FwdRequest>(request);
   }
 
-  async sendPartFromForwarder(chainId: number, request: FwdRequest, signature: string) {
-    let result = await this.utilService.sendPart(chainId, request, signature);
+  async sendPartFromForwarder(request: FwdRequest, signature: string) {
+    let result = await this.utilService.sendPart(CURRENT_CHAIN, request, signature);
 
     if (!result.success) {
       throw new Error(result.data);
@@ -484,23 +540,48 @@ export class SurveyService implements OnDestroy {
     return result.data;
   }
 
-  async findSurveys(chainId: number, filter: SurveyFilter): Promise<SurveySearchResult> {
-    let result = await this.utilService.findSurveys(chainId, filter);
+  async findSurveysOnServer(filter: SurveyFilter): Promise<SurveySearchResult> {
+    let result = await this.utilService.findSurveys(CURRENT_CHAIN, filter);
 
     if (!result.success) {
       throw new Error(result.data);
     }
 
     let total = result.data.total;
-    let surveys = result.data.surveys;
-    let impls: SurveyImpl[] = [];
+    let surveys: SurveyImpl[] = [];
 
-    for(let survey of surveys) {
+    for(let survey of result.data.surveys) {
       let impl = await this.toSurveyImpl(survey, []);
-      impls.push(impl);
+      surveys.push(impl);
     }
 
-    return Promise.resolve<SurveySearchResult>({ total, surveys: impls });
+    return Promise.resolve<SurveySearchResult>({ total, surveys });
+  }
+
+  async findPartsOnServer(filter: PartFilter): Promise<PartSearchResult> {
+    let result = await this.utilService.findParts(CURRENT_CHAIN, filter);
+
+    if (!result.success) {
+      throw new Error(result.data);
+    }
+    
+    let total = result.data.total;
+    let buckets = result.data.buckets;
+    let parts = [];
+    let surveys: SurveyImpl[] = [];
+
+    if(result.data.parts) {
+      for(let part of result.data.parts) {
+        parts.push(part);
+      }
+    }
+
+    for(let survey of result.data.surveys) {
+      let impl = await this.toSurveyImpl(survey, []);
+      surveys.push(impl);
+    }
+
+    return Promise.resolve<PartSearchResult>({ total, parts, buckets, surveys });
   }
 
   async signTypedData(request: FwdRequest) {
@@ -577,6 +658,19 @@ export class SurveyService implements OnDestroy {
       this._avgTxGas = total / this.txGasWgtSamples.length;
     } else {
       this._avgTxGas = this._minTxGas = 3000000;// Default value for the first survey when there are no participations
+    }
+  }
+
+  private async cachedReq<T>(cache: Cache, args: any[], call: () => Promise<T>): Promise<T> {
+    let key = keccak256(args.join('-'));
+
+    if(cache[key]) {
+      return Promise.resolve<T>(cache[key]);
+    } else {
+      this.checkContracts();
+      let result = await call();
+      cache[key] = result;
+      return result;
     }
   }
   

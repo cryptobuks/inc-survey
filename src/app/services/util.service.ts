@@ -14,6 +14,7 @@ import { DEFAULT_LIST_OF_LISTS_TO_DISPLAY, TRUSTED_LISTS, UNSUPPORTED_LIST_URLS 
 import { ChainId } from "../models/chains";
 import { getTokenLogoURL, ipfsToURL } from "../shared/helper";
 import { newTokenFromInfo, TokenData } from "../models/token-data";
+import { PartFilter } from "../models/part-filter";
 declare var grecaptcha: any;
 
 @Injectable({
@@ -21,8 +22,8 @@ declare var grecaptcha: any;
 })
 export class UtilService {
 
-    private trustTokens: { [chainId: string]: { [address: string]: TokenData } } = {};
-    private tokenLogoUrls: { [chainId: string]: { [address: string]: string } } = {};
+    private trustTokens: { [chainId: number]: { [address: string]: TokenData } } = {};
+    private tokenLogoUrls: { [chainId: number]: { [address: string]: string } } = {};
 
     validate: ValidateFunction;
 
@@ -122,6 +123,15 @@ export class UtilService {
     async findSurveys(chainId: number, filter: SurveyFilter): Promise<RelResponse> {
         const recaptcha = await grecaptcha.execute(RECAPTCHA_RENDER, { action: 'submit' });
         return this.http.post<RelResponse>(RELAYER_API_URL + '/find-surveys', {
+            chainId,
+            filter,
+            recaptcha
+        }, HTTP_OPTIONS).toPromise();
+    }
+
+    async findParts(chainId: number, filter: PartFilter): Promise<RelResponse> {
+        const recaptcha = await grecaptcha.execute(RECAPTCHA_RENDER, { action: 'submit' });
+        return this.http.post<RelResponse>(RELAYER_API_URL + '/find-parts', {
             chainId,
             filter,
             recaptcha

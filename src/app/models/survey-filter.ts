@@ -1,3 +1,5 @@
+import { FilterSortItem } from "./filter-sort-item";
+
 export interface SurveyFilter {
     cursor?: number;
     length?: number;
@@ -10,7 +12,8 @@ export interface SurveyFilter {
     minBudget?: string;
     minReward?: string;
     token?: string;
-    account?: string;
-    orderField?: string;
-    order?: 'asc' | 'desc';
+    surveyOwner?: string;
+    addresses?: string[];
+    fields?: string[];
+    sortItems: FilterSortItem[];
 }

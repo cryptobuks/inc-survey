@@ -34,11 +34,11 @@ export class SurveyImpl {
     
     static formatData(impl: SurveyImpl): SurveyFormattedData {
       impl.formatted = {
-        budgetAmount: toFormatBigNumber(toAmount(impl.budget, impl.tokenData.decimals)),
-        rewardAmount: toFormatBigNumber(toAmount(impl.reward, impl.tokenData.decimals)),
+        budgetAmount: toFormatBigNumber(toAmount(impl.budget, impl.tokenData?.decimals)),
+        rewardAmount: toFormatBigNumber(toAmount(impl.reward, impl.tokenData?.decimals)),
         entryDate: impl.entryDate?.toLocaleString(),
-        startDate: impl.startDate.toLocaleString(),
-        endDate: impl.endDate.toLocaleString()
+        startDate: impl.startDate?.toLocaleString(),
+        endDate: impl.endDate?.toLocaleString()
       };
 
       return impl.formatted;
@@ -46,9 +46,9 @@ export class SurveyImpl {
 
     static toImpl(survey: Survey, tokenData: TokenData, questions: QuestionImpl[]): SurveyImpl {
       let impl: SurveyImpl = {
-        address: survey.addr,
-        owner: survey.account,
-        entryDate: new Date(survey.entryTime * 1000),
+        address: survey.surveyAddr,
+        owner: survey.surveyOwner,
+        entryDate: new Date(survey.surveyTime * 1000),
         title: survey.title,
         description: survey.description,
         logoUrl: survey.logoUrl,

@@ -1,11 +1,13 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from 'src/app/app.component';
 import { AccountData } from 'src/app/models/account-data';
+import { SurveyImpl } from 'src/app/models/survey-impl';
 import { ConfigProps } from 'src/app/models/survey-model';
 import { SurveyService } from 'src/app/services/survey.service';
 import { Web3Service } from 'src/app/services/web3.service';
-import { destroyChart, renderChart, toAmount, toFormatBigNumber } from 'src/app/shared/helper';
+import { YEAR_SECONDS } from 'src/app/shared/constants';
+import { destroyChart, renderChart, toAmount, toChecksumAddress, toFormatBigNumber } from 'src/app/shared/helper';
 declare var $: any;
 declare var ApexCharts: any;
 
@@ -52,23 +54,32 @@ export class OwnPartsChartComponent implements OnInit, OnDestroy {
         this.chart = undefined;
       }
 
+      let currTime = Math.round(this.web3Service.currenTime / 1000);
+      let startTime = currTime - YEAR_SECONDS;
+
+      let result = await this.surveyService.findPartsOnServer({
+        startTime,
+        partOwner: toChecksumAddress(this.accountData.address),
+        surveyFields: ["surveyAddr", "title", "reward", "tokenSymbol"]
+      });
+
+      let surveyMap: { [address: string]: SurveyImpl } = {};
+
+      for (let survey of result.surveys) {
+        surveyMap[survey.address] = survey;
+      }
+
       let data = [];
-      let total = await this.surveyService.getOwnParticipationsLength();
 
-      if (total > 0) {
-        let length = (total < this.count) ? total : this.count;
-        let cursor = (total > this.count) ? total - this.count : 0;
-        let parts = await this.surveyService.getOwnParticipations(cursor, length);
+      for (let i = 0; i < result.buckets?.length; i++) {
+        let bucket = result.buckets[i]; // bucket.count will always be 1
+        let survey = surveyMap[bucket.key];
 
-        for (let i = parts.length - 1; i >= 0; i--) {
-          let survey = await this.surveyService.findSurvey(parts[i].surveyAddr);
-
-          data.push({
-            title: survey.title,
-            rewardAmount: toFormatBigNumber(toAmount(survey.reward)),
-            symbol: survey.tokenData.symbol
-          });
-        }
+        data.push({
+          title: survey.title,
+          value: toFormatBigNumber(toAmount(survey.reward)),
+          symbol: survey.tokenData.symbol
+        });
       }
 
       let tooltipTitle = this.translateService.instant("reward");
@@ -190,7 +201,7 @@ export class OwnPartsChartComponent implements OnInit, OnDestroy {
 
       for (let i = 0; i < data.length; i++) {
         chartData.xaxis.categories.push(data[i].title);
-        chartData.series[0].data.push(data[i].rewardAmount);
+        chartData.series[0].data.push(data[i].value);
       }
 
       $(".loading-cnt", $(this.element.nativeElement)).hide();

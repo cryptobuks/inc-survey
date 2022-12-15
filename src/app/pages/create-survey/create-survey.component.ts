@@ -507,8 +507,10 @@ export class CreateSurveyComponent extends BasePageComponent {
     });
   }
 
-  loadSurveyPreview() {
+  async loadSurveyPreview() {
     this.loading = true;
+    
+    await this.web3Service.loadTokenBalance(this.survey.tokenData);
     const validation = this.validateSurvey();
 
     if(validation) {

@@ -2,7 +2,7 @@
 
     <breadcrumbs></breadcrumbs>
 
-    <p-panel header="{{ 'initial_offer' | translate }}">
+    <p-panel header="{{ 'initial_offer_phase_x' | translate:{ val1 : (offerProps?.phase || '..') } }}">
         <ng-template pTemplate="icons">
             <button *ngIf="saleState == SaleState.STARTED" class="refresh-button" mat-icon-button type="button" (click)="refresh()" [attr.data-before]="refreshTimeout || ''">
                 <mat-icon>autorenew</mat-icon>

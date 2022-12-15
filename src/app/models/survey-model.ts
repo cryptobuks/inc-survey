@@ -51,19 +51,19 @@ export interface SurveyRequest {
 }
 
 export interface Survey extends SurveyRequest {
-    entryTime: number;
-    account: string;// Address: creator
     keyRequired: boolean;
-    addr: string;// Address: survey
+    surveyTime: number;
+    surveyOwner: string;// Address: creator
+    surveyAddr: string;// Address: survey
 }
 
 export interface Participation {
     surveyAddr: string;
     responses: string[];
     txGas: string;// BigNumber
-    entryTime: number;
     gasPrice: string;// BigNumber
-    account: string;// Address
+    partTime: number;
+    partOwner: string;// Address
 }
 
 export enum ValidationOperator {

@@ -142,7 +142,7 @@ input::placeholder, textarea::placeholder {
     font-size: 14px;
     color: var(--error-color);
     text-align: start;
-    word-break: break-all;
+    word-break: break-word;
     white-space: pre-line;
     line-height: 18px;
 }
@@ -284,7 +284,7 @@ input::placeholder, textarea::placeholder {
 .p-toast .p-toast-message .p-toast-message-content .p-toast-detail {
     /* Allow line breaks in toast */
     white-space: pre-line;
-    word-break: break-all;
+    word-break: break-word;
 }
 
 /*.p-toast .p-toast-message .p-toast-icon-close {

@@ -2,13 +2,12 @@ import { Component, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from 'src/app/app.component';
 import { AccountData } from 'src/app/models/account-data';
-import { SurveyFilter } from 'src/app/models/survey-filter';
+import { SurveyImpl } from 'src/app/models/survey-impl';
 import { ConfigProps } from 'src/app/models/survey-model';
 import { SurveyState } from 'src/app/models/survey-support';
 import { SurveyService } from 'src/app/services/survey.service';
 import { Web3Service } from 'src/app/services/web3.service';
-import { CURRENT_CHAIN } from 'src/app/shared/constants';
-import { destroyChart, renderChart } from 'src/app/shared/helper';
+import { calcPecent, destroyChart, formatDuration, limitStr, renderChart, toChecksumAddress } from 'src/app/shared/helper';
 declare var $: any;
 declare var ApexCharts: any;
 
@@ -51,6 +50,7 @@ export class OwnSurveysChartComponent implements OnInit, OnDestroy {
 
   async loadData() {
     this.loading = true;
+    let isOpened = this.surveyState == SurveyState.OPENED;
 
     try {
       if (this.chart) {
@@ -58,65 +58,83 @@ export class OwnSurveysChartComponent implements OnInit, OnDestroy {
         this.chart = undefined;
       }
 
-      let data = [];
-      let total = await this.surveyService.getOwnSurveysLength();
+      let currTime = Math.round(this.web3Service.currenTime / 1000);
+      let surveyMinStartTime = undefined, surveyMaxStartTime = undefined,
+      surveyMinEndTime = undefined, surveyMaxEndTime = undefined;
 
-      //if (total > 100) {
-      if (total > 0) {
-        let length = (total < this.count) ? total : this.count;
-        let cursor = (total > this.count) ? total - this.count : 0;
-        let currTime = Math.round(this.web3Service.currenTime / 1000);
+      if (isOpened) {
+        surveyMaxStartTime = currTime;
+        surveyMinEndTime = currTime;
+      } else {// CLOSED
+        surveyMaxEndTime = currTime + 1;
+      }
 
-        let filter: SurveyFilter = {
-          cursor,
-          length,
-          account: this.accountData.address,
-          order: 'desc'
-        };
-
-        if (this.surveyState == SurveyState.OPENED) {
-          filter.maxStartTime = currTime;
-          filter.minEndTime = currTime;
-        } else {// CLOSED
-          filter.maxEndTime = currTime;
-        }
-
-        const searchResult = await this.surveyService.findSurveys(CURRENT_CHAIN, filter);
-
-        for (let survey of searchResult.surveys) {
-          let partsNum = await this.surveyService.getParticipantsLength(survey.address);
-
-          data.push({
-            title: survey.title,
-            partsNum: partsNum
-          });
-        }
-      }/* else {
-        let index = total - 1;
-
-        while (index >= 0 && data.length < this.count) {
-          let survey = await this.surveyService.getOwnSurvey(index);
-          let state = this.surveyService.getState(survey);
-
-          if (state == this.surveyState) {
-            //let rmngBudget = await this.surveyService.remainingBudgetOf(survey.address);
-            let partsNum = await this.surveyService.getParticipantsLength(survey.address);
-
-            data.push({
-              title: survey.title,
-              partsNum: partsNum
-            });
+      let result = await this.surveyService.findPartsOnServer({
+        surveyOwner: toChecksumAddress(this.accountData.address),
+        surveyMinStartTime,
+        surveyMaxStartTime,
+        surveyMinEndTime,
+        surveyMaxEndTime,
+        surveyFields: ["surveyAddr", "title", "startTime", "endTime"],
+        sortItems: [
+          {
+            field: 'startTime',
+            order: 'desc'
           }
+        ]
+      });
 
-          index--;
-        }
-      }*/
+      let surveyMap: { [address: string]: SurveyImpl } = {};
 
-      let tooltipTitle = this.translateService.instant("participations");
-      let titleText = (this.surveyState == SurveyState.OPENED) ?
+      for (let survey of result.surveys) {
+        surveyMap[survey.address] = survey;
+      }
+
+      let progressTxt = this.translateService.instant("progress");
+      let durationTxt = this.translateService.instant("duration");
+      let elapsedTimeTxt = this.translateService.instant("elapsed_time");
+      let participationsTxt = this.translateService.instant("participations");
+      let titleText = isOpened ?
         this.translateService.instant("my_opened_surveys") :
         this.translateService.instant("my_closed_surveys");
-      let subtitleText = this.translateService.instant("participations_in_last_x", { val1: this.count });
+      let subtitleText = isOpened ?
+        this.translateService.instant("number_participations_so_far"):
+        this.translateService.instant("total_participations");
+
+      let data = [];
+      let currTimeMs = this.web3Service.currenTime;
+
+      for (let i = 0; i < result.buckets?.length; i++) {
+        let bucket = result.buckets[i];
+        let survey = surveyMap[bucket.key];
+        let startMs = survey.startDate.getTime();
+        let endMs = survey.endDate.getTime();
+        let duration = formatDuration(endMs - startMs);
+
+        let limitedTitle = limitStr(survey.title, 64);
+        let label = limitedTitle + ": " + bucket.count + " P";
+
+        let tooltip: string;
+        let value: number;
+
+        if(isOpened) {
+          let progress = currTimeMs - startMs;
+          let total = endMs - startMs;
+          value = calcPecent(progress, total);
+          let elapsed = formatDuration(currTimeMs - startMs);
+          tooltip = `${progressTxt}: ${value}%\n${elapsedTimeTxt}: ${elapsed}\n${durationTxt}: ${duration}\n${participationsTxt}: ${bucket.count}`;
+        } else {
+          value = bucket.count;
+          tooltip = `${durationTxt}: ${duration}\n${participationsTxt}: ${bucket.count}`;
+        }
+
+        data.push({
+          title: survey.title,
+          label,
+          tooltip,
+          value
+        });
+      }
 
       let chartData = {
         theme: AppComponent.instance.chartTheme,
@@ -151,8 +169,9 @@ export class OwnSurveysChartComponent implements OnInit, OnDestroy {
           style: {
             colors: ['#fff']
           },
-          formatter: function (val, opt) {
-            return opt.w.globals.labels[opt.dataPointIndex] + ":  " + val
+          formatter: function (value, opts) {
+            //return opts.w.globals.labels[opts.dataPointIndex] + ":  " + value;
+            return data[opts.seriesIndex].label;
           },
           offsetX: 0,
           dropShadow: {
@@ -165,6 +184,12 @@ export class OwnSurveysChartComponent implements OnInit, OnDestroy {
         },
         xaxis: {
           categories: [],
+          max: isOpened? 100: undefined,
+          labels: {
+            formatter: function(value, timestamp, opts) {
+              return value + (isOpened? '%': '');
+            }
+          }
         },
         yaxis: {
           labels: {
@@ -186,10 +211,14 @@ export class OwnSurveysChartComponent implements OnInit, OnDestroy {
             show: false
           },
           y: {
-            title: {
+            /*title: {
               formatter: function () {
                 return tooltipTitle + ':';
               }
+            },*/
+            //formatter: function(value, { series, seriesIndex, dataPointIndex, w })
+            formatter: function(value, opts) {
+              return data[opts.seriesIndex].tooltip;
             }
           }
         },
@@ -232,7 +261,7 @@ export class OwnSurveysChartComponent implements OnInit, OnDestroy {
 
       for (let i = 0; i < data.length; i++) {
         chartData.xaxis.categories.push(data[i].title);
-        chartData.series[0].data.push(data[i].partsNum);
+        chartData.series[0].data.push(data[i].value);
       }
 
       $(".loading-cnt", $(this.element.nativeElement)).hide();
