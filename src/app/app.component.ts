@@ -1,9 +1,9 @@
-import { ApplicationRef, Component, HostListener, Inject, LOCALE_ID, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ApplicationRef, Component, HostListener, Inject, LOCALE_ID, NgZone, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Lang } from './models/lang';
 import { getUserLocale, moveScrollToTop, shortAddress, toAmount, toFormatBigNumber } from './shared/helper';
-import { langMap, CURRENT_CHAIN, NET_PARAMS, INC_TOKEN, chartThemeDark, chartThemeLight, Theme, isTheme, NATIVE_CURRENCY, WRAPPED_CURRENCY } from './shared/constants';
+import { langMap, CURRENT_CHAIN, NET_PARAMS, INC_TOKEN, chartThemeDark, chartThemeLight, Theme, isTheme, NATIVE_CURRENCY, WRAPPED_CURRENCY, RECAPTCHA_RENDER } from './shared/constants';
 import { DomSanitizer, Title } from '@angular/platform-browser';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 import { MatIconRegistry } from '@angular/material/icon';
@@ -16,6 +16,7 @@ import { Breadcrumb, getBreadcrumbs } from './shared/menu';
 import { TokenData } from './models/token-data';
 import { NetData } from './models/net-data';
 import { SurveyService } from './services/survey.service';
+import { ScriptService } from './services/script.service';
 declare var $: any;
 declare var charts: any;
 
@@ -35,8 +36,8 @@ export class AppComponent implements OnInit, OnDestroy {
   get ccy(): TokenData { return NATIVE_CURRENCY[CURRENT_CHAIN]; }
   get wCcy(): TokenData { return WRAPPED_CURRENCY[CURRENT_CHAIN]; }
   get web3(): any { return this.web3Service.web3; }
-  get gasPriceGwei(): any { return this.web3Service.gasPriceGwei; }
   get blockHeader(): any { return this.web3Service.blockHeader; }
+  get gasPriceGwei(): any { return this.web3Service.gasPriceGwei; }
   get accountData(): AccountData { return this.web3Service.accountData; }
   get accountShortAddress(): string | null {
     return shortAddress(this.accountData?.address);
@@ -93,33 +94,44 @@ export class AppComponent implements OnInit, OnDestroy {
     private domSanitizer: DomSanitizer,
     private web3Service: Web3Service,
     private surveyService: SurveyService,// Initialize the service before connecting
+    private scriptService: ScriptService,
+    private renderer: Renderer2,
     private appRef: ApplicationRef,
     public ngZone: NgZone
   ) {
 
+    const recaptchaApi = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_RENDER}`;
+    const scriptElement = this.scriptService.loadJsScript(this.renderer, recaptchaApi);
+    scriptElement.onload = () => {
+     console.log('reCAPTCHA API Script loaded');
+    };
+    scriptElement.onerror = () => {
+      console.log('Could not load the reCAPTCHA API Script!');
+    };
+
     this.matIconRegistry.addSvgIcon(
       "metamask",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/svg/metamask.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/svg/metamask.svg")
     );
 
     this.matIconRegistry.addSvgIcon(
       "option_grid",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/svg/option_grid.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/svg/option_grid.svg")
     );
 
     this.matIconRegistry.addSvgIcon(
       "excel",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/svg/excel.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/svg/excel.svg")
     );
 
     this.matIconRegistry.addSvgIcon(
       "twitter",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/svg/twitter.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/svg/twitter.svg")
     );
 
     this.matIconRegistry.addSvgIcon(
       "discord",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("../assets/svg/discord.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/svg/discord.svg")
     );
 
     this.router.events.pipe(

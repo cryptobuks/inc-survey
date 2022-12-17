@@ -27,7 +27,7 @@ export const WMATIC_LOGO_URL = 'assets/img/wmatic_logo.png';
 // Used in the uniswap list, it seems that React can't resolve the relative path.
 export const INC_LOGO_URL = CURRENT_URL + '/assets/img/inc_logo.png';
 export const CURRENT_CHAIN = environment.production? ChainId.MATIC: ChainId.MUMBAI;
-export const RECAPTCHA_RENDER = "6LfrfcQdAAAAAFqwpMDyFMDLJn2HU3zWQqwgnu1E";
+export const RECAPTCHA_RENDER = environment.production? "6LfT1ogjAAAAANoyA_hKCzzQwdGPja9OWb-PcNJl": "6LfrfcQdAAAAAFqwpMDyFMDLJn2HU3zWQqwgnu1E";
 
 export const MINUTE_MILLIS = 1000 * 60;
 export const HOUR_MILLIS = MINUTE_MILLIS * 60;

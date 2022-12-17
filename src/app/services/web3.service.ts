@@ -565,7 +565,7 @@ export class Web3Service implements OnDestroy {
 
   private async loadEphemeralData() {
     let elapsedTime = new Date().getTime() - this.ephemeralDataTime;
-    if(elapsedTime < 30000) {// 30 seconds
+    if(elapsedTime < 60000) {// 1 min
       return;
     }
 
