@@ -64,9 +64,9 @@ export class OwnSurveysChartComponent implements OnInit, OnDestroy {
 
       if (isOpened) {
         surveyMaxStartTime = currTime;
-        surveyMinEndTime = currTime;
+        surveyMinEndTime = currTime - 1;
       } else {// CLOSED
-        surveyMaxEndTime = currTime + 1;
+        surveyMaxEndTime = currTime;
       }
 
       let result = await this.surveyService.findPartsOnServer({
@@ -109,7 +109,7 @@ export class OwnSurveysChartComponent implements OnInit, OnDestroy {
         let survey = surveyMap[bucket.key];
         let startMs = survey.startDate.getTime();
         let endMs = survey.endDate.getTime();
-        let duration = formatDuration(endMs - startMs);
+        let duration = formatDuration(endMs - startMs - 1000);
 
         let limitedTitle = limitStr(survey.title, 64);
         let label = limitedTitle + ": " + bucket.count + " P";
@@ -119,7 +119,7 @@ export class OwnSurveysChartComponent implements OnInit, OnDestroy {
 
         if(isOpened) {
           let progress = currTimeMs - startMs;
-          let total = endMs - startMs;
+          let total = endMs - startMs - 1000;
           value = calcPecent(progress, total);
           let elapsed = formatDuration(currTimeMs - startMs);
           tooltip = `${progressTxt}: ${value}%\n${elapsedTimeTxt}: ${elapsed}\n${durationTxt}: ${duration}\n${participationsTxt}: ${bucket.count}`;
@@ -171,7 +171,7 @@ export class OwnSurveysChartComponent implements OnInit, OnDestroy {
           },
           formatter: function (value, opts) {
             //return opts.w.globals.labels[opts.dataPointIndex] + ":  " + value;
-            return data[opts.seriesIndex].label;
+            return data[opts.dataPointIndex].label;
           },
           offsetX: 0,
           dropShadow: {
@@ -218,7 +218,7 @@ export class OwnSurveysChartComponent implements OnInit, OnDestroy {
             },*/
             //formatter: function(value, { series, seriesIndex, dataPointIndex, w })
             formatter: function(value, opts) {
-              return data[opts.seriesIndex].tooltip;
+              return data[opts.dataPointIndex].tooltip;
             }
           }
         },

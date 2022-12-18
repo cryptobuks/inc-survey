@@ -122,7 +122,7 @@ export class OwnPartsChartComponent implements OnInit, OnDestroy {
           // formatter: function(value, { seriesIndex, dataPointIndex, w })
           formatter: function (value, opts) {
             //return opts.w.globals.labels[opts.dataPointIndex] + ":  " + value
-            return data[opts.seriesIndex].title + ':' + value + ' ' + data[opts.seriesIndex].symbol;
+            return data[opts.dataPointIndex].title + ':' + value + ' ' + data[opts.dataPointIndex].symbol;
           },
           offsetX: 0,
           dropShadow: {
@@ -158,7 +158,7 @@ export class OwnPartsChartComponent implements OnInit, OnDestroy {
           y: {
             // formatter: function(value, { series, seriesIndex, dataPointIndex, w })
             formatter: function (value, opts) {
-              return tooltipTitle + ':' + value + ' ' + data[opts.seriesIndex].symbol;
+              return tooltipTitle + ':' + value + ' ' + data[opts.dataPointIndex].symbol;
             }
           }
         },

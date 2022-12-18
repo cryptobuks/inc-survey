@@ -92,7 +92,7 @@ export class SurveyStateInfoService implements OnDestroy {
 
   private setRemainingTime() {
     if (!this.rmngTimeValue) {
-      this.rmngTimeValue = this.survey.endDate.getTime() - this.web3Service.currenTime;
+      this.rmngTimeValue = this.survey.endDate.getTime() - this.web3Service.currenTime - 1000;
     } else {
       this.rmngTimeValue -= 1000;
     }

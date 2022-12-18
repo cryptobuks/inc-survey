@@ -629,7 +629,7 @@ export class SurveyService implements OnDestroy {
   getState(surveyImpl: SurveyImpl): SurveyState {
     let currTime = this.web3Service.currenTime;
     
-    if(currTime > surveyImpl.endDate.getTime()) {
+    if(currTime >= surveyImpl.endDate.getTime()) {
       return SurveyState.CLOSED;
     }
 

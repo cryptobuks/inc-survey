@@ -10,8 +10,8 @@ import { QuestionValidator, ResponseType, ValidationExpression, ValidationOperat
 import { QUESTION_CLASS, QuestionData, RESPONSE_TYPE, parseResponse, getExpressionTitle, getOperatorTitle } from 'src/app/models/survey-support';
 import { SurveyService } from 'src/app/services/survey.service';
 import { Web3Service } from 'src/app/services/web3.service';
-import { CURRENT_CHAIN, NATIVE_CURRENCY, DOMAIN_URL, HOUR_MILLIS } from 'src/app/shared/constants';
-import { calcFeeTotal, cleanValidationError, containsDigits, exportCoupons, generateSimpleTable, insertValidationError, isDigit, isUDigit, loadPageList, moveScrollTo, sanitizeHtml, ScrollPosition, truncateSeconds } from 'src/app/shared/helper';
+import { CURRENT_CHAIN, NATIVE_CURRENCY, DOMAIN_URL, MINUTE_MILLIS } from 'src/app/shared/constants';
+import { calcFeeTotal, cleanValidationError, containsDigits, exportCoupons, formatDuration, generateSimpleTable, insertValidationError, isDigit, isUDigit, loadPageList, moveScrollTo, sanitizeHtml, truncateSeconds } from 'src/app/shared/helper';
 declare var $: any;
 
 @Component({
@@ -149,20 +149,25 @@ export class SurveyImplComponent implements OnInit, OnDestroy {
   checkSurvey(): [string, string] {
     let currTime = truncateSeconds(new Date(this.web3Service.currenTime)).getTime();
 
-    if(this.survey.startDate.getTime() < currTime + (HOUR_MILLIS / 2)) {
-      return [".survey-start-date", this.translateService.instant("start_date_must_after_current_date_at_least_30_minutes")];
+    if(this.survey.startDate.getTime() < currTime + MINUTE_MILLIS * 10) {
+      return [".survey-start-date", this.translateService.instant("invalid_start_date_min_x_minutes", { val1: 10 })];
     }
 
     if(this.survey.startDate.getTime() - currTime > this.configProps.startMaxTime * 1000) {
-      return [".survey-start-date", this.translateService.instant("invalid_start_date_max_x_days", { val1: Math.round(this.configProps.startMaxTime / 60 / 60 / 24) })];
+      let days = Math.round(this.configProps.startMaxTime / 60 / 60 / 24);
+      return [".survey-start-date", this.translateService.instant("invalid_start_date_max_x_days", { val1: days })];
     }
 
-    if(this.survey.endDate.getTime() < this.survey.startDate.getTime() + this.configProps.rangeMinTime * 1000) {
-      return [".survey-end-date", this.translateService.instant("invalid_date_range_min_x_hours", { val1: Math.round(this.configProps.rangeMinTime / 60 / 60 ) })];
+    let range = this.survey.endDate.getTime() - this.survey.startDate.getTime() - 1000;
+
+    if(range < this.configProps.rangeMinTime * 1000) {
+      let duration = formatDuration(this.configProps.rangeMinTime * 1000);
+      return [".survey-end-date", this.translateService.instant("invalid_date_range_min_x", { val1: duration })];
     }
 
-    if(this.survey.endDate.getTime() - this.survey.startDate.getTime() > this.configProps.rangeMaxTime * 1000) {
-      return [".survey-end-date", this.translateService.instant("invalid_date_range_max_x_days", { val1: Math.round(this.configProps.rangeMaxTime / 60 / 60 / 24) })];
+    if(range > this.configProps.rangeMaxTime * 1000) {
+      let duration = formatDuration(this.configProps.rangeMaxTime * 1000);
+      return [".survey-end-date", this.translateService.instant("invalid_date_range_max_x", { val1: duration })];
     }
 
     if(this.survey.budget.isGreaterThan(this.survey.tokenData.balance)) {

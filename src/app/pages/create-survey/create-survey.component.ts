@@ -167,17 +167,22 @@ export class CreateSurveyComponent extends BasePageComponent {
   loading = false;
 
   get minStartDate(): Date {
+    // Set a margin so that the time for the survey to be completed
     let currTime = truncateSeconds(new Date(this.web3Service.currenTime)).getTime();
     return new Date(currTime + HOUR_MILLIS);
   };
   get maxStartDate(): Date {
-    return new Date(this.minStartDate.getTime() + this.configProps.startMaxTime * 1000);
+    let currTime = truncateSeconds(new Date(this.web3Service.currenTime)).getTime();
+    return new Date(currTime + this.configProps.startMaxTime * 1000);
   };
   get minEndDate(): Date {
-    return new Date(this.survey.startDate.getTime() + this.configProps.rangeMinTime * 1000);
+    // The selector does not admit seconds, so we add a minute that would be greater than the minimum.
+    // This looks good on the view because the minimum is set to [x minutes - 1 second].
+    return new Date(this.survey.startDate.getTime() + this.configProps.rangeMinTime * 1000 + 60000);
   };
   get maxEndDate(): Date {
-    return new Date(this.minEndDate.getTime() + this.configProps.rangeMaxTime * 1000);
+    // We can add a minute to the selector since the maximum established is [x minutes - 1 second].
+    return new Date(this.survey.startDate.getTime() + this.configProps.rangeMaxTime * 1000 + 60000);
   };
 
   get maxParts(): string {
@@ -206,11 +211,11 @@ export class CreateSurveyComponent extends BasePageComponent {
       return "-";
     }
 
-    if(this.survey.endDate.getTime() < this.survey.startDate.getTime()) {
+    if(this.survey.endDate.getTime() - 1000 < this.survey.startDate.getTime()) {
       return "N/A";
     }
 
-    let time = this.survey.endDate.getTime() - this.survey.startDate.getTime();
+    let time = this.survey.endDate.getTime() - this.survey.startDate.getTime() - 1000;
     return formatDuration(time);
   }
 
@@ -510,7 +515,12 @@ export class CreateSurveyComponent extends BasePageComponent {
   async loadSurveyPreview() {
     this.loading = true;
     
-    await this.web3Service.loadTokenBalance(this.survey.tokenData);
+    try {
+      await this.web3Service.loadTokenBalance(this.survey.tokenData);
+    } catch (err: any) {
+      console.error("Failed to get balance for " + this.survey.tokenData.symbol);
+    }
+
     const validation = this.validateSurvey();
 
     if(validation) {
@@ -631,23 +641,28 @@ export class CreateSurveyComponent extends BasePageComponent {
     }
 
     if(this.survey.startDate.getTime() < currTime + HOUR_MILLIS) {
-      return [".survey-start-date", this.translateService.instant("start_date_must_after_current_date_at_least_1_hour")];
+      return [".survey-start-date", this.translateService.instant("invalid_start_date_min_1_hour")];
     }
 
     if(this.survey.startDate.getTime() - currTime > this.configProps.startMaxTime * 1000) {
-      return [".survey-start-date", this.translateService.instant("invalid_start_date_max_x_days", { val1: Math.round(this.configProps.startMaxTime / 60 / 60 / 24) })];
+      let days = Math.round(this.configProps.startMaxTime / 60 / 60 / 24);
+      return [".survey-start-date", this.translateService.instant("invalid_start_date_max_x_days", { val1: days })];
     }
 
     if(!this.survey.endDate) {
       return [".survey-end-date", this.translateService.instant("please_enter_end_date")];
     }
 
-    if(this.survey.endDate.getTime() < this.survey.startDate.getTime() + this.configProps.rangeMinTime * 1000) {
-      return [".survey-end-date", this.translateService.instant("invalid_date_range_min_x_hours", { val1: Math.round(this.configProps.rangeMinTime / 60 / 60 ) })];
+    let range = this.survey.endDate.getTime() - this.survey.startDate.getTime() - 1000;
+
+    if(range < this.configProps.rangeMinTime * 1000) {
+      let duration = formatDuration(this.configProps.rangeMinTime * 1000);
+      return [".survey-end-date", this.translateService.instant("invalid_date_range_min_x", { val1: duration })];
     }
 
-    if(this.survey.endDate.getTime() - this.survey.startDate.getTime() > this.configProps.rangeMaxTime * 1000) {
-      return [".survey-end-date", this.translateService.instant("invalid_date_range_max_x_days", { val1: Math.round(this.configProps.rangeMaxTime / 60 / 60 / 24) })];
+    if(range > this.configProps.rangeMaxTime * 1000) {
+      let duration = formatDuration(this.configProps.rangeMaxTime * 1000);
+      return [".survey-end-date", this.translateService.instant("invalid_date_range_max_x", { val1: duration })];
     }
 
     let budget = toUnits(this.state.budgetAmount, this.survey.tokenData.decimals);

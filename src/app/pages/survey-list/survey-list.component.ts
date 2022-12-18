@@ -132,7 +132,7 @@ export class SurveyListComponent extends BasePageComponent {
         search: text,
         onlyPublic: onlyPublic,
         maxStartTime: onlyOpened? currTime: 0,
-        minEndTime: onlyOpened? currTime: 0,
+        minEndTime: onlyOpened? currTime - 1: 0,
         //token: ADDRESS_ZERO,// TODO <- add filter
         sortItems: [
           {
