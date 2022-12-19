@@ -5,8 +5,11 @@ import { MessageHelperService } from 'src/app/services/message-helper.service';
 import { UtilService } from 'src/app/services/util.service';
 import { Web3Utils } from 'src/app/shared/constants';
 import { cloneDeep, getUniqueItemsIgnoreCase, shortAddress } from 'src/app/shared/helper';
+import { environment } from 'src/environments/environment';
 
-const VAPID_PUBLIC_KEY = "BG73DNPCLA6h3awHy1unNvVtbAZVi2dPqMdRlQ0taHaZbCd7_f0am_XYhgF7X89gVkx4agwmlyQsvcuY6dwlt5E";
+const VAPID_PUBLIC_KEY = environment.production? 
+"BPI6xpqKCj97BMDrKuXz6Q_E4yMjBKhEeiiK4rVpD21xFCqko3Xath-hRejcoWF86RHkWzGAU9r_qtdQafOLPtQ": 
+"BG73DNPCLA6h3awHy1unNvVtbAZVi2dPqMdRlQ0taHaZbCd7_f0am_XYhgF7X89gVkx4agwmlyQsvcuY6dwlt5E";
 
 @Component({
   selector: 'notif-subscription',
@@ -115,6 +118,10 @@ export class NotifSubscriptionComponent implements OnInit {
       response = await this.swPush.requestSubscription({
         serverPublicKey: VAPID_PUBLIC_KEY
       });
+
+      if(!response) {
+        throw new Error("Unable to get subscription");
+      }
     } catch (error) {
       // Registration failed - permission denied
       console.error(error);
