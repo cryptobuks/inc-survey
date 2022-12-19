@@ -19,9 +19,8 @@ It also handles the initial INC token offering.
 
 ## Governance Routes
 
-TODO
-- [Snapshot](https://snapshot.org/#/XXXXXX): For off-chain voting on proposals.
-- [Tally](https://www.tally.xyz/governance/XXXXXX): View INC DAO information on proposals, Delegates, and delegate your voting power.
+- [Snapshot](https://snapshot.org/#/inctoken.eth): For off-chain voting on proposals.
+- [Tally](https://www.tally.xyz/gov/eip155:137:0x9a342e71abEab4B9F47Daf520D4C8df3bE938153): View INC DAO information on proposals, Delegates, and delegate your voting power.
 
 ## Licensing
 
