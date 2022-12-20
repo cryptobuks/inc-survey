@@ -8,6 +8,8 @@ import { calcFeeTotal, keccak256, printPage } from 'src/app/shared/helper';
 import { BasePageComponent } from '../base-page.component';
 declare var $: any;
 
+const surveyAddrLookup = keccak256('OwnershipTransferred(address,address)');
+
 @Component({
   selector: 'app-survey-sent',
   templateUrl: './survey-sent.component.html',
@@ -69,7 +71,7 @@ export class SurveySentComponent extends BasePageComponent {
       this.pushSuccess(this.translateService.instant('survey_on_blockchain_few_time_to_be_indexed'));
 
       for(let log of this.receipt.logs) {
-        if(log.topics[0] == keccak256('OwnershipTransferred(address,address)')) {
+        if(log.topics[0] == surveyAddrLookup) {
           this.survey.address = log.address;
           break;
         }
