@@ -188,11 +188,11 @@ export class SurveyPreviewComponent extends BasePageComponent {
       await this.loadAllowance();
 
       if(!this.hasAllowance()) {
-        //let gasLimit = await tokenCnt.methods.approve(this.engineContract._address, MAX_UINT256).estimateGas({ from: this.accountData.address, gas: 5000000 });
         let tokenCnt = await this.web3Service.getERC20Contract(this.survey.tokenData.address);
         let data = tokenCnt.methods.approve(this.engineContract._address, MAX_UINT256).encodeABI();
         let estimatedGas = await this.web3Service.estimateGas(this.accountData.address, tokenCnt._address, data);
-        let gasLimit = calcGasMargin(estimatedGas, 30);
+        // The gas limit is increased to ensure that the tx does not fail since the price is very low.
+        let gasLimit = calcGasMargin(estimatedGas, 100);
         success = await tokenCnt.methods.approve(this.engineContract._address, MAX_UINT256).send({ from: this.accountData.address, gasLimit: gasLimit });
       }
 
