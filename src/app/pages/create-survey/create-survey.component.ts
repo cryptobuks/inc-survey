@@ -163,6 +163,7 @@ export class CreateSurveyComponent extends BasePageComponent {
   imageError = false;
 
   partPrice: BigNumber;
+  partPriceTime: number;
   keysNum: number;
   loading = false;
 
@@ -383,7 +384,12 @@ export class CreateSurveyComponent extends BasePageComponent {
   onChangeGasReserve() {
   }
 
-  loadGasReserve() {
+  async loadGasReserve() {
+    if(!this.partPrice || (Date.now() - this.partPriceTime) > 5000) {
+      this.partPrice = await this.surveyService.calcPartPrice();
+      this.partPriceTime = Date.now();
+    }
+    
     this.state.gasReserveAmount = toFixedBigNumber(toAmount(this.newGasReserve));
   }
 
@@ -557,17 +563,13 @@ export class CreateSurveyComponent extends BasePageComponent {
   }
 
   private async loadChainData() {
-    await this.loadPartPrice();
+    await this.surveyService.loadAvgTxGas();
+    this.loadGasReserve();
+
     // in a multi-chain future, if the chainId changes, the token must be cleaned up.
     if(this.survey.tokenData.chainId != CURRENT_CHAIN) {
       this.survey.tokenData = {};
     }
-  }
-
-  private async loadPartPrice() {
-    await this.surveyService.loadAvgTxGas();
-    this.partPrice = await this.surveyService.calcPartPrice();
-    this.loadGasReserve();
   }
 
   private async loadImageData() {

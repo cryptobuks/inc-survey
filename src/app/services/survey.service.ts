@@ -606,7 +606,7 @@ export class SurveyService implements OnDestroy {
             jsonrpc: "2.0",
             method: "eth_signTypedData_v4",
             params: [request.from, JSON.stringify(data)],
-            id: new Date().getTime()
+            id: Date.now()
           },
           callback
         );
@@ -618,7 +618,7 @@ export class SurveyService implements OnDestroy {
             jsonrpc: "2.0",
             method: "eth_signTypedData",
             params: [request.from, data],
-            id: new Date().getTime()
+            id: Date.now()
           },
           callback
         );

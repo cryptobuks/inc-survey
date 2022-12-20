@@ -45,7 +45,7 @@ export class Web3Service implements OnDestroy {
   get offerProps(): OfferProps { return this._offerProps; }
   get configProps(): ConfigProps { return this._configProps; }
   get timeDiff(): any { return this._timeDiff; }
-  get currenTime(): any { return new Date().getTime() + (this.timeDiff ?? 0); }
+  get currenTime(): any { return Date.now() + (this.timeDiff ?? 0); }
 
   private _web3: any;
   private _gasPriceGwei: any;
@@ -525,9 +525,9 @@ export class Web3Service implements OnDestroy {
   }
 
   private async loadTimeDiff() {
-    let time = new Date().getTime();
+    let time = Date.now();
     let block = await this.getLastBlock();
-    let newTime = new Date().getTime();
+    let newTime = Date.now();
 
     if (block) {
       let elapsedTime = newTime - time;
@@ -557,7 +557,7 @@ export class Web3Service implements OnDestroy {
 
   // Do not use at the moment, since it affects the limit of transactions in the main node.
   private async loadEphemeralData() {
-    let elapsedTime = new Date().getTime() - this.ephemeralDataTime;
+    let elapsedTime = Date.now() - this.ephemeralDataTime;
     if(elapsedTime < 60000) {// 1 min
       return;
     }
@@ -571,7 +571,7 @@ export class Web3Service implements OnDestroy {
         this.loadTokenBalance(stateService.surveyEditState.survey.tokenData);
       }
 
-      this.ephemeralDataTime = new Date().getTime();
+      this.ephemeralDataTime = Date.now();
     } catch (error) {
       console.warn('Network congested: ', error.message);
     }

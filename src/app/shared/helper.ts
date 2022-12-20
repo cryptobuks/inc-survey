@@ -238,7 +238,7 @@ export function randomInt() {
 }
 
 export function uniqueId(): string {
-  return new Date().getTime() + "-" + randomIntFromInterval(1000, Number.MAX_SAFE_INTEGER);
+  return Date.now() + "-" + randomIntFromInterval(1000, Number.MAX_SAFE_INTEGER);
 }
 
 export function degreesToRadians(degrees: number): number {
@@ -820,7 +820,7 @@ export function downloadText(filename: string, content: string) {
 }
 
 export function exportCoupons(coupons: string[]) {
-  const filename = "coupons-" + new Date().getTime() + ".txt";
+  const filename = "coupons-" + Date.now() + ".txt";
   let content = "";
 
   for(let i = 0; i < coupons.length; i++) {

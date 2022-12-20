@@ -128,7 +128,7 @@ export class FlipdownComponent implements OnInit {
    * @description Get the time in seconds (unix timestamp)
    **/
   _getTime() {
-    //return Math.round(new Date().getTime() / 1000);
+    //return Math.round(Date.now() / 1000);
     return Math.round(this.web3Service.currenTime / 1000);
   }
 
