@@ -20,6 +20,9 @@ export class BalanceChipComponent implements OnInit {
   icon: string;
 
   @Input()
+  symbolTooltip: string;
+
+  @Input()
   iconTooltip: string;
 
   @Input()
@@ -32,11 +35,18 @@ export class BalanceChipComponent implements OnInit {
   color: string = "#ffffff";
 
   @Output()
+  onSymbolClick: EventEmitter<any> = new EventEmitter();
+
+  @Output()
   onIconClick: EventEmitter<any> = new EventEmitter();
 
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  emitSymbolClick(e: Event) {
+    this.onSymbolClick.emit(e);
   }
 
   emitIconClick(e: Event): void {

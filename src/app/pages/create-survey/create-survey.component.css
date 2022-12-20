@@ -218,7 +218,7 @@
     content: attr(title);
     font-size: 24px;
     font-weight: 500;
-    color: rgb(0 0 0 / 20%);
+    color: var(--bg-mask-25);
     position: absolute;
     top: 0;
     width: 100%;

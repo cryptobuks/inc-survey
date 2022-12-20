@@ -1,5 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import BigNumber from 'bignumber.js';
+import { StorageItem } from '../models/storage-item';
 import { SurveyEditState } from '../models/survey-edit-state';
 import { SurveyListState } from '../models/survey-list-state';
 import { SurveyTakeState } from '../models/survey-take-state';
@@ -12,14 +13,14 @@ import { Web3Service } from './web3.service';
 })
 export class StateService implements OnDestroy {
 
-  get surveyListState(): SurveyListState { return this._surveyListState; };
-  private _surveyListState: SurveyListState;
+  get surveyListState(): SurveyListState { return this._surveyListState.value; };
+  private _surveyListState = new StorageItem<SurveyListState>("SurveyListState");
 
-  get surveyEditState(): SurveyEditState { return this._surveyEditState; };
-  private _surveyEditState: SurveyEditState;
+  get surveyEditState(): SurveyEditState { return this._surveyEditState.value; };
+  private _surveyEditState = new StorageItem<SurveyEditState>("SurveyEditState");
 
-  get surveyTakeState(): SurveyTakeState { return this._surveyTakeState; };
-  private _surveyTakeState: SurveyTakeState;
+  get surveyTakeState(): SurveyTakeState { return this._surveyTakeState.value; };
+  private _surveyTakeState = new StorageItem<SurveyTakeState>("SurveyTakeState");
 
   constructor(private web3Service: Web3Service) {
   }
@@ -50,26 +51,39 @@ export class StateService implements OnDestroy {
   }
 
   createSurveyListState() {
-    this._surveyListState = new SurveyListState();
+    this._surveyListState.value = new SurveyListState();
     return this.surveyListState;
   }
 
+  saveSurveyListState() {
+    this._surveyListState.save();
+  }
+
   createSurveyEditState() {
-    this._surveyEditState = new SurveyEditState();
-    this.surveyEditState.survey = this.createSurvey();
+    const editState = new SurveyEditState();
+    editState.survey = this.createSurvey();
+    this._surveyEditState.value = editState;
     return this.surveyEditState;
   }
 
+  saveSurveyEditState() {
+    this._surveyEditState.save();
+  }
+
   cleanSurveyEditState() {
-    this._surveyEditState = undefined;
+    this._surveyEditState.value = undefined;
   }
 
   createSurveyTakeState() {
-    this._surveyTakeState = new SurveyTakeState();
+    this._surveyTakeState.value = new SurveyTakeState();
     return this.surveyTakeState;
   }
 
+  saveSurveyTakeState() {
+    this._surveyTakeState.save();
+  }
+
   cleanSurveyTakeState() {
-    this._surveyTakeState = undefined;
+    this._surveyTakeState.value = undefined;
   }
 }

@@ -1,4 +1,8 @@
+import BigNumber from "bignumber.js";
+import { DATE_ISO_PATTERN } from "../shared/constants";
 import { cloneDeep } from "../shared/helper";
+
+const BN_NAMES = ["budget", "reward", "gasReserve", "balance"];
 
 export class StorageItem<T> {
 
@@ -6,15 +10,14 @@ export class StorageItem<T> {
     defaultValue: T;
     private _value: T;
 
-    constructor(name: string, defaultValue: T) {
+    constructor(name: string, defaultValue?: T) {
         this.name = name;
-        this.defaultValue = defaultValue?? cloneDeep(defaultValue);
+        this.defaultValue = defaultValue ? cloneDeep(defaultValue) : undefined;
     }
-    
+
     get value(): T {
-        if(!this._value) {
-            let saved = localStorage[this.name];
-            this._value = saved? JSON.parse(saved): this.defaultValue;
+        if (!this._value) {
+            this._value = this.getSaved();
         }
 
         return this._value;
@@ -25,11 +28,32 @@ export class StorageItem<T> {
     }
 
     save() {
-        if(this._value) {
+        if (this._value) {
             //localStorage[this.name] = JSON.stringify(this._value);
             localStorage.setItem(this.name, JSON.stringify(this._value));
         } else {
             localStorage.removeItem(this.name);
         }
+    }
+
+    private getSaved() {
+        let saved = localStorage[this.name];
+        if (saved) {
+            try {
+                return JSON.parse(saved, (key, value) => {
+                    if(BN_NAMES.includes(key)) {
+                        return new BigNumber(value);
+                    } else if (typeof value === 'string' && DATE_ISO_PATTERN.test(value)) {
+                        return new Date(value);
+                    }
+
+                    return value;
+                });
+            } catch (error) {
+                console.error(error);
+                localStorage[this.name] = undefined;
+            }
+        }
+        return this.defaultValue;
     }
 }

@@ -3,10 +3,9 @@ import { environment } from "src/environments/environment";
 import { NetData, newNetwork } from "../models/net-data";
 import { newToken, TokenData } from "../models/token-data";
 import { ChainId } from "../models/chains";
-declare var Web3: any;
-
+import Web3 from "web3";
+import BN from 'bn.js';
 export const Web3Utils = Web3.utils;
-export const BN = Web3.utils.BN;
 
 const themes = ['light', 'dark'] as const;
 export type Theme = (typeof themes)[number];
@@ -15,6 +14,7 @@ export const isTheme = (x: any): x is Theme => themes.includes(x);
 export const ADDRESS_ZERO = "0x0000000000000000000000000000000000000000";
 export const MAX_UINT256 = new BN('2').pow(new BN('256')).sub(new BN('1'));
 //export const MAX_UINT256 = new BigNumber(2).pow(new BigNumber(256)).minus(new BigNumber(1));
+export const DATE_ISO_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
 
 export const DOMAIN_URL = 'https://survey.inctoken.org';
 export const LOCALHOST_URL = 'http://localhost:4200';

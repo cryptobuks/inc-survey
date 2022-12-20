@@ -96,7 +96,7 @@ export class InputTokenComponent implements OnInit, OnDestroy {
     return this.data.price;
   }
 
-  humanFriendlyBalance() {
+  hfBalance() {
     return toFormatBigNumber(this.data.balance);
   }
 

@@ -5,7 +5,7 @@ import BigNumber from "bignumber.js";
 import { PaginatorData } from "../models/paginator-data";
 import { ChainId } from "../models/chains";
 import { SimpleTable } from "../models/simple-table";
-declare var Web3: any;
+import Web3 from "web3";
 declare var $: any;
 declare const XLSX: any;
 declare var charts: any;

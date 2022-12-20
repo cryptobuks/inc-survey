@@ -1,5 +1,5 @@
-declare var Web3: any;
-const BN = Web3.utils.BN;
+import Web3 from "web3";
+import BN from 'bn.js';
 //declare var keccak256: any; don't add prefix ´0x´
 const keccak256 = Web3.utils.keccak256;
 

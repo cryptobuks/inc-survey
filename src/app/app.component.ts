@@ -42,13 +42,13 @@ export class AppComponent implements OnInit, OnDestroy {
   get accountShortAddress(): string | null {
     return shortAddress(this.accountData?.address);
   }
-  get humanFriendlyIncBalance() {
+  get hfIncBalance() {
     return this.accountData?.incBalance? toFormatBigNumber(toAmount(this.accountData.incBalance)): '-';
   }
-  get humanFriendlyCcyBalance() {
+  get hfCcyBalance() {
     return this.accountData?.ccyBalance? toFormatBigNumber(toAmount(this.accountData.ccyBalance)): '-';
   }
-  /*get humanFriendlyWCcyBalance() {
+  /*get hfWCcyBalance() {
     return this.accountData?.wCcyBalance? toFormatBigNumber(toAmount(this.accountData.wCcyBalance)): '-';
   }*/
 
@@ -264,6 +264,20 @@ export class AppComponent implements OnInit, OnDestroy {
   async importNetwork() {
     this.displayNetDialog = false;
     await this.web3Service.importNetwork(NET_PARAMS[CURRENT_CHAIN]);
+  }
+
+  async refreshIncBalance() {
+    this.accountData.incBalance = undefined;
+    setTimeout(async () => {
+      this.accountData.incBalance = await this.web3Service.getIncBalance(this.accountData.address);
+    }, 1000);
+  }
+
+  async refreshCcyBalance() {
+    this.accountData.ccyBalance = undefined;
+    setTimeout(async () => {
+      this.accountData.ccyBalance = await this.web3Service.getCcyBalance(this.accountData.address);
+    }, 1000);
   }
 
   async importToken() {

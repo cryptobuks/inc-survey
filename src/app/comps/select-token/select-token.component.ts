@@ -71,6 +71,11 @@ export class SelectTokenComponent implements OnInit, OnDestroy {
     this.clipboard.copy(this.data.address);
   }
 
+  refreshBalance() {
+    this.menuOverlay.hide();
+    this.loadBalance();
+  }
+
   async loadBalance() {
     try {
       await this.web3Service.loadTokenBalance(this.data);

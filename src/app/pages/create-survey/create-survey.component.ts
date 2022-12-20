@@ -285,6 +285,7 @@ export class CreateSurveyComponent extends BasePageComponent {
 
   onDestroy() {
     this.onChainLoadedRemover && this.onChainLoadedRemover();
+    this.stateService.saveSurveyEditState();
   }
 
   onImageError(event: Event) {

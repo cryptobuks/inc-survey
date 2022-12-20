@@ -35,16 +35,8 @@
               "src/assets/css/flex.css"
             ],
             "scripts": [
-              "src/assets/js/web3@1.5.3.js",
-              "src/assets/js/web3modal@1.9.8.js",
-              "src/assets/js/evm-chains@0.2.0.js",
-              "src/assets/js/web3-provider@1.7.7.js",
-              "src/assets/js/wallet-sdk-bundle@3.0.6.js",
-              "src/assets/js/fortmatic@2.0.6.js",
-              "src/assets/js/portis-web3@4.0.6.js",
-              "src/assets/js/torus.umd@1.13.7.js",
-              "src/assets/js/authereum@0.1.14.js",
-              "src/assets/js/sha3@0.8.0.js",
+              "src/assets/js/web3-provider@1.8.0.js",
+              "src/assets/js/coinbase-wallet-sdk@3.6.0.js",
               "src/assets/js/uuidv4@8.3.2.js",
               "src/assets/js/ipfs@0.65.0.js",
               "src/assets/js/apexcharts@3.33.1.js",

@@ -105,8 +105,8 @@ export class TakeSurveyComponent extends BasePageComponent {
   }
 
   onDestroy() {
-    if (this.onChainLoadedRemover)
-      this.onChainLoadedRemover();
+    this.onChainLoadedRemover && this.onChainLoadedRemover();
+    this.stateService.saveSurveyTakeState();
   }
 
   backToList() {

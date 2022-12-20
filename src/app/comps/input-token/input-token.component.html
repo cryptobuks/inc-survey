@@ -26,7 +26,7 @@
     </div>
 
     <div *ngIf="hasBalance() || hasPrice()" class="info">
-        <span *ngIf="hasBalance()" class="balance" (click)="onBalance()">{{ 'balance' | translate }}: {{ humanFriendlyBalance() }} {{ data.symbol }}</span>
+        <span *ngIf="hasBalance()" class="balance" (click)="onBalance()">{{ 'balance' | translate }}: {{ hfBalance() }} {{ data.symbol }}</span>
         <span *ngIf="hasPrice()" class="price" (click)="onPrice()">≈$ {{ data.price }}</span>
     </div>
 

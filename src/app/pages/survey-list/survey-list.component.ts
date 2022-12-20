@@ -67,6 +67,7 @@ export class SurveyListComponent extends BasePageComponent {
 
   onDestroy() {
     this.onChainLoadedRemover();
+    this.stateService.saveSurveyListState();
   }
 
   cleanSearch() {

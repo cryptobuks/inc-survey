@@ -11,7 +11,7 @@ import { StorageUtil } from 'src/app/shared/storage-util';
 import { TranslateService } from '@ngx-translate/core';
 import { Web3Error } from 'src/app/models/web3-error';
 import BigNumber from 'bignumber.js';
-declare var Web3: any;
+import Web3 from "web3";
 declare var $: any;
 
 const existsToken = (array: any[], token: any) => (

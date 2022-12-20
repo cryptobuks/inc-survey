@@ -40,15 +40,17 @@
             <span class="flex-spacer"></span>
 
             <div class="balance-chips">
-                <balance-chip symbol="INC" symbolIcon="assets/img/inc_logo.png" [balance]="humanFriendlyIncBalance" background="#3a4570"
-                    icon="add" iconTooltip="{{ 'import_token' | translate }}" (onIconClick)="importToken()">
+                <balance-chip symbol="INC" symbolIcon="assets/img/inc_logo.png" [balance]="hfIncBalance" background="#3a4570"
+                    icon="add" symbolTooltip="{{ 'refresh_balance_of_x' | translate:{val1 : 'INC' } }}" iconTooltip="{{ 'import_token' | translate }}" 
+                    (onSymbolClick)="refreshIncBalance()" (onIconClick)="importToken()">
                 </balance-chip>
 
-                <balance-chip [symbol]="ccy.symbol" [symbolIcon]="ccy.logoURI" [balance]="humanFriendlyCcyBalance" background="#8247e5"
-                    icon="add" iconTooltip="{{ 'import_or_select_network' | translate }}" (onIconClick)="importNetwork()">
+                <balance-chip [symbol]="ccy.symbol" [symbolIcon]="ccy.logoURI" [balance]="hfCcyBalance" background="#8247e5"
+                    icon="add" symbolTooltip="{{ 'refresh_balance_of_x' | translate:{val1 : ccy.symbol } }}" iconTooltip="{{ 'import_or_select_network' | translate }}" 
+                    (onSymbolClick)="refreshCcyBalance()" (onIconClick)="importNetwork()">
                 </balance-chip>
 
-                <!--<balance-chip [symbol]="wCcy.symbol" [symbolIcon]="wCcy.logoURI" [balance]="humanFriendlyWCcyBalance" background="#00bffa"
+                <!--<balance-chip [symbol]="wCcy.symbol" [symbolIcon]="wCcy.logoURI" [balance]="hfWCcyBalance" background="#00bffa"
                     icon="add" iconTooltip="{{ 'import_wrapped_currency' | translate }}" (onIconClick)="importWrappedToken()">
                 </balance-chip>-->
             </div>

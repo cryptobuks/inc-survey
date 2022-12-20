@@ -926,6 +926,7 @@ div[contenteditable]:empty:not(:focus):before {
 
 .web3modal-provider-container {
     padding: 10px !important;
+    background-color: unset !important;
 }
 
 .web3modal-provider-icon {
@@ -940,4 +941,32 @@ div[contenteditable]:empty:not(:focus):before {
 .web3modal-provider-description {
     font-size: 16px !important;
     margin: 0 !important;
+}
+
+.light-theme .web3modal-modal-card {
+    background-color: rgb(255, 255, 255) !important;
+    color: black !important;
+}
+.light-theme .web3modal-provider-name {
+    color: rgb(12, 12, 13) !important;
+}
+.light-theme .web3modal-provider-description {
+    color: rgb(169, 169, 188) !important;
+}
+.light-theme .web3modal-provider-container:hover {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.dark-theme .web3modal-modal-card {
+    background-color: rgb(39, 49, 56);
+    color: white;
+}
+.dark-theme .web3modal-provider-name {
+    color: rgb(199, 199, 199) !important;
+}
+.dark-theme .web3modal-provider-description {
+    color: rgb(136, 136, 136) !important;
+}
+.dark-theme .web3modal-provider-container:hover {
+    background-color: rgba(0, 0, 0, 0.2) !important;
 }

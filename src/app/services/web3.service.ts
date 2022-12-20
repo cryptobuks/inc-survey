@@ -20,11 +20,8 @@ import { TokenData } from '../models/token-data';
 import { cloneDeep, equalsIgnoreCase, getInstance, toAmount, toFormatBigNumber } from '../shared/helper';
 import { StateService } from './state.service';
 import { UtilService } from './util.service';
-declare var window: any;
-declare var Web3: any;
-
-const Web3Modal = window.Web3Modal.default;
-//const evmChains = window.evmChains;
+import Web3 from "web3";
+import Web3Modal from "web3modal";
 
 @Injectable({
   providedIn: 'root'
@@ -102,13 +99,8 @@ export class Web3Service implements OnDestroy {
   }
 
   async setModalTheme(theme: Theme) {
-    this.web3Modal = new Web3Modal({
-      network: "mainnet", // optional mainnet, ropsten, etc..
-      cacheProvider: true, // optional
-      //disableInjectedProvider: false, // optional. For MetaMask / Brave / Opera.
-      providerOptions, // required
-      theme: theme
-    });
+    // TODO It doesn't work, a css alternative is being used
+    await this.web3Modal.updateTheme(theme);
   }
 
   checkConnection() {
@@ -563,6 +555,7 @@ export class Web3Service implements OnDestroy {
     //console.debug("configProps:: " + JSON.stringify(this.configProps));
   }
 
+  // Do not use at the moment, since it affects the limit of transactions in the main node.
   private async loadEphemeralData() {
     let elapsedTime = new Date().getTime() - this.ephemeralDataTime;
     if(elapsedTime < 60000) {// 1 min
@@ -571,12 +564,12 @@ export class Web3Service implements OnDestroy {
 
     try {
       this.loadGasPrice();
-      /*this.loadAccountBalance();
+      this.loadAccountBalance();
 
       let stateService = getInstance(StateService);
       if(stateService?.surveyEditState?.survey?.tokenData) {
         this.loadTokenBalance(stateService.surveyEditState.survey.tokenData);
-      }*/
+      }
 
       this.ephemeralDataTime = new Date().getTime();
     } catch (error) {
@@ -597,7 +590,7 @@ export class Web3Service implements OnDestroy {
             instance._blockHeader = blockHeader;
           });
 
-          instance.loadEphemeralData();
+          //instance.loadEphemeralData();
         }
       })
       .on("error", console.error);
