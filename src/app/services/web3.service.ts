@@ -245,7 +245,12 @@ export class Web3Service implements OnDestroy {
 
     // Get list of accounts of the connected wallet
     // MetaMask does not give you all accounts, only the selected account
-    let accounts = await this.web3.currentProvider.request({ method: 'eth_requestAccounts' });
+    let accounts: string[];
+    try {
+      accounts = await this.web3.currentProvider.request({ method: 'eth_requestAccounts' });
+    } catch (error) {
+      accounts = await this.web3.currentProvider.request({ method: 'eth_accounts' });
+    }
     data.address = accounts[0];
 
     data.ccyBalance = await this.getCcyBalance(data.address);

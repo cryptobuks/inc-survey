@@ -1,6 +1,7 @@
 declare var require: any;
 declare var window: any;
 var process = require('.env');
+import { ChainId } from "../models/chains";
 import { CURRENT_CHAIN } from "./constants";
 
 const WalletConnectProvider = window.WalletConnectProvider.default;
@@ -14,10 +15,10 @@ export const providerOptions = {
     package: WalletConnectProvider,
     options: {
       infuraId: INFURA_ID,// Required unless you provide a JSON RPC url; see `rpc` below
-      /*rpc: {// Custom RPC mapping: alternative to infuraId
-        [ChainId.MATIC]: NETWORK_URLS[ChainId.MATIC],
-        [ChainId.MUMBAI]: NETWORK_URLS[ChainId.MUMBAI]
-      }*/
+      rpc: {// Custom RPC mapping: alternative to infuraId
+        [ChainId.MATIC]: "https://polygon-rpc.com",
+        [ChainId.MUMBAI]: "https://rpc-mumbai.maticvigil.com"
+      }
     }
   },
   // Coinbase Wallet: https://docs.cloud.coinbase.com/wallet-sdk/docs/web3modal
