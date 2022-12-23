@@ -262,7 +262,7 @@ export class Web3Service implements OnDestroy {
 
   async getOfferProps(): Promise<OfferProps> {
     this.checkContracts();
-    let data: any = {};
+    /*let data: any = {};
 
     data.phase = parseInt(await this.offerContract.methods.phase().call());
     data.openingTime = parseInt(await this.offerContract.methods.openingTime().call());
@@ -270,14 +270,25 @@ export class Web3Service implements OnDestroy {
     data.initialRate = parseInt(await this.offerContract.methods.initialRate().call());
     data.finalRate = parseInt(await this.offerContract.methods.finalRate().call());
     data.totalSold = new BigNumber(await this.offerContract.methods.totalSold().call());
-    data.totalRaised = new BigNumber(await this.offerContract.methods.totalRaised().call());
+    data.totalRaised = new BigNumber(await this.offerContract.methods.totalRaised().call());*/
+
+    // avoid calls to static values so as not to saturate the network
+    let data: OfferProps = {
+      phase: 1,
+      openingTime: 1672531200,
+      closingTime: 1680220800,
+      initialRate: 500,
+      finalRate: 50,
+      totalSold: new BigNumber(await this.offerContract.methods.totalSold().call()),
+      totalRaised: new BigNumber(await this.offerContract.methods.totalRaised().call())
+    };
 
     return Promise.resolve<OfferProps>(data);
   }
 
   async getConfigProps(): Promise<ConfigProps> {
     this.checkContracts();
-    let data: any = {};
+    /*let data: any = {};
 
     data.surveyMaxPerRequest = parseInt(await this.configContract.methods.surveyMaxPerRequest().call());
     data.questionMaxPerRequest = parseInt(await this.configContract.methods.questionMaxPerRequest().call());
@@ -300,7 +311,32 @@ export class Web3Service implements OnDestroy {
     data.validatorMaxPerQuestion = parseInt(await this.validatorContract.methods.validatorMaxPerQuestion().call());
     data.validatorValueMaxLength = parseInt(await this.validatorContract.methods.validatorValueMaxLength().call());
     data.hashMaxPerSurvey = parseInt(await this.validatorContract.methods.hashMaxPerSurvey().call());
-    data.responseMaxLength = parseInt(await this.validatorContract.methods.responseMaxLength().call());
+    data.responseMaxLength = parseInt(await this.validatorContract.methods.responseMaxLength().call());*/
+
+    // avoid calls to static values so as not to saturate the network
+    let data: ConfigProps = {
+      surveyMaxPerRequest: 100,
+      questionMaxPerRequest: 100,
+      responseMaxPerRequest: 100,
+      participantMaxPerRequest: 100,
+      participationMaxPerRequest: 100,
+      txGasMaxPerRequest: 100,
+      feeWei: new BigNumber("10000000000000000"),
+      tknSymbolMaxLength: 64,
+      tknNameMaxLength: 128,
+      titleMaxLength: 128,
+      descriptionMaxLength: 512,
+      urlMaxLength: 2048,
+      startMaxTime: 864000,
+      rangeMinTime: 86399,
+      rangeMaxTime: 2591999,
+      questionMaxPerSurvey: 100,
+      questionMaxLength: 4096,
+      validatorMaxPerQuestion: 10,
+      validatorValueMaxLength: 128,
+      hashMaxPerSurvey: 1000,
+      responseMaxLength: 2048
+    };
 
     return Promise.resolve<ConfigProps>(data);
   }
