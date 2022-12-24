@@ -80,7 +80,7 @@ export class LazyThumbComponent implements OnInit {
         if(this.loadingInternal) {
           this.onImageError(undefined);
         }
-      }, 5000);
+      }, 30000);
     } else {
       this._url = value;
     }
